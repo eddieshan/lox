@@ -11,6 +11,8 @@ class GapBuffer {
         std::size_t _gap;
         std::size_t _end;
 
+        void visit(size_t from, size_t to, void (*f)(const void*, size_t));
+
     public:
     
         GapBuffer();
@@ -24,7 +26,7 @@ class GapBuffer {
         void down();
 
         void insert(uint8_t);
-        
+
         void ln_start();
 
         void ln_end();
@@ -32,6 +34,8 @@ class GapBuffer {
         void del_right();
 
         void del_left();
+
+        void visit(void (*f)(const void*, size_t));
 };
 
 #endif
