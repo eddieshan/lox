@@ -4,6 +4,7 @@
 #include "term.h"
 #include "keys.h"
 #include "ansi.h"
+#include "gap_buffer.h"
 
 Editor::Editor() {
 }
@@ -17,6 +18,7 @@ Editor& Editor::instance()
 void Editor::start() {
     
     if(!_state.is_started) {
+        GapBuffer buffer;
         const auto result = term::enable_raw_mode();
 
         term::write_bytes((char*)term::ansi::Clear, sizeof(term::ansi::Clear));
@@ -33,29 +35,34 @@ void Editor::start() {
                     break;
                 case keys::Cr:
                     break;
-                case keys::Up: 
+                case keys::Up:
                     break;                    
-                case keys::Down: 
+                case keys::Down:
                     break;
-                case keys::Right: 
+                case keys::Right:
                     break;
-                case keys::Left: 
+                case keys::Left:
                     break;
-                case keys::Htab: 
+                case keys::Htab:                    
                     break;
                 case keys::LnStart: 
                     break;
                 case keys::LnEnd: 
                     break;
-                case keys::Del: 
+                case keys::Del:
                     break;
                 case keys::BSpace: 
                     break;
-                default: 
+                default:
                     if (key.size == 1) {
-                        printf("%c", key.code);
+                        buffer.insert(key.code);
                     }
             };
+
+            term::write_bytes((char*)term::ansi::Clear, sizeof(term::ansi::Clear));
+            term::write_bytes((char*)term::ansi::Home, sizeof(term::ansi::Home));
+
+            buffer.visit(term::write_bytes);
 
             term::flush();
         }  

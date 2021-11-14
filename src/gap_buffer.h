@@ -17,23 +17,7 @@ class GapBuffer {
     
         GapBuffer();
 
-        void right();
-
-        void left();
-
-        void up();
-
-        void down();
-
         void insert(uint8_t);
-
-        void ln_start();
-
-        void ln_end();
-
-        void del_right();
-
-        void del_left();
 
         void visit(void (*f)(const void*, size_t));
 };

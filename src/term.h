@@ -20,7 +20,7 @@ namespace term {
 
     RawModeResult enable_raw_mode();
     Key read_key();
-    void write_bytes(char* buffer, std::size_t size);
+    void write_bytes(const void* buffer, std::size_t size);
     void flush();
 
 }
