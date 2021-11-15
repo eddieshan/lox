@@ -75,7 +75,7 @@ term::Key term::read_key() {
     return term::Key { .code = code, .size = size };
 }
 
-void term::write_bytes(const void* buffer, std::size_t size) {
+void term::write_bytes(const void* buffer, size_t size) {
     write(STDOUT_FILENO, buffer, size);
 }
 

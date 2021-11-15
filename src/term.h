@@ -8,7 +8,7 @@ namespace term {
 
     struct Key {
         uint32_t code;
-        std::size_t size;
+        size_t size;
     };
 
     enum class RawModeResult {
@@ -20,7 +20,7 @@ namespace term {
 
     RawModeResult enable_raw_mode();
     Key read_key();
-    void write_bytes(const void* buffer, std::size_t size);
+    void write_bytes(const void* buffer, size_t size);
     void flush();
 
 }
