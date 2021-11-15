@@ -3,10 +3,11 @@
 #include <memory>
 
 #include "fixed_buffer.h"
+#include "utils.h"
 
 constexpr size_t BufferSize = 1024;
 
-FixedBuffer::FixedBuffer(): 
+FixedBuffer::FixedBuffer():
     _size(0), 
     _bytes(std::make_unique<uint8_t[]>(BufferSize)) { 
     }
@@ -20,9 +21,19 @@ void FixedBuffer::write(const uint8_t* bytes, size_t size) {
     }
 }
 
-void FixedBuffer::accept(void (*visit)(const void*, size_t)) {
+void FixedBuffer::write(utils::Slice<uint8_t> slice) {
+    auto new_size = _size + slice.size;
+
+    if(new_size < BufferSize) {
+        auto current = _bytes.get() + _size;
+        std::copy(slice.data, slice.data + slice.size, current);
+        _size = new_size;
+    }
+}
+
+void FixedBuffer::accept(void (*visit)(utils::Slice<uint8_t>)) {
     if(_size > 0) {
-        visit(_bytes.get(), _size);
+        visit(utils::Slice<uint8_t> { _bytes.get(), _size });
     }
 }
 

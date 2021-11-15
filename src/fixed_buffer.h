@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <memory>
 
+#include "utils.h"
+
 class FixedBuffer {
     private:
         std::unique_ptr<uint8_t[]> _bytes;
@@ -16,7 +18,9 @@ class FixedBuffer {
 
         void write(const uint8_t*, size_t);
 
-        void accept(void (*visit)(const void*, size_t));
+        void accept(void (*visit)(utils::Slice<uint8_t>));
+
+        void write(utils::Slice<uint8_t> data);
 
         void clear();
 };
