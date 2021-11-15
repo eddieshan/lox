@@ -4,10 +4,10 @@
 
 #include "gap_buffer.h"
 
-GapBuffer::GapBuffer() {
-    _bytes = std::make_unique<uint8_t[]>(BufferSize);
-    _gap = 0;
-    _end = BufferLimit;
+GapBuffer::GapBuffer(): 
+    _gap(0),
+    _end(BufferLimit),
+    _bytes(std::make_unique<uint8_t[]>(BufferSize)) {
 }
 
 void GapBuffer::insert(uint8_t byte) {
