@@ -5,6 +5,7 @@
 #include "keys.h"
 #include "ansi.h"
 #include "gap_buffer.h"
+#include "fixed_buffer.h"
 
 Editor::Editor() {
 }
@@ -18,12 +19,10 @@ Editor& Editor::instance()
 void Editor::start() {
     
     if(!_state.is_started) {
-        GapBuffer buffer;
-        const auto result = term::enable_raw_mode();
+        GapBuffer text_buffer;
+        FixedBuffer screen_buffer;
 
-        term::write_bytes((char*)term::ansi::Clear, sizeof(term::ansi::Clear));
-        term::write_bytes((char*)term::ansi::Home, sizeof(term::ansi::Home));
-        term::flush();
+        const auto result = term::enable_raw_mode();
 
         while (1) {
 
@@ -55,16 +54,18 @@ void Editor::start() {
                     break;
                 default:
                     if (key.size == 1) {
-                        buffer.insert(key.code);
+                        text_buffer.insert(key.code);
                     }
             };
 
-            term::write_bytes((char*)term::ansi::Clear, sizeof(term::ansi::Clear));
-            term::write_bytes((char*)term::ansi::Home, sizeof(term::ansi::Home));
+            screen_buffer.write(term::ansi::Clear, sizeof(term::ansi::Clear));
+            screen_buffer.write(term::ansi::Home, sizeof(term::ansi::Home));
 
-            buffer.visit(term::write_bytes);
+            text_buffer.accept<FixedBuffer>(&FixedBuffer::write, screen_buffer);
+            screen_buffer.accept(term::write_bytes);
 
             term::flush();
+            screen_buffer.clear();
         }  
     }
 }
