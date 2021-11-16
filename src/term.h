@@ -22,7 +22,7 @@ namespace term {
 
     RawModeResult enable_raw_mode();
     Key read_key();
-    void write_bytes(utils::Slice<uint8_t> buffer);
+    void write_bytes(const utils::Slice<uint8_t>& buffer);
     void flush();
 
 }

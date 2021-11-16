@@ -9,8 +9,7 @@ constexpr size_t BufferSize = 1024;
 
 FixedBuffer::FixedBuffer():
     _size(0), 
-    _bytes(std::make_unique<uint8_t[]>(BufferSize)) { 
-    }
+    _bytes(std::make_unique<uint8_t[]>(BufferSize)) {}
 
 void FixedBuffer::write(const uint8_t* bytes, size_t size) {
     auto new_size = _size + size;
@@ -21,7 +20,7 @@ void FixedBuffer::write(const uint8_t* bytes, size_t size) {
     }
 }
 
-void FixedBuffer::write(utils::Slice<uint8_t> slice) {
+void FixedBuffer::write(const utils::Slice<uint8_t>& slice) {
     auto new_size = _size + slice.size;
 
     if(new_size < BufferSize) {
@@ -31,9 +30,9 @@ void FixedBuffer::write(utils::Slice<uint8_t> slice) {
     }
 }
 
-void FixedBuffer::accept(void (*visit)(utils::Slice<uint8_t>)) {
+void FixedBuffer::accept(void (*visit)(const utils::Slice<uint8_t>&)) {
     if(_size > 0) {
-        visit(utils::Slice<uint8_t> { _bytes.get(), _size });
+        visit(utils::Slice(_bytes.get(), _size));
     }
 }
 

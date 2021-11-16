@@ -18,9 +18,9 @@ class FixedBuffer {
 
         void write(const uint8_t*, size_t);
 
-        void accept(void (*visit)(utils::Slice<uint8_t>));
+        void accept(void (*visit)(const utils::Slice<uint8_t>&));
 
-        void write(utils::Slice<uint8_t> data);
+        void write(const utils::Slice<uint8_t>& data);
 
         void clear();
 };

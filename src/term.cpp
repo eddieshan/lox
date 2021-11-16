@@ -76,7 +76,7 @@ term::Key term::read_key() {
     return term::Key { .code = code, .size = size };
 }
 
-void term::write_bytes(utils::Slice<uint8_t> buffer) {
+void term::write_bytes(const utils::Slice<uint8_t>& buffer) {
     write(STDOUT_FILENO, buffer.data, buffer.size);
 }
 
