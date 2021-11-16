@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <cstddef>
 
+#include "utils.h"
+
 namespace term {
 
     struct Key {
@@ -20,7 +22,7 @@ namespace term {
 
     RawModeResult enable_raw_mode();
     Key read_key();
-    void write_bytes(const void* buffer, size_t size);
+    void write_bytes(const utils::Slice<uint8_t>& buffer);
     void flush();
 
 }

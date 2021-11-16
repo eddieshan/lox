@@ -5,6 +5,7 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include "utils.h"
 #include "term.h"
 
 namespace flags {
@@ -75,8 +76,8 @@ term::Key term::read_key() {
     return term::Key { .code = code, .size = size };
 }
 
-void term::write_bytes(const void* buffer, size_t size) {
-    write(STDOUT_FILENO, buffer, size);
+void term::write_bytes(const utils::Slice<uint8_t>& buffer) {
+    write(STDOUT_FILENO, buffer.data, buffer.size);
 }
 
 void term::flush() {
