@@ -1,6 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <array>
+
 namespace utils {
 
     // Immutable slice type.
@@ -13,6 +15,13 @@ namespace utils {
 
         Slice(T* data_, size_t size_): data(data_), size(size_) {}
     };
+
+    template <typename V, typename... T>
+    constexpr auto array_of(T&&... t)
+        -> std::array<V, sizeof...(T)>
+    {
+        return {{ std::forward<T>(t)... }};
+    }
 }
 
 #endif
