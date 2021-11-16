@@ -1,12 +1,18 @@
+#include <array>
+
+#include "utils.h"
+
 namespace term::ansi {
-    constexpr uint8_t Seq[] = "\x1b[";
-    constexpr uint8_t Clear[] = "\x1b[2J";
-    constexpr uint8_t Reset[] = "\x1b[0m";
-    constexpr uint8_t Pos[] = "H";
-    constexpr uint8_t NextLine[] = "\x1b[1E";
-    constexpr uint8_t Home[] = "\x1b[H";
-    constexpr uint8_t Del1[] = "\x1b[1P";
-    constexpr uint8_t BackDel1[] = "\x1b[1D\x1b[1P";
-    constexpr uint8_t Underline[] = "\x1b[4m";
-    constexpr uint8_t StrikeThrough[] = "\x1b[9m";
+
+    constexpr std::array<uint8_t, 3> Seq { "\x1b[" };
+
+    constexpr auto Home  = utils::array_of<uint8_t>(27, 91, 72); //\x1b[H
+    constexpr auto Clear = utils::array_of<uint8_t>(27, 91, 50, 74); // \x1b[2J
+
+    constexpr std::array<uint8_t, 5> Reset { "\x1b[0m" };
+    constexpr std::array<uint8_t, 5> NextLine = { "\x1b[1E" };
+    constexpr std::array<uint8_t, 6> Del1 { "\x1b[1P" };
+    constexpr std::array<uint8_t, 9> BackDel1 { "\x1b[1D\x1b[1P" };
+    constexpr std::array<uint8_t, 5> Underline { "\x1b[4m" };
+    constexpr std::array<uint8_t, 5> StrikeThrough { "\x1b[9m" };
 }
