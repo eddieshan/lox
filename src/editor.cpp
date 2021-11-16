@@ -58,8 +58,8 @@ void Editor::start() {
                     }
             };
 
-            screen_buffer.write(term::ansi::Clear, sizeof(term::ansi::Clear));
-            screen_buffer.write(term::ansi::Home, sizeof(term::ansi::Home));
+            screen_buffer.write<term::ansi::Clear.size()>(term::ansi::Clear);
+            screen_buffer.write<term::ansi::Home.size()>(term::ansi::Home);
 
             text_buffer.accept<FixedBuffer>(&FixedBuffer::write, screen_buffer);
             screen_buffer.accept(term::write_bytes);
