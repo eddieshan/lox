@@ -21,13 +21,7 @@ void FixedBuffer::write(const uint8_t* bytes, size_t size) {
 }
 
 void FixedBuffer::write(const utils::Slice<uint8_t>& slice) {
-    auto new_size = _size + slice.size;
-
-    if(new_size < BufferSize) {
-        auto current = _bytes.get() + _size;
-        std::copy(slice.data, slice.data + slice.size, current);
-        _size = new_size;
-    }
+    write(slice.data, slice.size);
 }
 
 void FixedBuffer::accept(void (*visit)(const utils::Slice<uint8_t>&)) {
