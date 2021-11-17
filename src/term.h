@@ -15,6 +15,11 @@ namespace term {
         Key(uint32_t code_, size_t size_);
     };
 
+    struct WindowSize {
+        unsigned int rows;
+        unsigned int cols;
+    };
+
     enum class RawModeResult {
         Ok,
         InvalidTty,
@@ -24,6 +29,7 @@ namespace term {
 
     RawModeResult enable_raw_mode();
     Key read_key();
+    WindowSize get_window_size();
     void write_bytes(const utils::Slice<uint8_t>& buffer);
     void flush();
 
