@@ -9,8 +9,10 @@
 namespace term {
 
     struct Key {
-        uint32_t code;
-        size_t size;
+        const uint32_t code;
+        const size_t size;
+
+        Key(uint32_t code_, size_t size_);
     };
 
     enum class RawModeResult {

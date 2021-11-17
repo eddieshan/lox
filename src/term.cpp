@@ -42,6 +42,10 @@ termios get_raw_attr(termios current) {
     return raw;
 }
 
+term::Key::Key(uint32_t code_, size_t size_): 
+    code(code_),
+    size(size_) {}
+
 term::RawModeResult term::enable_raw_mode() {
     if (!isatty(STDIN_FILENO)) {
         return RawModeResult::InvalidTty;
@@ -73,7 +77,7 @@ term::RawModeResult term::enable_raw_mode() {
 term::Key term::read_key() {
     uint32_t code {0};
     const auto size = (size_t) read(STDIN_FILENO, &code, sizeof(uint32_t));
-    return term::Key { .code = code, .size = size };
+    return term::Key(code, size);
 }
 
 void term::write_bytes(const utils::Slice<uint8_t>& buffer) {
