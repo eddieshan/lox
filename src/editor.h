@@ -2,7 +2,7 @@
 #define EDITOR_H
 
 #include "term.h"
-#include "gap_buffer.h"
+#include "piece_table.h"
 #include "fixed_buffer.h"
 
 struct EditorState {
@@ -14,7 +14,7 @@ class Editor {
         Editor();
 
         EditorState _state;
-        GapBuffer _text_buffer;
+        PieceTable _text_buffer;
         FixedBuffer _screen_buffer;
 
         bool process(const term::Key& key);
