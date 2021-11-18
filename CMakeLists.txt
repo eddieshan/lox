@@ -5,9 +5,11 @@ project(lox VERSION 0.0)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 set(SOURCES
+    src/ansi.cpp
     src/gap_buffer.cpp
     src/fixed_buffer.cpp
     src/piece_table.cpp
+    src/cursor.cpp
     src/editor.cpp
     src/term.cpp
     src/main.cpp
