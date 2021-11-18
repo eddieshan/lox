@@ -20,6 +20,7 @@ class Editor {
         Cursor _cursor;
 
         bool process(const term::Key& key);
+        void clear_screen();
 
     public:
         static Editor& instance();

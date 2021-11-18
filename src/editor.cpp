@@ -48,18 +48,17 @@ bool Editor::process(const term::Key& key) {
         default:
             if (key.size == 1) {
                 _text_buffer.insert(key.code);
-                _cursor.right();
             }
     };
 
-    _screen_buffer.write<term::ansi::Clear.size()>(term::ansi::Clear);
-    _screen_buffer.write<term::ansi::Home.size()>(term::ansi::Home);
+    _screen_buffer.write(term::ansi::Clear);
+    _screen_buffer.write(term::ansi::Home);
 
     _text_buffer.accept<FixedBuffer>(&FixedBuffer::write, _screen_buffer);
 
     const auto screen_pos = _cursor.screen_pos();
     const auto pos = term::ansi::go_to(screen_pos);
-    _screen_buffer.write<pos.size()>(pos);
+    _screen_buffer.write(pos);
 
     _screen_buffer.accept(term::write_bytes);
 
@@ -69,6 +68,14 @@ bool Editor::process(const term::Key& key) {
     return true;
 }
 
+void Editor::clear_screen() {
+    _screen_buffer.write(term::ansi::Clear);
+    _screen_buffer.write(term::ansi::Home);
+    _screen_buffer.accept(term::write_bytes);
+    _screen_buffer.clear();
+    term::flush();
+}
+
 void Editor::start() {
     if(!_state.is_started) {
         const auto result = term::enable_raw_mode();
@@ -76,12 +83,14 @@ void Editor::start() {
 
         auto wait_for_events = true;
 
+        clear_screen();
+
         do {
             const auto key = term::read_key();
 
             if(key.size > 0) {
                 wait_for_events = process(key);
             }
-        }  while(wait_for_events);
+        } while(wait_for_events);
     }
 }
