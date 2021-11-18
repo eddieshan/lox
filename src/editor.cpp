@@ -48,6 +48,7 @@ bool Editor::process(const term::Key& key) {
         default:
             if (key.size == 1) {
                 _text_buffer.insert(key.code);
+                _cursor.right();
             }
     };
 

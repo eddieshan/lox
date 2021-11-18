@@ -3,7 +3,7 @@
 
 Cursor::Cursor(const term::WindowSize window_size):
     _window_size(window_size),
-    _pos(0) {}
+    _pos(1) {}
 
 unsigned int Cursor::pos() {
     return _pos;
