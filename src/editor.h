@@ -4,6 +4,7 @@
 #include "term.h"
 #include "piece_table.h"
 #include "fixed_buffer.h"
+#include "cursor.h"
 
 struct EditorState {
     bool is_started;
@@ -16,6 +17,7 @@ class Editor {
         EditorState _state;
         PieceTable _text_buffer;
         FixedBuffer _screen_buffer;
+        Cursor _cursor;
 
         bool process(const term::Key& key);
 

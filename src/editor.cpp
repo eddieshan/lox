@@ -4,8 +4,9 @@
 #include "term.h"
 #include "keys.h"
 #include "ansi.h"
+#include "cursor.h"
 
-Editor::Editor() {
+Editor::Editor(): _cursor(term::get_window_size()) {
 
 }
 
@@ -23,12 +24,16 @@ bool Editor::process(const term::Key& key) {
         case keys::Cr:
             break;
         case keys::Up:
+            _cursor.up();
             break;                    
         case keys::Down:
+            _cursor.down();
             break;
-        case keys::Right:
+        case keys::Right:            
+            _cursor.right();
             break;
         case keys::Left:
+            _cursor.left();
             break;
         case keys::Htab:                    
             break;
@@ -43,6 +48,7 @@ bool Editor::process(const term::Key& key) {
         default:
             if (key.size == 1) {
                 _text_buffer.insert(key.code);
+                _cursor.right();
             }
     };
 
@@ -50,6 +56,11 @@ bool Editor::process(const term::Key& key) {
     _screen_buffer.write<term::ansi::Home.size()>(term::ansi::Home);
 
     _text_buffer.accept<FixedBuffer>(&FixedBuffer::write, _screen_buffer);
+
+    const auto screen_pos = _cursor.screen_pos();
+    const auto pos = term::ansi::go_to(screen_pos);
+    _screen_buffer.write<pos.size()>(pos);
+
     _screen_buffer.accept(term::write_bytes);
 
     term::flush();
@@ -58,9 +69,11 @@ bool Editor::process(const term::Key& key) {
     return true;
 }
 
-void Editor::start() {   
+void Editor::start() {
     if(!_state.is_started) {
         const auto result = term::enable_raw_mode();
+        const auto window_size = term::get_window_size();
+
         auto wait_for_events = true;
 
         do {
