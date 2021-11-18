@@ -52,9 +52,7 @@ bool Editor::process(const term::Key& key) {
             }
     };
 
-    _screen_buffer.write(term::ansi::Clear);
-    _screen_buffer.write(term::ansi::Home);
-
+    _screen_buffer.write(term::ansi::Reset);
     _text_buffer.accept<FixedBuffer>(&FixedBuffer::write, _screen_buffer);
 
     const auto screen_pos = _cursor.screen_pos();
@@ -70,8 +68,7 @@ bool Editor::process(const term::Key& key) {
 }
 
 void Editor::clear_screen() {
-    _screen_buffer.write(term::ansi::Clear);
-    _screen_buffer.write(term::ansi::Home);
+    _screen_buffer.write(term::ansi::Reset);
     _screen_buffer.accept(term::write_bytes);
     _screen_buffer.clear();
     term::flush();
