@@ -20,6 +20,11 @@ namespace term {
         unsigned int cols;
     };
 
+    struct ScreenPosition {
+        unsigned int row;
+        unsigned int col;
+    };    
+
     enum class RawModeResult {
         Ok,
         InvalidTty,
