@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 #include "utils.h"
 #include "term.h"
@@ -45,6 +46,16 @@ termios get_raw_attr(termios current) {
 term::Key::Key(uint32_t code_, size_t size_): 
     code(code_),
     size(size_) {}
+
+term::WindowSize term::get_window_size() {
+    struct winsize ws;
+
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+        return term::WindowSize {};
+    } else {
+        return term::WindowSize { rows: ws.ws_row, cols: ws.ws_col };
+    }
+}
 
 term::RawModeResult term::enable_raw_mode() {
     if (!isatty(STDIN_FILENO)) {
