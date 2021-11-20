@@ -13,7 +13,7 @@ namespace utils {
         const T* data;
         const size_t size;
 
-        Slice(T* data_, size_t size_): data(data_), size(size_) {}
+        Slice(const T* data_, const size_t size_): data(data_), size(size_) {}
     };
 }
 
