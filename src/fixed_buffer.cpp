@@ -7,9 +7,13 @@
 
 constexpr size_t BufferSize = 1024;
 
-FixedBuffer::FixedBuffer():
-    _size(0), 
-    _bytes(std::make_unique<uint8_t[]>(BufferSize)) {}
+FixedBuffer::FixedBuffer(const utils::Slice<uint8_t>& prelude):
+    _size(prelude.size),
+    _prelude_size(prelude.size),
+    _bytes(std::make_unique<uint8_t[]>(BufferSize)) {
+
+    std::copy(prelude.data, prelude.data + prelude.size, _bytes.get());
+}
 
 void FixedBuffer::write(const uint8_t* bytes, size_t size) {
     auto new_size = _size + size;
@@ -31,5 +35,5 @@ void FixedBuffer::accept(void (*visit)(const utils::Slice<uint8_t>&)) {
 }
 
 void FixedBuffer::clear() {
-    _size = 0;
+    _size = _prelude_size;
 }

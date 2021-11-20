@@ -5,10 +5,11 @@
 #include "keys.h"
 #include "ansi.h"
 #include "cursor.h"
+#include "utils.h"
 
-Editor::Editor(): _cursor(term::get_window_size()) {
-
-}
+Editor::Editor(): 
+    _cursor(term::get_window_size()),
+    _screen_buffer(utils::Slice<uint8_t>(term::ansi::Reset.data(), term::ansi::Reset.size())) {}
 
 Editor& Editor::instance()
 {
@@ -43,7 +44,7 @@ bool Editor::process(const term::Key& key) {
             break;
         case keys::Del:
             break;
-        case keys::BSpace: 
+        case keys::BSpace:
             break;
         default:
             if (key.size == 1) {
@@ -52,23 +53,18 @@ bool Editor::process(const term::Key& key) {
             }
     };
 
-    _screen_buffer.write(term::ansi::Reset);
     _text_buffer.accept<FixedBuffer>(&FixedBuffer::write, _screen_buffer);
 
     const auto screen_pos = _cursor.screen_pos();
     const auto pos = term::ansi::go_to(screen_pos);
     _screen_buffer.write(pos);
 
-    _screen_buffer.accept(term::write_bytes);
-
-    term::flush();
-    _screen_buffer.clear();
+    flush();
 
     return true;
 }
 
-void Editor::clear_screen() {
-    _screen_buffer.write(term::ansi::Reset);
+void Editor::flush() {
     _screen_buffer.accept(term::write_bytes);
     _screen_buffer.clear();
     term::flush();
@@ -81,7 +77,7 @@ void Editor::start() {
 
         auto wait_for_events = true;
 
-        clear_screen();
+        flush();
 
         do {
             const auto key = term::read_key();
