@@ -9,7 +9,7 @@
 
 Editor::Editor(): 
     _cursor(term::get_window_size()),
-    _screen_buffer(utils::Slice<uint8_t>(term::ansi::Reset.data(), term::ansi::Reset.size())) {}
+    _screen_buffer(utils::slice::from(term::ansi::Reset)) {}
 
 Editor& Editor::instance()
 {
@@ -49,7 +49,9 @@ bool Editor::process(const term::Key& key) {
         default:
             if (key.size == 1) {
                 _text_buffer.insert(key.code);
-                _cursor.right();
+                if(key.code != keys::CarriageReturn) {
+                    _cursor.right();
+                }
             }
     };
 
