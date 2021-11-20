@@ -13,8 +13,20 @@ namespace utils {
         const T* data;
         const size_t size;
 
-        Slice(T* data_, size_t size_): data(data_), size(size_) {}
+        Slice(const T* data_, const size_t size_): data(data_), size(size_) {}
     };
+
+    namespace slice {
+
+        // TODO:
+        //  Return type can be made constexpr, is it worth it?
+        //  Cost of creating slices is minimal, they will be typically in the stack.
+        //  Not clear whether constexpr would be beneficial, pending analysis.
+        template<typename T, std::size_t Size>
+        Slice<T> from(const std::array<T, Size>& array) {
+            return Slice<T>(array.data(), array.size());
+        };
+    }
 }
 
 #endif
