@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <memory>
 
-#include "utils.h"
+#include "../utils/slice.h"
 
 struct Piece {
     size_t start;

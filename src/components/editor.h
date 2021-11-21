@@ -1,10 +1,10 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "term.h"
-#include "piece_table.h"
-#include "fixed_buffer.h"
-#include "cursor.h"
+#include "../term/term.h"
+#include "../buffers/piece_table.h"
+#include "../buffers/fixed_buffer.h"
+#include "../components/cursor.h"
 
 struct EditorState {
     bool is_started;

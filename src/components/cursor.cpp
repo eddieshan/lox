@@ -1,4 +1,4 @@
-#include "term.h"
+#include "../term/term.h"
 #include "cursor.h"
 
 Cursor::Cursor(const term::WindowSize window_size):

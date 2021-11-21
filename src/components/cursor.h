@@ -1,7 +1,7 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include "term.h"
+#include "../term/term.h"
 
 class Cursor {
     private:

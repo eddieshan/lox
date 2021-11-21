@@ -1,11 +1,11 @@
 #include <stdio.h>
 
+#include "../term/term.h"
+#include "../term/keys.h"
+#include "../term/ansi.h"
+#include "../utils/array.h"
 #include "editor.h"
-#include "term.h"
-#include "keys.h"
-#include "ansi.h"
 #include "cursor.h"
-#include "utils.h"
 
 Editor::Editor(): 
     _cursor(term::get_window_size()),

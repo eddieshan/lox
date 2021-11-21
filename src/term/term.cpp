@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#include "utils.h"
+#include "../utils/array.h"
 #include "term.h"
 
 namespace flags {

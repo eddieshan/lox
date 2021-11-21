@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "editor.h"
+#include "components/editor.h"
 
 int main()
 {

@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "utils.h"
+#include "../utils/slice.h"
 
 namespace {
     constexpr size_t Kb = 1024;

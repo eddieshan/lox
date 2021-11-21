@@ -3,7 +3,7 @@
 
 #include <array>
 
-#include "array.h"
+#include "../utils/array.h"
 #include "term.h"
 
 namespace {

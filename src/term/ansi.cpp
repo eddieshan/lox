@@ -1,8 +1,8 @@
 #include <array>
 #include <charconv>
 
+#include "../utils/array.h"
 #include "ansi.h"
-#include "array.h"
 #include "term.h"
 
 // The conversion of row and col to char has unknown size at compile time.

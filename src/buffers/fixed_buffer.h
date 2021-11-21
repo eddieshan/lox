@@ -6,7 +6,7 @@
 #include <memory>
 #include <array>
 
-#include "utils.h"
+#include "../utils/slice.h"
 
 class FixedBuffer {
     private:

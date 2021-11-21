@@ -2,11 +2,11 @@
 #include <cstdint>
 #include <memory>
 
+#include "../utils/slice.h"
+#include "../term/keys.h"
+#include "../term/ansi.h"
+#include "../term/term.h"
 #include "fixed_buffer.h"
-#include "utils.h"
-#include "keys.h"
-#include "ansi.h"
-#include "term.h"
 
 constexpr size_t BufferSize = 1024;
 
