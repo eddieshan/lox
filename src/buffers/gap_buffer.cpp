@@ -4,6 +4,8 @@
 
 #include "gap_buffer.h"
 
+using namespace buffers;
+
 GapBuffer::GapBuffer(): 
     _gap(0),
     _end(BufferLimit),

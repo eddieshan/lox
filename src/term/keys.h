@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace keys {
+namespace term::keys {
 
     constexpr uint32_t WhiteSpace = 32;
     constexpr uint32_t LnFeed = 10;

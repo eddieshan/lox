@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <cstddef>
 
-#include "utils.h"
+#include "../utils/slice.h"
 
 namespace term {
 

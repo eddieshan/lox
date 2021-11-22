@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "editor.h"
+#include "components/editor.h"
 
 int main()
 {
     std::cout << "Starting Lox" << std::endl;
 
-    Editor::instance().start();
+    components::Editor::instance().start();
 }

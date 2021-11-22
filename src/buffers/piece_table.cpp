@@ -3,6 +3,8 @@
 
 #include "piece_table.h"
 
+using namespace buffers;
+
 constexpr size_t Kb = 1024;
 constexpr size_t BlockSize = 10*Kb;
 constexpr size_t BufferSize = 3*BlockSize;
