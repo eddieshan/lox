@@ -3,7 +3,7 @@
 
 #include <array>
 
-namespace utils {
+namespace utils::array {
 
     template <typename V, typename... T>
     constexpr auto array_of(T&&... t)

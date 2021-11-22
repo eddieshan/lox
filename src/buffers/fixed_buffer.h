@@ -8,27 +8,29 @@
 
 #include "../utils/slice.h"
 
-class FixedBuffer {
-    private:
-        std::unique_ptr<uint8_t[]> _bytes;
-        size_t _prelude_size;
-        size_t _size;
-        void write(const uint8_t*, size_t);
+namespace buffers {
+    class FixedBuffer {
+        private:
+            std::unique_ptr<uint8_t[]> _bytes;
+            size_t _prelude_size;
+            size_t _size;
+            void write(const uint8_t*, size_t);
 
-    public:
-    
-        FixedBuffer(const utils::Slice<uint8_t>& prelude);
+        public:
+        
+            FixedBuffer(const utils::Slice<uint8_t>& prelude);
 
-        template<size_t size>
-        void write(const std::array<uint8_t, size>& array) {
-            write(array.data(), size);
-        }
+            template<size_t size>
+            void write(const std::array<uint8_t, size>& array) {
+                write(array.data(), size);
+            }
 
-        void accept(void (*visit)(const utils::Slice<uint8_t>&));
+            void accept(void (*visit)(const utils::Slice<uint8_t>&));
 
-        void write(const utils::Slice<uint8_t>& data);
+            void write(const utils::Slice<uint8_t>& data);
 
-        void clear();
-};
+            void clear();
+    };
+}
 
 #endif

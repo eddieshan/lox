@@ -3,23 +3,24 @@
 
 #include "../term/term.h"
 
-class Cursor {
-    private:
-        const term::WindowSize _window_size;
-        unsigned int _pos;
+namespace components {
+    class Cursor {
+        private:
+            const term::WindowSize _window_size;
+            unsigned int _pos;
 
-    public:
-        Cursor(const term::WindowSize window_size);
+        public:
+            Cursor(const term::WindowSize window_size);
 
-        unsigned int pos();
+            unsigned int pos();
 
-        term::ScreenPosition screen_pos();
-        
-        void left();
-        void right();
-        void up();
-        void down();
-};
-
+            term::ScreenPosition screen_pos();
+            
+            void left();
+            void right();
+            void up();
+            void down();
+    };
+}
 
 #endif

@@ -1,6 +1,8 @@
 #include "../term/term.h"
 #include "cursor.h"
 
+using namespace components;
+
 Cursor::Cursor(const term::WindowSize window_size):
     _window_size(window_size),
     _pos(1) {}

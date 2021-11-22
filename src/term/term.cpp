@@ -9,6 +9,8 @@
 #include "../utils/array.h"
 #include "term.h"
 
+using namespace utils;
+
 namespace flags {
     // Input mode flags: no break, no CR to NL, no parity check, no strip char, no start/stop output control.
     constexpr tcflag_t RawInput = ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
@@ -91,7 +93,7 @@ term::Key term::read_key() {
     return term::Key(code, size);
 }
 
-void term::write_bytes(const utils::Slice<uint8_t>& buffer) {
+void term::write_bytes(const Slice<uint8_t>& buffer) {
     write(STDOUT_FILENO, buffer.data, buffer.size);
 }
 

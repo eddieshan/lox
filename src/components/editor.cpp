@@ -4,8 +4,14 @@
 #include "../term/keys.h"
 #include "../term/ansi.h"
 #include "../utils/array.h"
+#include "../buffers/piece_table.h"
+#include "../buffers/fixed_buffer.h"
 #include "editor.h"
 #include "cursor.h"
+
+using namespace term;
+using namespace buffers;
+using namespace components;
 
 Editor::Editor(): 
     _cursor(term::get_window_size()),
