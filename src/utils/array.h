@@ -6,7 +6,7 @@
 namespace utils::array {
 
     template <typename V, typename... T>
-    constexpr auto array_of(T&&... t)
+    constexpr auto from(T&&... t)
         -> std::array<V, sizeof...(T)>
     {
         return {{ std::forward<T>(t)... }};

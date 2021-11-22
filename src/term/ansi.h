@@ -8,10 +8,10 @@
 
 namespace {
     constexpr uint8_t Esc = 27;
-    constexpr auto Csi = utils::array::array_of<uint8_t>(Esc, (uint8_t)'[');
-    constexpr auto Home_ = utils::array::array_of<uint8_t>((uint8_t)'H');
-    constexpr auto Clear_ = utils::array::array_of<uint8_t>((uint8_t)'2', (uint8_t)'J');
-    constexpr auto NextLine_ = utils::array::array_of<uint8_t>((uint8_t)'1', (uint8_t)'E');
+    constexpr auto Csi = utils::array::from<uint8_t>(Esc, (uint8_t)'[');
+    constexpr auto Home_ = utils::array::from<uint8_t>((uint8_t)'H');
+    constexpr auto Clear_ = utils::array::from<uint8_t>((uint8_t)'2', (uint8_t)'J');
+    constexpr auto NextLine_ = utils::array::from<uint8_t>((uint8_t)'1', (uint8_t)'E');
 }
 
 namespace term::ansi {
