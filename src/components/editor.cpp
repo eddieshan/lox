@@ -42,11 +42,11 @@ bool Editor::process(const term::Key& key) {
         case keys::Left:
             _cursor.left();
             break;
-        case keys::Htab:                    
+        case keys::Htab:
             break;
-        case keys::LnStart: 
+        case keys::LnStart:
             break;
-        case keys::LnEnd: 
+        case keys::LnEnd:
             break;
         case keys::Del:
             break;
@@ -62,10 +62,6 @@ bool Editor::process(const term::Key& key) {
     };
 
     _text_buffer.accept<FixedBuffer>(&FixedBuffer::write, _screen_buffer);
-
-    const auto screen_pos = _cursor.screen_pos();
-    const auto pos = term::ansi::go_to(screen_pos);
-    _screen_buffer.write(pos);
 
     flush();
 

@@ -13,13 +13,15 @@ constexpr size_t BufferLimit = BufferSize - 1;
 PieceTable::PieceTable():
     _bytes(std::make_unique<uint8_t[]>(BufferSize)),
     _pieces(std::make_unique<Piece[]>(BufferSize)),
+    _index(0),
     _size(0),
     _n_pieces(0) { }
 
 void PieceTable::insert(uint8_t v) {
     _bytes[_size] = v;
-    _size += 1;
+    _size++;
+    _index++;
 
     _n_pieces = 1;
-    _pieces[_n_pieces - 1].size += 1;
+    _pieces[_n_pieces - 1].size++;
 }

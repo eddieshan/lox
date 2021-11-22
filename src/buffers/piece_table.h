@@ -18,6 +18,7 @@ namespace buffers {
         private:
             std::unique_ptr<uint8_t[]> _bytes;
             std::unique_ptr<Piece[]> _pieces;
+            size_t _index;
             size_t _size;
             size_t _n_pieces;
 

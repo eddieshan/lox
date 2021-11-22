@@ -10,6 +10,7 @@
 
 using namespace buffers;
 using namespace utils;
+using namespace term;
 
 constexpr size_t BufferSize = 1024;
 
@@ -35,26 +36,32 @@ void FixedBuffer::write(const Slice<uint8_t>& slice) {
 }
 
 void FixedBuffer::accept(void (*visit)(const Slice<uint8_t>&)) {
-    if(_size > 0) {
+    if(_size > _prelude_size) {
         const auto start = _bytes.get();
-        size_t index = 0, last_cr = 0, last_pos = _size - 1;
-        const auto cr = slice::from(term::ansi::NextLine);
+
+        size_t last_cr = 0, last_pos = _size - 1;
+        auto pos = ScreenPosition {1, 1};
+        const auto cr = slice::from(ansi::NextLine);
 
         // Buffer out text line by line. Carriage return are translated to VT100 LineFeed.
-        while(index < _size) {
-            if(_bytes[index] == term::keys::CarriageReturn) {
+        for(size_t index = 0; index < _size; index++) {
+            if(_bytes[index] == keys::CarriageReturn) {
                 visit(Slice(start + last_cr, index - last_cr));
                 visit(cr);
                 last_cr = index;
+                pos.row++;
             }
-
-            index++;
         }
 
         // Buffer out remaining text eg. in case the last line does not end in carriage return.
         if (last_cr < last_pos) {
             visit(Slice(start + last_cr, _size - last_cr));
+
+            const auto offset = pos.row == 1? _prelude_size - 1 : 0;
+            pos.col = _size - last_cr - offset;
         }
+
+        visit(slice::from(ansi::go_to(pos)));
     }
 }
 
