@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "../term/term.h"
-#include "../term/keys.h"
+#include "../utils/ascii.h"
 #include "../term/ansi.h"
 #include "../utils/array.h"
 #include "../buffers/piece_table.h"
@@ -9,6 +9,7 @@
 #include "editor.h"
 #include "cursor.h"
 
+using namespace utils;
 using namespace term;
 using namespace buffers;
 using namespace components;
@@ -25,37 +26,37 @@ Editor& Editor::instance()
 
 bool Editor::process(const term::Key& key) {
     switch (key.code) {
-        case keys::CtrlQ:
+        case ascii::CtrlQ:
             return false;
             break;
-        case keys::Cr:
+        case ascii::Cr:
             break;
-        case keys::Up:
-            _cursor.up();
+        case ascii::Up:
+            //_cursor.up();
             break;                    
-        case keys::Down:
-            _cursor.down();
+        case ascii::Down:
+            //_cursor.down();
             break;
-        case keys::Right:            
-            _cursor.right();
+        case ascii::Right:            
+            _text_buffer.forward();
             break;
-        case keys::Left:
-            _cursor.left();
+        case ascii::Left:
+            _text_buffer.back();
             break;
-        case keys::Htab:
+        case ascii::Htab:
             break;
-        case keys::LnStart:
+        case ascii::LnStart:
             break;
-        case keys::LnEnd:
+        case ascii::LnEnd:
             break;
-        case keys::Del:
+        case ascii::Del:
             break;
-        case keys::BSpace:
+        case ascii::BSpace:
             break;
         default:
             if (key.size == 1) {
                 _text_buffer.insert(key.code);
-                if(key.code != keys::CarriageReturn) {
+                if(key.code != ascii::CarriageReturn) {
                     _cursor.right();
                 }
             }
