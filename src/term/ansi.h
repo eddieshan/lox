@@ -4,6 +4,8 @@
 #include <array>
 
 #include "../utils/array.h"
+#include "../utils/geometry.h"
+
 #include "term.h"
 
 namespace {
@@ -18,7 +20,7 @@ namespace term::ansi {
     constexpr auto Reset = utils::array::concat(Csi, Clear_, Csi, Home_);
     constexpr auto NextLine = utils::array::concat(Csi, NextLine_);
 
-    std::array<uint8_t, 10> go_to(const ScreenPosition& col);
+    std::array<uint8_t, 10> go_to(const utils::Position& col);
 }
 
 #endif

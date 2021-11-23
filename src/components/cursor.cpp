@@ -1,9 +1,10 @@
-#include "../term/term.h"
+#include "../utils/geometry.h"
 #include "cursor.h"
 
 using namespace components;
+using namespace utils;
 
-Cursor::Cursor(const term::WindowSize window_size):
+Cursor::Cursor(const WindowSize window_size):
     _window_size(window_size),
     _pos(1) {}
 
@@ -11,8 +12,8 @@ unsigned int Cursor::pos() {
     return _pos;
 }
 
-term::ScreenPosition Cursor::screen_pos() {
-    return term::ScreenPosition {
+Position Cursor::screen_pos() {
+    return Position {
         row: _pos / _window_size.cols,
         col: _pos % _window_size.cols
     };
