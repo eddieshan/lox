@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "../utils/slice.h"
-#include "../term/keys.h"
+#include "../utils/ascii.h"
 #include "../term/ansi.h"
 #include "../term/term.h"
 #include "fixed_buffer.h"
@@ -32,37 +32,26 @@ void FixedBuffer::write(const uint8_t* bytes, size_t size) {
 }
 
 void FixedBuffer::write(const Slice<uint8_t>& slice) {
-    write(slice.data, slice.size);
+    const auto start = slice.data;
+    size_t last_cr = 0;
+
+    for(auto i = 0; i < slice.size; i++) {
+        const auto v = *(start + i);
+
+        if(v == ascii::CarriageReturn) {
+            write(start + last_cr, i - last_cr);
+            write(ansi::NextLine);
+            last_cr = i;
+        }
+    }
+
+    if (last_cr <= slice.size - 1) {
+        write(start + last_cr, slice.size - last_cr);
+    }
 }
 
 void FixedBuffer::accept(void (*visit)(const Slice<uint8_t>&)) {
-    if(_size > _prelude_size) {
-        const auto start = _bytes.get();
-
-        size_t last_cr = 0, last_pos = _size - 1;
-        auto pos = ScreenPosition {1, 1};
-        const auto cr = slice::from(ansi::NextLine);
-
-        // Buffer out text line by line. Carriage return are translated to VT100 LineFeed.
-        for(size_t index = 0; index < _size; index++) {
-            if(_bytes[index] == keys::CarriageReturn) {
-                visit(Slice(start + last_cr, index - last_cr));
-                visit(cr);
-                last_cr = index;
-                pos.row++;
-            }
-        }
-
-        // Buffer out remaining text eg. in case the last line does not end in carriage return.
-        if (last_cr < last_pos) {
-            visit(Slice(start + last_cr, _size - last_cr));
-
-            const auto offset = pos.row == 1? _prelude_size - 1 : 0;
-            pos.col = _size - last_cr - offset;
-        }
-
-        visit(slice::from(ansi::go_to(pos)));
-    }
+    visit(Slice(_bytes.get(), _size));
 }
 
 void FixedBuffer::clear() {
