@@ -39,7 +39,7 @@ size_t PieceTable::distance_to_line_start() {
         if(is_linebreak(temp_cursor.index())) {
             break;
         } else {
-            +line_size;
+            ++line_size;
         }
     }
 
