@@ -15,7 +15,7 @@ using namespace buffers;
 using namespace components;
 
 Editor::Editor(): 
-    _cursor(term::get_window_size()),
+    _cursor({ row: 0, col : 0 }),
     _screen_buffer(utils::slice::from(term::ansi::Reset)) {}
 
 Editor& Editor::instance()
@@ -32,16 +32,16 @@ bool Editor::process(const term::Key& key) {
         case ascii::Cr:
             break;
         case ascii::Up:
-            //_cursor.up();
+            _text_buffer.row_back();
             break;                    
         case ascii::Down:
-            //_cursor.down();
+            _text_buffer.row_forward();
             break;
-        case ascii::Right:            
-            _text_buffer.forward();
+        case ascii::Right:
+            _text_buffer.col_forward();
             break;
         case ascii::Left:
-            _text_buffer.back();
+            _text_buffer.col_back();
             break;
         case ascii::Htab:
             break;
@@ -56,13 +56,16 @@ bool Editor::process(const term::Key& key) {
         default:
             if (key.size == 1) {
                 _text_buffer.insert(key.code);
-                if(key.code != ascii::CarriageReturn) {
-                    _cursor.right();
-                }
             }
     };
 
     _text_buffer.accept<FixedBuffer>(&FixedBuffer::write, _screen_buffer);
+    auto cursor = _text_buffer.position();
+    cursor.row++;
+    cursor.col++;
+    _screen_buffer.write(ansi::go_to(cursor));
+
+    //printf("(%d, %d)", _cursor.row, _cursor.col);
 
     flush();
 
