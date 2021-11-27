@@ -5,10 +5,10 @@
 
 using namespace buffers;
 
-PieceCursor::PieceCursor(const std::list<Piece>::iterator piece_, const std::list<Piece>::iterator end_):
+PieceCursor::PieceCursor(std::list<Piece> &pieces):
     offset(0),
-    piece(piece_),
-    end(end) { }
+    piece(pieces.begin()),
+    end(pieces.end()) {}
 
 size_t PieceCursor::index() {
     return piece->start + offset;

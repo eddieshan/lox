@@ -18,9 +18,12 @@ constexpr size_t BufferLimit = BufferSize - 1;
 PieceTable::PieceTable():
     _bytes(std::make_unique<uint8_t[]>(BufferSize)),
     _pieces({{ start: 0, size: 0 }}),
-    _size(0),
-    _cursor(_pieces.begin(), _pieces.end()) {
-        _cursor.end = _pieces.end();
+    _size(0) {
+        // _cursor gets initialized here for the second time to avoid relying 
+        // in the member declaration order since it's dependent on _pieces.
+        // TODO: 
+        //  dependencies probably need to be restructured to have a clean initialization.       
+        _cursor = PieceCursor(_pieces);
     }
 
 bool PieceTable::is_linebreak(const size_t index) {

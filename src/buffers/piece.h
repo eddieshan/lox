@@ -17,7 +17,9 @@ namespace buffers {
         size_t offset;
         std::list<Piece>::iterator end;
 
-        PieceCursor(const std::list<Piece>::iterator piece_, const std::list<Piece>::iterator end_);
+        PieceCursor() = default;
+
+        PieceCursor(std::list<Piece> &pieces);
 
         size_t index();        
 
