@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "../term/term.h"
-#include "../term/keys.h"
+#include "../utils/ascii.h"
 #include "../term/ansi.h"
 #include "../utils/array.h"
 #include "../buffers/piece_table.h"
@@ -9,12 +9,13 @@
 #include "editor.h"
 #include "cursor.h"
 
+using namespace utils;
 using namespace term;
 using namespace buffers;
 using namespace components;
 
 Editor::Editor(): 
-    _cursor(term::get_window_size()),
+    _cursor({ row: 0, col : 0 }),
     _screen_buffer(utils::slice::from(term::ansi::Reset)) {}
 
 Editor& Editor::instance()
@@ -25,47 +26,46 @@ Editor& Editor::instance()
 
 bool Editor::process(const term::Key& key) {
     switch (key.code) {
-        case keys::CtrlQ:
+        case ascii::CtrlQ:
             return false;
             break;
-        case keys::Cr:
+        case ascii::Cr:
             break;
-        case keys::Up:
-            _cursor.up();
+        case ascii::Up:
+            _text_buffer.row_back();
             break;                    
-        case keys::Down:
-            _cursor.down();
+        case ascii::Down:
+            _text_buffer.row_forward();
             break;
-        case keys::Right:            
-            _cursor.right();
+        case ascii::Right:
+            _text_buffer.col_forward();
             break;
-        case keys::Left:
-            _cursor.left();
+        case ascii::Left:
+            _text_buffer.col_back();
             break;
-        case keys::Htab:                    
+        case ascii::Htab:
             break;
-        case keys::LnStart: 
+        case ascii::LnStart:
             break;
-        case keys::LnEnd: 
+        case ascii::LnEnd:
             break;
-        case keys::Del:
+        case ascii::Del:
             break;
-        case keys::BSpace:
+        case ascii::BSpace:
             break;
         default:
             if (key.size == 1) {
                 _text_buffer.insert(key.code);
-                if(key.code != keys::CarriageReturn) {
-                    _cursor.right();
-                }
             }
     };
 
     _text_buffer.accept<FixedBuffer>(&FixedBuffer::write, _screen_buffer);
+    auto cursor = _text_buffer.position();
+    cursor.row++;
+    cursor.col++;
+    _screen_buffer.write(ansi::go_to(cursor));
 
-    const auto screen_pos = _cursor.screen_pos();
-    const auto pos = term::ansi::go_to(screen_pos);
-    _screen_buffer.write(pos);
+    //printf("(%d, %d)", _cursor.row, _cursor.col);
 
     flush();
 

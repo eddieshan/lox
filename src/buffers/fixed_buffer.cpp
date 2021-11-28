@@ -3,13 +3,14 @@
 #include <memory>
 
 #include "../utils/slice.h"
-#include "../term/keys.h"
+#include "../utils/ascii.h"
 #include "../term/ansi.h"
 #include "../term/term.h"
 #include "fixed_buffer.h"
 
 using namespace buffers;
 using namespace utils;
+using namespace term;
 
 constexpr size_t BufferSize = 1024;
 
@@ -22,40 +23,35 @@ FixedBuffer::FixedBuffer(const Slice<uint8_t>& prelude):
 }
 
 void FixedBuffer::write(const uint8_t* bytes, size_t size) {
-    auto new_size = _size + size;
+    const auto new_size = _size + size;
     if(new_size < BufferSize) {
-        auto current = _bytes.get() + _size;
+        const auto current = _bytes.get() + _size;
         std::copy(bytes, bytes + size, current);
         _size = new_size;
     }
 }
 
 void FixedBuffer::write(const Slice<uint8_t>& slice) {
-    write(slice.data, slice.size);
+    const auto start = slice.data;
+    size_t last_cr = 0;
+
+    for(auto i = 0; i < slice.size; i++) {
+        const auto v = *(start + i);
+
+        if(v == ascii::CarriageReturn) {
+            write(start + last_cr, i - last_cr);
+            write(ansi::NextLine);
+            last_cr = i;
+        }
+    }
+
+    if (last_cr <= slice.size - 1) {
+        write(start + last_cr, slice.size - last_cr);
+    }
 }
 
 void FixedBuffer::accept(void (*visit)(const Slice<uint8_t>&)) {
-    if(_size > 0) {
-        const auto start = _bytes.get();
-        size_t index = 0, last_cr = 0, last_pos = _size - 1;
-        const auto cr = slice::from(term::ansi::NextLine);
-
-        // Buffer out text line by line. Carriage return are translated to VT100 LineFeed.
-        while(index < _size) {
-            if(_bytes[index] == term::keys::CarriageReturn) {
-                visit(Slice(start + last_cr, index - last_cr));
-                visit(cr);
-                last_cr = index;
-            }
-
-            index++;
-        }
-
-        // Buffer out remaining text eg. in case the last line does not end in carriage return.
-        if (last_cr < last_pos) {
-            visit(Slice(start + last_cr, _size - last_cr));
-        }
-    }
+    visit(Slice(_bytes.get(), _size));
 }
 
 void FixedBuffer::clear() {

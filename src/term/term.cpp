@@ -6,7 +6,8 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#include "../utils/array.h"
+#include "../utils/geometry.h"
+
 #include "term.h"
 
 using namespace utils;
@@ -49,13 +50,13 @@ term::Key::Key(uint32_t code_, size_t size_):
     code(code_),
     size(size_) {}
 
-term::WindowSize term::get_window_size() {
+utils::WindowSize term::get_window_size() {
     struct winsize ws;
 
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
-        return term::WindowSize {};
+        return utils::WindowSize {};
     } else {
-        return term::WindowSize { rows: ws.ws_row, cols: ws.ws_col };
+        return utils::WindowSize { rows: ws.ws_row, cols: ws.ws_col };
     }
 }
 

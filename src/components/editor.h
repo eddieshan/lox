@@ -2,6 +2,7 @@
 #define EDITOR_H
 
 #include "../term/term.h"
+#include "../utils/geometry.h"
 #include "../buffers/piece_table.h"
 #include "../buffers/fixed_buffer.h"
 #include "../components/cursor.h"
@@ -18,7 +19,7 @@ namespace components {
             EditorState _state;
             buffers::PieceTable _text_buffer;
             buffers::FixedBuffer _screen_buffer;
-            Cursor _cursor;
+            utils::Position _cursor;
 
             bool process(const term::Key& key);
             void flush();

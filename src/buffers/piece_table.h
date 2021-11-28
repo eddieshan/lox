@@ -3,40 +3,50 @@
 
 #include <cstddef>
 #include <memory>
+#include <list>
 
 #include "../utils/slice.h"
+#include "../utils/geometry.h"
 
+#include "piece.h"
 
 namespace buffers {
-
-    struct Piece {
-        size_t start;
-        size_t size;
-    };
 
     class PieceTable {
         private:
             std::unique_ptr<uint8_t[]> _bytes;
-            std::unique_ptr<Piece[]> _pieces;
+            std::list<Piece> _pieces;
             size_t _size;
-            size_t _n_pieces;
+            PieceCursor _cursor;
+
+            bool is_linebreak(const size_t offset);
+            size_t distance_to_line_start();
 
         public:
 
             PieceTable();
         
-            void insert(uint8_t);
+            void insert(const uint8_t);
+
+            void col_forward();
+
+            void col_back();
+
+            void row_forward(const size_t step = 1);
+
+            void row_back(const size_t step = 1);            
+
+            utils::Position position();
 
             template <typename T>
             void accept(void (T::*visit)(const utils::Slice<uint8_t>&), T& v) {
-                for(auto i = 0; i < _n_pieces; i++) {
-                    auto start = _bytes.get() + _pieces[i].start;
-                    auto slice = utils::Slice(start, _pieces[i].size);
+                for(const auto piece : _pieces) {
+                    const auto start = _bytes.get() + piece.start;
+                    const auto slice = utils::Slice(start, piece.size);
                     (v.*visit)(slice);
                 }
             }
     };
 }
-
 
 #endif

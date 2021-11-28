@@ -2,6 +2,7 @@
 #include <charconv>
 
 #include "../utils/array.h"
+#include "../utils/geometry.h"
 #include "ansi.h"
 #include "term.h"
 
@@ -14,7 +15,7 @@
 // TODO: 
 //  Returning the escape array by value is not very efficient.
 //  Find out if there is a better implementation. 
-std::array<uint8_t, 10> term::ansi::go_to(const ScreenPosition& screen_pos) {
+std::array<uint8_t, 10> term::ansi::go_to(const utils::Position& screen_pos) {
     auto pos = utils::array::from<uint8_t>((uint8_t)27, (uint8_t)91, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)59, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)72); // x1b[row:colH
     const auto row_start = pos.data() + 3, col_start = pos.data() + 6;
  
