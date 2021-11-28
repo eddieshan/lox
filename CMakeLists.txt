@@ -9,6 +9,7 @@ set(SOURCES
     src/term/term.cpp
     src/buffers/gap_buffer.cpp
     src/buffers/fixed_buffer.cpp
+    src/buffers/piece.cpp
     src/buffers/piece_table.cpp
     src/components/cursor.cpp
     src/components/editor.cpp
