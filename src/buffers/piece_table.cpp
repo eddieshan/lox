@@ -138,8 +138,16 @@ void PieceTable::row_back(const size_t step) {
 Position PieceTable::position() {
 
     auto pos = Position { row: 0, col: 0 };
+    
     for(auto p = _pieces.begin(); p != _cursor.piece; ++p) {
-        pos.row += p->line_count;
+        for(auto i = p->start; i < p->start + p->size - 1; ++i) {
+            if(is_linebreak(i)) {
+                ++pos.row;
+                pos.col = 0;
+            } else {
+                ++pos.col;
+            }
+        }
     }
 
     for(auto i = _cursor.piece->start; i < _cursor.piece->start + _cursor.offset; ++i) {
@@ -149,7 +157,7 @@ Position PieceTable::position() {
         } else {
             ++pos.col;
         }
-    }
+    }    
 
     return pos;
 }
