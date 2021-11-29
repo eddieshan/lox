@@ -64,7 +64,7 @@ void PieceTable::insert(const uint8_t v) {
             _pieces.insert(next, piece_right);
             
             _cursor.piece = inserted;
-            _cursor.offset = 0;
+            _cursor.offset = 1;
         }
 
         ++_size;
