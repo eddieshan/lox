@@ -12,26 +12,30 @@ namespace buffers {
         size_t line_count;
     };
 
-    struct PieceCursor {
-        std::list<Piece>::iterator piece;
-        size_t offset;
-        std::list<Piece>::iterator end;
+    class PieceCursor {
+        private:
+            std::list<Piece>::iterator _end;
 
-        PieceCursor() = default;
+        public:
 
-        PieceCursor(std::list<Piece> &pieces);
+            std::list<Piece>::iterator piece;
+            size_t offset;
 
-        size_t index();        
+            PieceCursor() = default;
 
-        void back();
+            PieceCursor(std::list<Piece> &pieces);
 
-        void forward();
+            size_t index();        
 
-        bool is_first();
+            void back();
 
-        bool is_last();
+            void forward();
 
-        bool end_of_piece();
+            bool is_first();
+
+            bool is_last();
+
+            bool end_of_piece();
     };
 }
 #endif
