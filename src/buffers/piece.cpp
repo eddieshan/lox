@@ -8,7 +8,7 @@ using namespace buffers;
 PieceCursor::PieceCursor(std::list<Piece> &pieces):
     offset(0),
     piece(pieces.begin()),
-    end(pieces.end()) {}
+    _end(pieces.end()) {}
 
 size_t PieceCursor::index() {
     return piece->start + offset;
@@ -36,18 +36,8 @@ bool PieceCursor::is_first() {
     return piece->start == 0 && offset == 0;
 }
 
-// bool PieceCursor::is_last(const size_t size) {
-//     //printf("Current: (%d, %d, %d)", piece->start, offset, piece);
-//     const auto is_last_piece = std::next(piece) == end;
-//     if(is_last_piece) {
-//         return index() == size - 1? false : offset >= piece->size - 1;
-//     }
-
-//     return false;
-// }
-
 bool PieceCursor::is_last() {
-    return std::next(piece) == end && (piece->size == 0 || offset == piece->size - 1);
+    return std::next(piece) == _end && (piece->size == 0 || offset == piece->size - 1);
 }
 
 bool PieceCursor::end_of_piece() {
