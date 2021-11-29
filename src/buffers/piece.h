@@ -25,13 +25,13 @@ namespace buffers {
 
         void back();
 
-        void forward(const size_t size);
+        void forward();
 
         bool is_first();
 
-        bool is_last(const size_t size);
+        bool is_last();
 
-        bool is_at_end(const size_t size);
+        bool end_of_piece();
     };
 }
 #endif
