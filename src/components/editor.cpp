@@ -70,13 +70,13 @@ bool Editor::process(const term::Key& key) {
 
 void Editor::render() {
 
-    term::write_bytes(slice::from(term::ansi::Reset));
+    term::write(slice::from(term::ansi::Reset));
 
-    _text_view.render(term::write_bytes);
+    _text_view.render(term::write);
 
     auto screen_pos = _text_view.screen_position();
 
-    cursor::render(screen_pos, term::write_bytes);
+    cursor::render(screen_pos, term::write);
 
     term::flush();
 }

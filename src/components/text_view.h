@@ -20,7 +20,7 @@ namespace components {
 
             void write(const utils::Slice<uint8_t>& data);
 
-            void render(void (*visit)(const utils::Slice<uint8_t>&));
+            void render(void (*write)(const utils::Slice<uint8_t>&));
 
             void clear();
 

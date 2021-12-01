@@ -90,8 +90,8 @@ term::Key term::read_key() {
     return term::Key { code: code, size: size };
 }
 
-void term::write_bytes(const Slice<uint8_t>& buffer) {
-    write(STDOUT_FILENO, buffer.data, buffer.size);
+void term::write(const Slice<uint8_t>& buffer) {
+    ::write(STDOUT_FILENO, buffer.data, buffer.size);
 }
 
 void term::flush() {

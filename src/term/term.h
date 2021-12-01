@@ -24,7 +24,7 @@ namespace term {
     RawModeResult enable_raw_mode();
     Key read_key();
     utils::WindowSize get_window_size();
-    void write_bytes(const utils::Slice<uint8_t>& buffer);
+    void write(const utils::Slice<uint8_t>& buffer);
     void flush();
 
 }
