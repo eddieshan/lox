@@ -31,25 +31,6 @@ void FixedBuffer::write(const uint8_t* bytes, size_t size) {
     }
 }
 
-void FixedBuffer::write(const Slice<uint8_t>& slice) {
-    const auto start = slice.data;
-    size_t last_cr = 0;
-
-    for(auto i = 0; i < slice.size; i++) {
-        const auto v = *(start + i);
-
-        if(v == ascii::CarriageReturn) {
-            write(start + last_cr, i - last_cr);
-            write(ansi::NextLine);
-            last_cr = i;
-        }
-    }
-
-    if (last_cr <= slice.size - 1) {
-        write(start + last_cr, slice.size - last_cr);
-    }
-}
-
 void FixedBuffer::accept(void (*visit)(const Slice<uint8_t>&)) {
     visit(Slice(_bytes.get(), _size));
 }

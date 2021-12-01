@@ -17,26 +17,16 @@ namespace buffers {
             std::unique_ptr<uint8_t[]> _bytes;
             std::list<Piece> _pieces;
             size_t _size;
-            PieceCursor _cursor;
 
-            bool is_linebreak(const size_t offset);
-            size_t distance_to_line_start();
+            PieceCursor cursor(const size_t pos);
 
         public:
 
             PieceTable();
         
-            void insert(const uint8_t);
+            size_t insert(const uint8_t v, const size_t pos);
 
-            void col_forward();
-
-            void col_back();
-
-            void row_forward(const size_t step = 1);
-
-            void row_back(const size_t step = 1);            
-
-            utils::Position position();
+            size_t size() const;
 
             template <typename T>
             void accept(void (T::*visit)(const utils::Slice<uint8_t>&), T& v) {

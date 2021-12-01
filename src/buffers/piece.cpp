@@ -5,41 +5,17 @@
 
 using namespace buffers;
 
-PieceCursor::PieceCursor(std::list<Piece> &pieces):
-    offset(0),
-    piece(pieces.begin()),
-    _end(pieces.end()) {}
+PieceCursor piece_cursor::from(const size_t pos, const std::list<Piece>::iterator& begin, const std::list<Piece>::iterator& end) {
+    size_t index = 0;
 
-size_t PieceCursor::index() {
-    return piece->start + offset;
-}
-
-void PieceCursor::back() {
-    if(offset == 0) {
-        piece = std::prev(piece);
-        offset = piece->size - 1;
-    } else {
-        offset--;
-    }    
-}
-
-void PieceCursor::forward() {
-    if(offset < piece->size - 1) {
-        offset++;
-    } else {
-        piece = std::next(piece);
-        offset = 0;
+    for(auto piece = begin; piece != end; ++piece) {
+        const auto next_index = index + piece->size;
+        if(next_index < pos) {            
+            index = next_index;
+        } else {
+            return PieceCursor { piece: piece, offset: pos - index};
+        }
     }
-}
-
-bool PieceCursor::is_first() {
-    return piece->start == 0 && offset == 0;
-}
-
-bool PieceCursor::is_last() {
-    return std::next(piece) == _end && (piece->size == 0 || offset == piece->size - 1);
-}
-
-bool PieceCursor::end_of_piece() {
-    return piece->size == 0 || offset == piece->size - 1;
+    
+    return PieceCursor { piece: end, offset: 0 };
 }
