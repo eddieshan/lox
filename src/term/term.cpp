@@ -46,10 +46,6 @@ termios get_raw_attr(termios current) {
     return raw;
 }
 
-term::Key::Key(uint32_t code_, size_t size_): 
-    code(code_),
-    size(size_) {}
-
 utils::WindowSize term::get_window_size() {
     struct winsize ws;
 
@@ -91,7 +87,7 @@ term::RawModeResult term::enable_raw_mode() {
 term::Key term::read_key() {
     uint32_t code {0};
     const auto size = (size_t) read(STDIN_FILENO, &code, sizeof(uint32_t));
-    return term::Key(code, size);
+    return term::Key { code: code, size: size };
 }
 
 void term::write_bytes(const Slice<uint8_t>& buffer) {
