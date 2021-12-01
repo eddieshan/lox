@@ -9,7 +9,6 @@
 #include "text_view.h"
 #include "editor.h"
 #include "cursor.h"
-
 using namespace utils;
 using namespace term;
 using namespace buffers;
@@ -75,13 +74,9 @@ void Editor::render() {
 
     _text_view.render(term::write_bytes);
 
-    auto cursor = _text_view.screen_position();
+    auto screen_pos = _text_view.screen_position();
 
-    cursor.row++;
-    cursor.col++;
-
-    const auto pos = ansi::go_to(cursor);
-    term::write_bytes(Slice(pos.data(), pos.size()));
+    cursor::render(screen_pos, term::write_bytes);
 
     term::flush();
 }
