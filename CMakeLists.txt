@@ -11,6 +11,7 @@ set(SOURCES
     src/buffers/fixed_buffer.cpp
     src/buffers/piece.cpp
     src/buffers/piece_table.cpp
+    src/components/text_view.cpp    
     src/components/cursor.cpp
     src/components/editor.cpp
     src/main.cpp
