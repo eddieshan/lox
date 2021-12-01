@@ -1,11 +1,12 @@
 #include <stdio.h>
 
-#include "../term/term.h"
-#include "../utils/ascii.h"
-#include "../term/ansi.h"
+#include "../utils/units.h"
 #include "../utils/array.h"
+#include "../utils/ascii.h"
+#include "../term/term.h"
+#include "../term/ansi.h"
 #include "../buffers/piece_table.h"
-#include "../buffers/fixed_buffer.h"
+#include "text_view.h"
 #include "editor.h"
 #include "cursor.h"
 
@@ -16,7 +17,7 @@ using namespace components;
 
 Editor::Editor(): 
     _cursor({ row: 0, col : 0 }),
-    _screen_buffer(utils::slice::from(term::ansi::Reset)) {}
+    _text_view(TextView(units::Kb)) {}
 
 Editor& Editor::instance()
 {
@@ -25,6 +26,7 @@ Editor& Editor::instance()
 }
 
 bool Editor::process(const term::Key& key) {
+
     switch (key.code) {
         case ascii::CtrlQ:
             return false;
@@ -32,16 +34,16 @@ bool Editor::process(const term::Key& key) {
         case ascii::Cr:
             break;
         case ascii::Up:
-            _text_buffer.row_back();
+            _text_view.row_back();
             break;                    
         case ascii::Down:
-            _text_buffer.row_forward();
+            _text_view.row_forward();
             break;
         case ascii::Right:
-            _text_buffer.col_forward();
+            _text_view.col_forward();
             break;
         case ascii::Left:
-            _text_buffer.col_back();
+            _text_view.col_back();
             break;
         case ascii::Htab:
             break;
@@ -55,26 +57,32 @@ bool Editor::process(const term::Key& key) {
             break;
         default:
             if (key.size == 1) {
-                _text_buffer.insert(key.code);
+                const auto next_pos = _text_buffer.insert(key.code, _text_view.position());
+                _text_view.clear();
+                _text_buffer.accept(&TextView::write, _text_view);
+                _text_view.move_to(next_pos);
             }
     };
 
-    _text_buffer.accept<FixedBuffer>(&FixedBuffer::write, _screen_buffer);
-    auto cursor = _text_buffer.position();
-    cursor.row++;
-    cursor.col++;
-    _screen_buffer.write(ansi::go_to(cursor));
-
-    //printf("(%d, %d)", _cursor.row, _cursor.col);
-
-    flush();
+    render();
 
     return true;
 }
 
-void Editor::flush() {
-    _screen_buffer.accept(term::write_bytes);
-    _screen_buffer.clear();
+void Editor::render() {
+
+    term::write_bytes(slice::from(term::ansi::Reset));
+
+    _text_view.render(term::write_bytes);
+
+    auto cursor = _text_view.screen_position();
+
+    cursor.row++;
+    cursor.col++;
+
+    const auto pos = ansi::go_to(cursor);
+    term::write_bytes(Slice(pos.data(), pos.size()));
+
     term::flush();
 }
 
@@ -85,7 +93,7 @@ void Editor::start() {
 
         auto wait_for_events = true;
 
-        flush();
+        render();
 
         do {
             const auto key = term::read_key();

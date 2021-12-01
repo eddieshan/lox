@@ -4,7 +4,7 @@
 #include "../term/term.h"
 #include "../utils/geometry.h"
 #include "../buffers/piece_table.h"
-#include "../buffers/fixed_buffer.h"
+#include "../components/text_view.h"
 #include "../components/cursor.h"
 
 namespace components {
@@ -18,11 +18,11 @@ namespace components {
 
             EditorState _state;
             buffers::PieceTable _text_buffer;
-            buffers::FixedBuffer _screen_buffer;
+            components::TextView _text_view;
             utils::Position _cursor;
 
             bool process(const term::Key& key);
-            void flush();
+            void render();
 
         public:
             static Editor& instance();
