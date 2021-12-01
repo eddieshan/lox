@@ -14,7 +14,6 @@ namespace buffers {
             std::unique_ptr<uint8_t[]> _bytes;
             size_t _prelude_size;
             size_t _size;
-            void write(const uint8_t*, size_t);
 
         public:
         
@@ -25,9 +24,9 @@ namespace buffers {
                 write(array.data(), size);
             }
 
-            void accept(void (*visit)(const utils::Slice<uint8_t>&));
+            void write(const uint8_t*, size_t);
 
-            void write(const utils::Slice<uint8_t>& data);
+            void accept(void (*visit)(const utils::Slice<uint8_t>&));
 
             void clear();
     };
