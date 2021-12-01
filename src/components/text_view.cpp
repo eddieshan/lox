@@ -22,7 +22,7 @@ void TextView::write(const utils::Slice<uint8_t>& slice) {
     }
 }
 
-void TextView::render(void (*visit)(const utils::Slice<uint8_t>&)) {
+void TextView::render(void (*write)(const utils::Slice<uint8_t>&)) {
     const auto start = _bytes.get();
     const auto line_break = Slice(ansi::NextLine.data(), ansi::NextLine.size());
     size_t last_cr = 0;
@@ -32,14 +32,14 @@ void TextView::render(void (*visit)(const utils::Slice<uint8_t>&)) {
         const auto is_line_break = v == ascii::CarriageReturn;
 
         if(is_line_break) {
-            visit(Slice(start + last_cr, i - last_cr));
-            visit(line_break);
+            write(Slice(start + last_cr, i - last_cr));
+            write(line_break);
             last_cr = i;
         }
     }
 
     if (last_cr < _length) {
-        visit(Slice(start + last_cr, _length - last_cr));
+        write(Slice(start + last_cr, _length - last_cr));
     }
 }
 
