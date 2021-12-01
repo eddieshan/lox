@@ -10,21 +10,9 @@
 namespace term {
 
     struct Key {
-        const uint32_t code;
-        const size_t size;
-
-        Key(uint32_t code_, size_t size_);
+        uint32_t code;
+        size_t size;
     };
-
-    // struct WindowSize {
-    //     unsigned int rows;
-    //     unsigned int cols;
-    // };
-
-    // struct ScreenPosition {
-    //     unsigned int row;
-    //     unsigned int col;
-    // };    
 
     enum class RawModeResult {
         Ok,
