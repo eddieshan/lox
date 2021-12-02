@@ -6,9 +6,11 @@
 #include "../term/term.h"
 #include "../term/ansi.h"
 #include "../buffers/piece_table.h"
+#include "navigation.h"
 #include "text_view.h"
 #include "editor.h"
 #include "cursor.h"
+
 using namespace utils;
 using namespace term;
 using namespace buffers;
@@ -33,16 +35,16 @@ bool Editor::process(const term::Key& key) {
         case ascii::Cr:
             break;
         case ascii::Up:
-            _text_view.row_back();
+            _text_view.move_to(navigation::row_back);
             break;                    
         case ascii::Down:
-            _text_view.row_forward();
+            _text_view.move_to(navigation::row_forward);
             break;
         case ascii::Right:
-            _text_view.col_forward();
+            _text_view.move_to(navigation::col_forward);
             break;
         case ascii::Left:
-            _text_view.col_back();
+            _text_view.move_to(navigation::col_back);
             break;
         case ascii::Htab:
             break;
@@ -74,7 +76,7 @@ void Editor::render() {
 
     _text_view.render(term::write);
 
-    auto screen_pos = _text_view.screen_position();
+    auto screen_pos = _text_view.map(navigation::screen_position);
 
     cursor::render(screen_pos, term::write);
 
