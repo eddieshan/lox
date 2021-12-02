@@ -26,21 +26,21 @@ namespace components {
 
             utils::Position screen_position() const;
 
+            template<typename TResult>
+            TResult map(TResult (*mapper)(const utils::Slice<uint8_t>& text, const size_t pos)) const {
+                return mapper(utils::Slice(_bytes.get(), _length), _cursor);
+            }
+
             size_t position() const;
 
             size_t length() const;
 
             void move_to(const size_t pos);
 
-            void col_forward();
+            void move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos));
 
-            void col_back();
-
-            void row_forward(const size_t step = 1);
-
-            void row_back(const size_t step = 1);
+            void move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step), const size_t step = 1);
     };
-
 }
 
 #endif
