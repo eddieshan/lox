@@ -5,6 +5,7 @@
 
 #include "../utils/geometry.h"
 #include "../utils/slice.h"
+#include "../buffers/fixed_buffer.h"
 
 namespace components {
 
@@ -16,19 +17,20 @@ namespace components {
             size_t _cursor;
 
         public:
+
+            static constexpr utils::Position StartPos = utils::Position { row: 0, col: 3 };
+
             TextView(size_t size);
 
             void write(const utils::Slice<uint8_t>& data);
 
-            void render(void (*write)(const utils::Slice<uint8_t>&));
+            void render(buffers::FixedBuffer& buffer);
 
             void clear();
 
-            utils::Position screen_position() const;
-
             template<typename TResult>
             TResult map(TResult (*mapper)(const utils::Slice<uint8_t>& text, const size_t pos)) const {
-                return mapper(utils::Slice(_bytes.get(), _length), _cursor);
+                return mapper(utils::Slice(_bytes.get(), _length), _cursor) + StartPos;
             }
 
             size_t position() const;

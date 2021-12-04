@@ -4,6 +4,7 @@
 #include "../term/term.h"
 #include "../utils/geometry.h"
 #include "../buffers/piece_table.h"
+#include "../buffers/fixed_buffer.h"
 #include "../components/text_view.h"
 #include "../components/cursor.h"
 
@@ -20,6 +21,7 @@ namespace components {
             buffers::PieceTable _text_buffer;
             components::TextView _text_view;
             utils::Position _cursor;
+            buffers::FixedBuffer _screen_buffer;
 
             bool process(const term::Key& key);
             void render();

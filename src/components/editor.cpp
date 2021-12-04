@@ -18,7 +18,8 @@ using namespace components;
 
 Editor::Editor(): 
     _cursor({ row: 0, col : 0 }),
-    _text_view(TextView(units::Kb)) {}
+    _text_view(TextView(units::Kb)),
+    _screen_buffer(FixedBuffer(slice::from(ansi::Reset))) {}
 
 Editor& Editor::instance()
 {
@@ -71,14 +72,11 @@ bool Editor::process(const term::Key& key) {
 }
 
 void Editor::render() {
-
-    term::write(slice::from(term::ansi::Reset));
-
-    _text_view.render(term::write);
-
-    auto screen_pos = _text_view.map(navigation::screen_position);
-
-    cursor::render(screen_pos, term::write);
+    _text_view.render(_screen_buffer);
+    const auto screen_pos = _text_view.map(navigation::screen_position);
+    cursor::render(screen_pos, _screen_buffer);
+    _screen_buffer.accept(term::write);
+    _screen_buffer.clear();
 
     term::flush();
 }
