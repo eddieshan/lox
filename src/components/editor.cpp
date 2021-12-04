@@ -6,15 +6,16 @@
 #include "../term/term.h"
 #include "../term/ansi.h"
 #include "../buffers/piece_table.h"
-#include "navigation.h"
-#include "text_view.h"
+#include "../text/navigation.h"
+#include "../views/text_view.h"
+#include "../views/cursor.h"
 #include "editor.h"
-#include "cursor.h"
 
 using namespace utils;
 using namespace term;
 using namespace buffers;
 using namespace components;
+using namespace views;
 
 Editor::Editor(): 
     _cursor({ row: 0, col : 0 }),

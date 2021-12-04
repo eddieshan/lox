@@ -10,7 +10,7 @@
 
 using namespace utils;
 using namespace term;
-using namespace components;
+using namespace views;
 
 TextView::TextView(size_t size): 
     _bytes(std::make_unique<uint8_t[]>(size)),
