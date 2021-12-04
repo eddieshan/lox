@@ -7,6 +7,8 @@ namespace utils {
         unsigned int col;
     };
 
+    utils::Position operator+(const utils::Position& a, const utils::Position& b);
+
     struct WindowSize {
         unsigned int rows;
         unsigned int cols;
