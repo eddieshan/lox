@@ -5,8 +5,7 @@
 #include "../utils/geometry.h"
 #include "../buffers/piece_table.h"
 #include "../buffers/fixed_buffer.h"
-#include "../views/text_view.h"
-#include "../views/cursor.h"
+#include "../models/text_area.h"
 
 namespace components {
     struct EditorState {
@@ -19,7 +18,7 @@ namespace components {
 
             EditorState _state;
             buffers::PieceTable _text_buffer;
-            views::TextView _text_view;
+            models::TextArea _text_area;
             utils::Position _cursor;
             buffers::FixedBuffer _screen_buffer;
 
