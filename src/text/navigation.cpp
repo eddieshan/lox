@@ -4,7 +4,7 @@
 #include "navigation.h"
 
 using namespace utils;
-using namespace components;
+using namespace text;
 
 Position navigation::screen_position(const utils::Slice<uint8_t>& text, const size_t pos) {
     auto screen_pos = Position { 0, 0 };
