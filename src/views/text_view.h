@@ -7,7 +7,7 @@
 #include "../utils/slice.h"
 #include "../buffers/fixed_buffer.h"
 
-namespace components {
+namespace views {
 
     class TextView {
         private:

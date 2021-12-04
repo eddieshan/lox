@@ -7,7 +7,7 @@
 #include "../buffers/fixed_buffer.h"
 #include "cursor.h"
 
-using namespace components;
+using namespace views;
 using namespace utils;
 
 // The conversion of row and col to char has unknown size at compile time.
