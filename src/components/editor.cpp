@@ -23,7 +23,7 @@ using namespace components;
 Editor::Editor():
     _cursor({ row: 0, col : 0 }),
     _text_area(TextArea(units::Kb)),
-    _screen_buffer(FixedBuffer(slice::from(ansi::Reset))) {}
+    _screen_buffer(FixedBuffer(slice::from(ansi::ClearScreen))) {}
 
 Editor& Editor::instance()
 {
@@ -76,9 +76,9 @@ bool Editor::process(const term::Key& key) {
 }
 
 void Editor::render() {
-    text_view::render(_text_area.text(), _screen_buffer);
-    const auto screen_pos = text_view::cursor(_text_area.text(), _text_area.position());
+    const auto screen_pos = text_view::render(_text_area.text(), _text_area.position(), _screen_buffer);
     cursor::render(screen_pos, _screen_buffer);
+
     _screen_buffer.accept(term::write);
     _screen_buffer.clear();
 

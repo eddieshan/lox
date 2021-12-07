@@ -11,13 +11,12 @@
 using namespace utils;
 using namespace term;
 using namespace views;
-using namespace text;
 
-static constexpr utils::Position StartPos = utils::Position { row: 0, col: 3 };
+constexpr utils::Position StartPos = utils::Position { row: 0, col: 3 };
 
-
-void text_view::render(const Slice<uint8_t>& text, buffers::FixedBuffer& buffer) {
-    size_t last_cr = 0, row = 1;
+Position text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer) {
+    size_t last_cr = 0, lines = 1;
+    auto screen_pos = Position { row: 0, col: 0};
 
     constexpr auto move_to_start_col = array::from<uint8_t>((uint8_t)'3', (uint8_t)'C');
     constexpr auto next_line = array::concat(ansi::NextLine, ansi::Csi, move_to_start_col);
@@ -26,12 +25,23 @@ void text_view::render(const Slice<uint8_t>& text, buffers::FixedBuffer& buffer)
     buffer.write(move_to_start_col);
 
     for(auto i = 0; i < text.size; ++i) {
-        if(text.data[i] == ascii::CarriageReturn) {
+        const auto is_line_break = text.data[i] == ascii::CarriageReturn;
+        if(is_line_break) {
             const auto offset = last_cr == 0? 0 : 1;
             buffer.write(text.data + last_cr + offset, i - last_cr);
-            last_cr = i;
-            ++row;
             buffer.write(next_line);
+            last_cr = i;
+            ++lines;
+        }
+
+        if(i < pos) {
+            if(is_line_break) {
+                ++screen_pos.row;
+                screen_pos.col = 0;
+
+            } else {
+                ++screen_pos.col;
+            }
         }
     }
 
@@ -43,14 +53,22 @@ void text_view::render(const Slice<uint8_t>& text, buffers::FixedBuffer& buffer)
     std::array<uint8_t, 3> line_count = { 0, 0, 0 };
 
     buffer.write(ansi::Home);
+    buffer.write(ansi::Dim);
     
-    for(auto i = 1; i <= row; ++i) {
-        std::to_chars((char*)line_count.data(), (char*)line_count.data() + line_count.size() - 1, i);
-        buffer.write(line_count);
+    for(auto i = 0; i < lines; ++i) {
+        std::to_chars((char*)line_count.data(), (char*)line_count.data() + line_count.size() - 1, i + 1);
+        if(i == screen_pos.row) {
+            buffer.write(ansi::Reset);
+            buffer.write(line_count);
+            buffer.write(ansi::Dim);
+        } else {
+            buffer.write(line_count);
+        }
+
         buffer.write(ansi::NextLine);
     }
-}
 
-Position text_view::cursor(const utils::Slice<uint8_t>& text, const size_t pos) {
-    return navigation::screen_position(text, pos) + StartPos;
+    buffer.write(ansi::Reset);
+
+    return screen_pos + StartPos;
 }
