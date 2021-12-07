@@ -17,13 +17,14 @@ namespace buffers {
             std::unique_ptr<uint8_t[]> _bytes;
             utils::ArrayList<Piece> _pieces;
             size_t _size;
+            size_t _capacity;
             size_t _last_piece;
 
             PieceCursor cursor(const size_t pos);
 
         public:
 
-            PieceTable();
+            PieceTable(const size_t capacity);
         
             size_t insert(const uint8_t v, const size_t pos);
 

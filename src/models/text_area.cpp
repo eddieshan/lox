@@ -11,26 +11,26 @@ using namespace utils;
 using namespace term;
 using namespace models;
 
-TextArea::TextArea(size_t size): 
-    _bytes(std::make_unique<uint8_t[]>(size)),
-    _size(size),
-    _length(0) {}
+TextArea::TextArea(size_t capacity): 
+    _bytes(std::make_unique<uint8_t[]>(capacity)),
+    _capacity(capacity),
+    _size(0) {}
 
 void TextArea::write(const utils::Slice<uint8_t>& slice) {
-    const auto new_length = _length + slice.size;
-    if(new_length < _size) {
-        const auto current = _bytes.get() + _length;
+    const auto new_size = _size + slice.size;
+    if(new_size < _capacity) {
+        const auto current = _bytes.get() + _size;
         std::copy(slice.data, slice.data + slice.size, current);
-        _length = new_length;
+        _size = new_size;
     }
 }
 
 void TextArea::clear() {
-    _length = 0;
+    _size = 0;
 }
 
 Slice<uint8_t> TextArea::text() const {
-    return Slice(_bytes.get(), _length);
+    return Slice(_bytes.get(), _size);
 }
 
 size_t TextArea::position() const {
@@ -44,13 +44,13 @@ void TextArea::move_to(const size_t pos) {
 }
 
 void TextArea::move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos)) {
-    _cursor = find_pos(Slice(_bytes.get(), _length), _cursor);
+    _cursor = find_pos(Slice(_bytes.get(), _size), _cursor);
 }
 
 void TextArea::move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step), const size_t step) {
-    _cursor = find_pos(Slice(_bytes.get(), _length), _cursor, step);
+    _cursor = find_pos(Slice(_bytes.get(), _size), _cursor, step);
 }
 
-size_t TextArea::length() const {
-    return _length;
+size_t TextArea::size() const {
+    return _size;
 }

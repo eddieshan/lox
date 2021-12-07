@@ -12,19 +12,18 @@ using namespace buffers;
 using namespace utils;
 using namespace term;
 
-constexpr size_t BufferSize = 1024;
-
-FixedBuffer::FixedBuffer(const Slice<uint8_t>& prelude):
-    _size(prelude.size),
+FixedBuffer::FixedBuffer(const size_t capacity, const Slice<uint8_t>& prelude):
+    _bytes(std::make_unique<uint8_t[]>(capacity)),
     _prelude_size(prelude.size),
-    _bytes(std::make_unique<uint8_t[]>(BufferSize)) {
+    _size(prelude.size),
+    _capacity(capacity) {
 
     std::copy(prelude.data, prelude.data + prelude.size, _bytes.get());
 }
 
 void FixedBuffer::write(const uint8_t* bytes, size_t size) {
     const auto new_size = _size + size;
-    if(new_size < BufferSize) {
+    if(new_size < _capacity) {
         const auto current = _bytes.get() + _size;
         std::copy(bytes, bytes + size, current);
         _size = new_size;
