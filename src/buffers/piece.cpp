@@ -15,7 +15,6 @@ PieceCursor piece_cursor::from(const size_t pos, const utils::Slice<Piece>& piec
         } else if(next_count < pos + 1) {
             count = next_count;
         } else {
-            //printf("[%d, %d, %d]", pos, i, count);
             return PieceCursor { pos: i, offset: pos - count };
         }
     }

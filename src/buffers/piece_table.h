@@ -34,7 +34,6 @@ namespace buffers {
                 for(size_t i = 0; i < _pieces.size(); i++) {
                     const auto start = _bytes.get() + _pieces[i].start;
                     const auto slice = utils::Slice<uint8_t>(start, _pieces[i].size);
-                    //printf("(%d, %d)", _pieces[i].start, _pieces[i].size);
                     (v.*visit)(slice);
                 }
             }
