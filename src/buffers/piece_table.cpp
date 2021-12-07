@@ -1,10 +1,9 @@
 #include <cstddef>
 #include <memory>
-#include <algorithm>
 
 #include "../utils/units.h"
+#include "../utils/array_list.h"
 #include "../utils/geometry.h"
-#include "../utils/ascii.h"
 #include "piece_table.h"
 
 using namespace buffers;
@@ -16,37 +15,33 @@ constexpr size_t BufferLimit = BufferSize - 1;
 
 PieceTable::PieceTable():
     _bytes(std::make_unique<uint8_t[]>(BufferSize)),
-    _pieces({{ start: 0, size: 0 }}),
-    _size(0) {}
+    _pieces(units::Kb),
+    _size(0),
+    _last_piece(0) {
+        _pieces.insert({ start: 0, size: 0 });
+    }
 
 size_t PieceTable::insert(const uint8_t v, const size_t pos) {
 
     if(_size < BufferLimit) {
-        auto current_cursor = piece_cursor::from(pos, _pieces.begin(), _pieces.end());
-
-        const auto index = current_cursor.piece->start + current_cursor.offset;
-
-        if(index == 0 || index == _size) {
-            if(current_cursor.piece->size == 0) {
-                current_cursor.piece->size = 2;
-            } else {
-                current_cursor.piece->size += 1;
-            }
-
-            current_cursor.offset += 1;
-
+        if(pos == 0 || pos == _size) {
+            ++_pieces[_last_piece].size;
         } else {
-            const auto piece_right = Piece { start: index, size: current_cursor.piece->size - current_cursor.offset - 1 };
-            const auto new_piece = Piece { start: _size, size: 2 };            
+            auto cursor = piece_cursor::from(pos, _pieces.data());
+            const auto piece = &_pieces[cursor.pos];
+            const auto index = piece->start + cursor.offset;
 
-            current_cursor.piece->size = current_cursor.offset;
+            const auto piece_right = Piece { start: index, size: piece->size - cursor.offset };
+            const auto new_piece = Piece { start: _size, size: 1 };
 
-            const auto next  = std::next(current_cursor.piece);
-            const auto inserted = _pieces.insert(next, new_piece);
-            _pieces.insert(next, piece_right);
+            piece->size = cursor.offset;
 
-            current_cursor.piece = inserted;
-            current_cursor.offset = 1;
+            const auto new_pos = cursor.pos + 1;
+
+            _pieces.insert(piece_right, new_pos);
+            _pieces.insert(new_piece, new_pos);
+
+            _last_piece = new_pos;
         }
 
         _bytes[_size] = v;

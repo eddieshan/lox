@@ -2,7 +2,7 @@
 #define PIECE_H
 
 #include <cstddef>
-#include <list>
+#include "../utils/slice.h"
 
 namespace buffers {
 
@@ -12,12 +12,12 @@ namespace buffers {
     };
 
     struct PieceCursor {
-        std::list<Piece>::iterator piece;
+        size_t pos;
         size_t offset;
     };
 
     namespace piece_cursor {
-        PieceCursor from(const size_t pos, const std::list<Piece>::iterator& begin, const std::list<Piece>::iterator& end);
+        PieceCursor from(const size_t pos, const utils::Slice<Piece>& pieces);
     }
 }
 #endif

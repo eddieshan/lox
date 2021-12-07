@@ -23,7 +23,7 @@ Position navigation::screen_position(const utils::Slice<uint8_t>& text, const si
 }
 
 size_t navigation::col_forward(const utils::Slice<uint8_t>& text, const size_t pos) {
-    return pos < text.size - 1? pos + 1 : pos;
+    return pos < text.size? pos + 1 : pos;
 }
 
 size_t navigation::col_back(const utils::Slice<uint8_t>& text, const size_t pos) {
