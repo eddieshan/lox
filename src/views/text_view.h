@@ -9,9 +9,7 @@
 
 namespace views::text_view {
 
-    void render(const utils::Slice<uint8_t>& text, buffers::FixedBuffer& buffer);
-
-    utils::Position cursor(const utils::Slice<uint8_t>& text, const size_t pos);
+    utils::Position render(const utils::Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer);
 }
 
 #endif
