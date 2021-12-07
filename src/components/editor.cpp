@@ -20,10 +20,15 @@ using namespace models;
 using namespace views;
 using namespace components;
 
+constexpr auto TextBufferSize = 64*units::Kb;
+constexpr auto ScreenBufferSize = units::Kb;
+constexpr auto TempTextBufferSize = units::Kb;
+
 Editor::Editor():
     _cursor({ row: 0, col : 0 }),
-    _text_area(TextArea(units::Kb)),
-    _screen_buffer(FixedBuffer(slice::from(ansi::ClearScreen))) {}
+    _text_area(TextArea(TempTextBufferSize)),
+    _screen_buffer(FixedBuffer(ScreenBufferSize, slice::from(ansi::ClearScreen))),
+    _text_buffer(TextBufferSize) {}
 
 Editor& Editor::instance()
 {
@@ -41,7 +46,7 @@ bool Editor::process(const term::Key& key) {
             break;
         case ascii::Up:
             _text_area.move_to(navigation::row_back);
-            break;                    
+            break;
         case ascii::Down:
             _text_area.move_to(navigation::row_forward);
             break;

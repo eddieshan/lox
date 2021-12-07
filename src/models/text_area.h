@@ -12,13 +12,13 @@ namespace models {
     class TextArea {
         private:
             std::unique_ptr<uint8_t[]> _bytes;
+            size_t _capacity;
             size_t _size;
-            size_t _length;
             size_t _cursor;
 
         public:
 
-            TextArea(size_t size);
+            TextArea(const size_t capacity);
 
             void write(const utils::Slice<uint8_t>& data);
 
@@ -28,7 +28,7 @@ namespace models {
 
             size_t position() const;
 
-            size_t length() const;
+            size_t size() const;
 
             void move_to(const size_t pos);
 

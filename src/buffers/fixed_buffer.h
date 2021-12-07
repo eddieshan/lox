@@ -14,10 +14,11 @@ namespace buffers {
             std::unique_ptr<uint8_t[]> _bytes;
             size_t _prelude_size;
             size_t _size;
+            size_t _capacity;
 
         public:
         
-            FixedBuffer(const utils::Slice<uint8_t>& prelude);
+            FixedBuffer(const size_t capacity, const utils::Slice<uint8_t>& prelude);
 
             template<size_t size>
             void write(const std::array<uint8_t, size>& array) {
