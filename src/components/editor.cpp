@@ -5,6 +5,7 @@
 #include "../utils/ascii.h"
 #include "../term/term.h"
 #include "../term/ansi.h"
+#include "../settings/theme.h"
 #include "../buffers/piece_table.h"
 #include "../text/navigation.h"
 #include "../models/text_area.h"
@@ -19,15 +20,22 @@ using namespace text;
 using namespace models;
 using namespace views;
 using namespace components;
+using namespace settings;
 
 constexpr auto TextBufferSize = 64*units::Kb;
 constexpr auto ScreenBufferSize = units::Kb;
 constexpr auto TempTextBufferSize = units::Kb;
 
+const auto preamble = array::concat(
+    ansi::ClearScreen,
+    theme::Background,
+    theme::Foreground
+);
+
 Editor::Editor():
     _cursor({ row: 0, col : 0 }),
     _text_area(TextArea(TempTextBufferSize)),
-    _screen_buffer(FixedBuffer(ScreenBufferSize, slice::from(ansi::ClearScreen))),
+    _screen_buffer(FixedBuffer(ScreenBufferSize, slice::from(preamble))),
     _text_buffer(TextBufferSize) {}
 
 Editor& Editor::instance()
@@ -86,6 +94,8 @@ void Editor::render() {
 
     _screen_buffer.accept(term::write);
     _screen_buffer.clear();
+
+    //printf("%c%c%c%c%c%c%c%c%d", theme::Background[2], theme::Background[3], theme::Background[4], theme::Background[5], theme::Background[6], theme::Background[7], theme::Background[8], theme::Background[9],  theme::Background[10]);
 
     term::flush();
 }

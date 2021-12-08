@@ -5,6 +5,8 @@
 
 namespace utils::ascii {
 
+    constexpr uint8_t Esc = 27;
+
     constexpr uint32_t WhiteSpace = 32;
     constexpr uint32_t LnFeed = 10;
     
