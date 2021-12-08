@@ -4,34 +4,48 @@
 #include <array>
 
 #include "../utils/array.h"
+#include "../utils/ascii.h"
 #include "../utils/geometry.h"
 
 #include "term.h"
 
-namespace {
-    constexpr uint8_t Esc = 27;
-    constexpr auto Home_ = utils::array::from<uint8_t>((uint8_t)'H');
-    constexpr auto Clear_ = utils::array::from<uint8_t>((uint8_t)'2', (uint8_t)'J');
-    constexpr auto NextLine_ = utils::array::from<uint8_t>((uint8_t)'1', (uint8_t)'E');
-    constexpr auto CursorDn_ = utils::array::from<uint8_t>((uint8_t)'B');
-    constexpr auto CursorRt_ = utils::array::from<uint8_t>((uint8_t)'C');
-    constexpr auto Dim_ = utils::array::from<uint8_t>((uint8_t)'2', (uint8_t)'m');
-    constexpr auto Reset_ = utils::array::from<uint8_t>((uint8_t)'0', (uint8_t)'m');
-}
-
 namespace term::ansi {
-    constexpr auto Csi = utils::array::from<uint8_t>(Esc, (uint8_t)'[');
-    constexpr auto Home = utils::array::concat(Csi, Home_);
-    constexpr auto NextLine = utils::array::concat(Csi, NextLine_);
+    constexpr auto Csi = utils::array::from<uint8_t>(utils::ascii::Esc, (uint8_t)'[');
 
-    constexpr auto CursorDn = utils::array::concat(Csi, CursorDn_);
+    template<size_t Size>
+    constexpr std::array<uint8_t, Size + Csi.size()> escape(const std::array<char, Size> chars) {
+        constexpr auto csi_size = Csi.size();
+        constexpr auto total_size = Size + csi_size;
+        std::array<uint8_t, total_size> result { 0 };
 
-    constexpr auto ClearScreen = utils::array::concat(Csi, Clear_, Csi, Home_);
-    
-    constexpr auto Reset = utils::array::concat(Csi, Reset_);
-    constexpr auto Dim = utils::array::concat(Csi, Dim_);
+        for(auto i = 0; i < Csi.size(); ++i) {
+            result[i] = Csi[i];
+        }
 
-    std::array<uint8_t, 10> go_to(const utils::Position& col);
+        for(size_t i = csi_size, j = 0; i < total_size; ++i, ++j) {
+            result[i] = (uint8_t)chars[j];
+        }
+
+        return result;
+    }
+
+    constexpr auto Home = escape(utils::array::from<char>('H'));
+    constexpr auto NextLine = escape(utils::array::from<char>('1', 'E'));
+    constexpr auto Clear = escape(utils::array::from<char>('2', 'J'));
+    constexpr auto CursorDn = escape(utils::array::from<char>('B'));
+    constexpr auto CursorRt = escape(utils::array::from<char>('C'));
+    constexpr auto CursorMv = escape(utils::array::from<char>('\0', '\0', '\0', ';' , '\0', '\0', '\0', 'H'));
+
+    constexpr auto Dim = escape(utils::array::from<char>('2', 'm'));
+    constexpr auto Reset = escape(utils::array::from<char>('0', 'm'));
+
+    constexpr auto ClearScreen = utils::array::concat(Clear, Home);
+
+    constexpr auto Foreground = escape(utils::array::from<char>('3', '8', ';', '5', ';', '\0', '\0', '\0', 'm'));
+    constexpr auto Background = escape(utils::array::from<char>('4', '8', ';', '5', ';', '\0', '\0', '\0', 'm'));
+
+    std::array<uint8_t, 11> foreground(const std::array<char, 3>& color_code);
+    std::array<uint8_t, 11> background(const std::array<char, 3>& color_code);
 }
 
 #endif
