@@ -4,6 +4,7 @@
 #include "../utils/geometry.h"
 #include "../utils/slice.h"
 #include "../utils/array.h"
+#include "../term/ansi.h"
 #include "../buffers/fixed_buffer.h"
 #include "cursor.h"
 
@@ -20,7 +21,7 @@ using namespace utils;
 //  Returning the escape array by value is not very efficient.
 //  Find out if there is a better implementation.
 void cursor::render(const Position& screen_pos, buffers::FixedBuffer& buffer) {
-    auto pos = utils::array::from<uint8_t>((uint8_t)27, (uint8_t)91, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)59, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)72); // x1b[row:colH
+    auto pos = term::ansi::CursorMv;
     const auto row_start = pos.data() + 2, col_start = pos.data() + 6;
  
     std::to_chars((char*)row_start, (char*)row_start + 2, screen_pos.row + 1);
