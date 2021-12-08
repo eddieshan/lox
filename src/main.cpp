@@ -6,5 +6,5 @@ int main()
 {
     std::cout << "Starting Lox" << std::endl;
 
-    components::Editor::instance().start();
+    components::editor::run();
 }

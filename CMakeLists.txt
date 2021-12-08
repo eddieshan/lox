@@ -6,6 +6,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 set(SOURCES
     src/utils/geometry.cpp
+    src/term/ansi.cpp
     src/term/term.cpp
     src/buffers/gap_buffer.cpp
     src/buffers/fixed_buffer.cpp

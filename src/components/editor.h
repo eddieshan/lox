@@ -8,30 +8,16 @@
 #include "../models/text_area.h"
 
 namespace components {
+
     struct EditorState {
-        bool is_started;
+        buffers::PieceTable text_buffer;
+        models::TextArea text_area;
+        buffers::FixedBuffer screen_buffer;
     };
 
-    class Editor {
-        private:
-            Editor();
-
-            EditorState _state;
-            buffers::PieceTable _text_buffer;
-            models::TextArea _text_area;
-            utils::Position _cursor;
-            buffers::FixedBuffer _screen_buffer;
-
-            bool process(const term::Key& key);
-            void render();
-
-        public:
-            static Editor& instance();
-            void start();
-
-            Editor(Editor const&) = delete;
-            void operator =(Editor const&) = delete;
-    };
+    namespace editor {
+        void run();
+    }
 }
 
 #endif
