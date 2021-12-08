@@ -94,9 +94,7 @@ void Editor::render() {
 
     _screen_buffer.accept(term::write);
     _screen_buffer.clear();
-
-    //printf("%c%c%c%c%c%c%c%c%d", theme::Background[2], theme::Background[3], theme::Background[4], theme::Background[5], theme::Background[6], theme::Background[7], theme::Background[8], theme::Background[9],  theme::Background[10]);
-
+    
     term::flush();
 }
 
