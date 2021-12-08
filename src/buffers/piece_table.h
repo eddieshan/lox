@@ -24,7 +24,7 @@ namespace buffers {
 
         public:
 
-            PieceTable(const size_t capacity);
+            explicit PieceTable(const size_t capacity);
         
             size_t insert(const uint8_t v, const size_t pos);
 

@@ -18,7 +18,7 @@ namespace buffers {
 
         public:
         
-            FixedBuffer(const size_t capacity, const utils::Slice<uint8_t>& prelude);
+            explicit FixedBuffer(const size_t capacity, const utils::Slice<uint8_t>& prelude);
 
             template<size_t size>
             void write(const std::array<uint8_t, size>& array) {
