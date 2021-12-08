@@ -18,7 +18,7 @@ namespace models {
 
         public:
 
-            TextArea(const size_t capacity);
+            explicit TextArea(const size_t capacity);
 
             void write(const utils::Slice<uint8_t>& data);
 

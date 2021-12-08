@@ -14,7 +14,8 @@ using namespace models;
 TextArea::TextArea(size_t capacity): 
     _bytes(std::make_unique<uint8_t[]>(capacity)),
     _capacity(capacity),
-    _size(0) {}
+    _size(0),
+    _cursor(0) {}
 
 void TextArea::write(const utils::Slice<uint8_t>& slice) {
     const auto new_size = _size + slice.size;

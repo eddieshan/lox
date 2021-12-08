@@ -26,25 +26,17 @@ constexpr auto TextBufferSize = 64*units::Kb;
 constexpr auto ScreenBufferSize = units::Kb;
 constexpr auto TempTextBufferSize = units::Kb;
 
-const auto preamble = array::concat(
-    ansi::ClearScreen,
-    theme::Background,
-    theme::Foreground
-);
+void render(EditorState& state) {
+    const auto screen_pos = text_view::render(state.text_area.text(), state.text_area.position(), state.screen_buffer);
+    cursor::render(screen_pos, state.screen_buffer);
 
-Editor::Editor():
-    _cursor({ row: 0, col : 0 }),
-    _text_area(TextArea(TempTextBufferSize)),
-    _screen_buffer(FixedBuffer(ScreenBufferSize, slice::from(preamble))),
-    _text_buffer(TextBufferSize) {}
-
-Editor& Editor::instance()
-{
-    static Editor instance;
-    return instance;
+    state.screen_buffer.accept(term::write);
+    state.screen_buffer.clear();
+    
+    term::flush();
 }
 
-bool Editor::process(const term::Key& key) {
+bool process(const term::Key& key, EditorState& state) {
 
     switch (key.code) {
         case ascii::CtrlQ:
@@ -53,16 +45,16 @@ bool Editor::process(const term::Key& key) {
         case ascii::Cr:
             break;
         case ascii::Up:
-            _text_area.move_to(navigation::row_back);
+            state.text_area.move_to(navigation::row_back);
             break;
         case ascii::Down:
-            _text_area.move_to(navigation::row_forward);
+            state.text_area.move_to(navigation::row_forward);
             break;
         case ascii::Right:
-            _text_area.move_to(navigation::col_forward);
+            state.text_area.move_to(navigation::col_forward);
             break;
         case ascii::Left:
-            _text_area.move_to(navigation::col_back);
+            state.text_area.move_to(navigation::col_back);
             break;
         case ascii::Htab:
             break;
@@ -76,43 +68,39 @@ bool Editor::process(const term::Key& key) {
             break;
         default:
             if (key.size == 1) {
-                const auto next_pos = _text_buffer.insert(key.code, _text_area.position());
-                _text_area.clear();
-                _text_buffer.accept(&TextArea::write, _text_area);
-                _text_area.move_to(next_pos);
+                const auto next_pos = state.text_buffer.insert(key.code, state.text_area.position());                
+                state.text_area.clear();
+                state.text_buffer.accept(&TextArea::write, state.text_area);
+                state.text_area.move_to(next_pos);
             }
     };
 
-    render();
+    render(state);
 
     return true;
 }
 
-void Editor::render() {
-    const auto screen_pos = text_view::render(_text_area.text(), _text_area.position(), _screen_buffer);
-    cursor::render(screen_pos, _screen_buffer);
 
-    _screen_buffer.accept(term::write);
-    _screen_buffer.clear();
-    
-    term::flush();
-}
+void editor::run() {
+    const auto result = term::enable_raw_mode();
+    const auto window_size = term::get_window_size();
+    const auto preamble = array::concat(ansi::ClearScreen, theme::Background, theme::Foreground);
 
-void Editor::start() {
-    if(!_state.is_started) {
-        const auto result = term::enable_raw_mode();
-        const auto window_size = term::get_window_size();
+    auto wait_for_events = true;
 
-        auto wait_for_events = true;
+    auto state = EditorState {
+        text_buffer: PieceTable(TextBufferSize),
+        text_area: TextArea(TempTextBufferSize),
+        screen_buffer: FixedBuffer(ScreenBufferSize, slice::from(preamble))
+    };
 
-        render();
+    render(state);
 
-        do {
-            const auto key = term::read_key();
+    do {
+        const auto key = term::read_key();
 
-            if(key.size > 0) {
-                wait_for_events = process(key);
-            }
-        } while(wait_for_events);
-    }
+        if(key.size > 0) {
+            wait_for_events = process(key, state);
+        }
+    } while(wait_for_events);
 }
