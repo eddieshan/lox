@@ -14,7 +14,7 @@ using namespace term;
 
 FixedBuffer::FixedBuffer(const size_t capacity, const Slice<uint8_t>& prelude):
     _bytes(std::make_unique<uint8_t[]>(capacity)),
-    _prelude_size(prelude.size),
+    _preamble_size(prelude.size),
     _size(prelude.size),
     _capacity(capacity) {
 
@@ -35,5 +35,5 @@ void FixedBuffer::accept(void (*visit)(const Slice<uint8_t>&)) {
 }
 
 void FixedBuffer::clear() {
-    _size = _prelude_size;
+    _size = _preamble_size;
 }

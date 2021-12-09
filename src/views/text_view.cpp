@@ -58,7 +58,7 @@ Position text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers
     for(auto i = 0; i < lines; ++i) {
         std::to_chars((char*)line_count.data(), (char*)line_count.data() + line_count.size() - 1, i + 1);
         if(i == screen_pos.row) {
-            buffer.write(ansi::Reset);
+            buffer.write(ansi::ResetDim);
             buffer.write(line_count);
             buffer.write(ansi::Dim);
         } else {

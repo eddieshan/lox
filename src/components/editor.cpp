@@ -2,7 +2,6 @@
 
 #include "../utils/units.h"
 #include "../utils/array.h"
-#include "../utils/ascii.h"
 #include "../term/term.h"
 #include "../term/ansi.h"
 #include "../settings/theme.h"
@@ -84,7 +83,7 @@ bool process(const term::Key& key, EditorState& state) {
 void editor::run() {
     const auto result = term::enable_raw_mode();
     const auto window_size = term::get_window_size();
-    const auto preamble = array::concat(ansi::ClearScreen, theme::Background, theme::Foreground);
+    const auto preamble = array::concat(theme::Background, theme::Foreground, ansi::ClearScreen);
 
     auto wait_for_events = true;
 
