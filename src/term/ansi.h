@@ -37,6 +37,7 @@ namespace term::ansi {
     constexpr auto CursorMv = escape(utils::array::from<char>('\0', '\0', '\0', ';' , '\0', '\0', '\0', 'H'));
 
     constexpr auto Dim = escape(utils::array::from<char>('2', 'm'));
+    constexpr auto ResetDim = escape(utils::array::from<char>('2', '2', 'm'));
     constexpr auto Reset = escape(utils::array::from<char>('0', 'm'));
 
     constexpr auto ClearScreen = utils::array::concat(Clear, Home);
