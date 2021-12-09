@@ -39,7 +39,7 @@ size_t TextArea::position() const {
 }
 
 void TextArea::move_to(const size_t pos) {
-    if(pos >= 0 && pos < _size) {
+    if(pos >= 0 && pos <= _size) {
         _cursor = pos;
     }
 }
