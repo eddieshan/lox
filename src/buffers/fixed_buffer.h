@@ -12,7 +12,7 @@ namespace buffers {
     class FixedBuffer {
         private:
             std::unique_ptr<uint8_t[]> _bytes;
-            size_t _prelude_size;
+            size_t _preamble_size;
             size_t _size;
             size_t _capacity;
 
