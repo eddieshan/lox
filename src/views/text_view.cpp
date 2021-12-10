@@ -12,16 +12,13 @@ using namespace utils;
 using namespace term;
 using namespace views;
 
-constexpr utils::Position StartPos = utils::Position { row: 0, col: 3 };
-
 Position text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer) {
     size_t last_cr = 0, lines = 1;
     auto screen_pos = Position { row: 0, col: 0};
 
-    constexpr auto move_to_start_col = array::from<uint8_t>((uint8_t)'3', (uint8_t)'C');
-    constexpr auto next_line = array::concat(ansi::NextLine, ansi::Csi, move_to_start_col);
+    constexpr auto move_to_start_col = ansi::escape(array::from<char>('3', 'C'));
+    constexpr auto next_line = array::concat(ansi::NextLine, move_to_start_col);
 
-    buffer.write(ansi::Csi);
     buffer.write(move_to_start_col);
 
     for(auto i = 0; i < text.size; ++i) {
@@ -56,7 +53,7 @@ Position text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers
     buffer.write(ansi::Dim);
     
     for(auto i = 0; i < lines; ++i) {
-        std::to_chars((char*)line_count.data(), (char*)line_count.data() + line_count.size() - 1, i + 1);
+        std::to_chars((char*)line_count.data(), (char*)line_count.data() + line_count.size(), i + 1);
         if(i == screen_pos.row) {
             buffer.write(ansi::ResetDim);
             buffer.write(line_count);
@@ -68,7 +65,7 @@ Position text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers
         buffer.write(ansi::NextLine);
     }
 
-    buffer.write(ansi::Reset);
+    buffer.write(ansi::ResetDim);
 
-    return screen_pos + StartPos;
+    return screen_pos;
 }

@@ -13,6 +13,7 @@ namespace components {
         buffers::PieceTable text_buffer;
         models::TextArea text_area;
         buffers::FixedBuffer screen_buffer;
+        utils::WindowSize window_size;
     };
 
     namespace editor {

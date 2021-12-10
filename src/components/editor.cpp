@@ -9,6 +9,7 @@
 #include "../text/navigation.h"
 #include "../models/text_area.h"
 #include "../views/text_view.h"
+#include "../views/status_bar_view.h"
 #include "../views/cursor.h"
 #include "editor.h"
 
@@ -26,8 +27,9 @@ constexpr auto ScreenBufferSize = units::Kb;
 constexpr auto TempTextBufferSize = units::Kb;
 
 void render(EditorState& state) {
-    const auto screen_pos = text_view::render(state.text_area.text(), state.text_area.position(), state.screen_buffer);
-    cursor::render(screen_pos, state.screen_buffer);
+    const auto text_pos = text_view::render(state.text_area.text(), state.text_area.position(), state.screen_buffer);
+    status_bar_view::render(text_pos, state.window_size, state.screen_buffer);
+    cursor::render(text_pos + text_view::StartPos, state.screen_buffer);
 
     state.screen_buffer.accept(term::write);
     state.screen_buffer.clear();
@@ -82,7 +84,6 @@ bool process(const term::Key& key, EditorState& state) {
 
 void editor::run() {
     const auto result = term::enable_raw_mode();
-    const auto window_size = term::get_window_size();
     const auto preamble = array::concat(theme::Background, theme::Foreground, ansi::ClearScreen);
 
     auto wait_for_events = true;
@@ -90,7 +91,8 @@ void editor::run() {
     auto state = EditorState {
         text_buffer: PieceTable(TextBufferSize),
         text_area: TextArea(TempTextBufferSize),
-        screen_buffer: FixedBuffer(ScreenBufferSize, slice::from(preamble))
+        screen_buffer: FixedBuffer(ScreenBufferSize, slice::from(preamble)),
+        window_size: term::get_window_size()
     };
 
     render(state);
