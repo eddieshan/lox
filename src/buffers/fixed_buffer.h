@@ -1,5 +1,4 @@
-#ifndef SCREEN_BUFFER_H
-#define SCREEN_BUFFER_H
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -32,5 +31,3 @@ namespace buffers {
             void clear();
     };
 }
-
-#endif

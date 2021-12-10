@@ -1,5 +1,4 @@
-#ifndef TEXT_VIEW_H
-#define TEXT_VIEW_H
+#pragma once
 
 #include "../utils/slice.h"
 #include "../buffers/fixed_buffer.h"
@@ -10,5 +9,3 @@ namespace views::text_view {
 
     models::TextState render(const utils::Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer);
 }
-
-#endif

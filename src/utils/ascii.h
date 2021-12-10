@@ -1,5 +1,4 @@
-#ifndef KEYS_H
-#define KEYS_H
+#pragma once
 
 #include <cstdint>
 
@@ -24,5 +23,3 @@ namespace utils::ascii {
     constexpr uint32_t LnEnd          = 0x1b5b4600;
     constexpr uint32_t Del            = 0x1b5b337e;
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef EDITOR_H
-#define EDITOR_H
+#pragma once
 
 #include "../utils/geometry.h"
 #include "../buffers/piece_table.h"
@@ -19,5 +18,3 @@ namespace components {
         void run();
     }
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TEXT_AREA_H
-#define TEXT_AREA_H
+#pragma once
 
 #include <memory>
 
@@ -42,5 +41,3 @@ namespace models {
         size_t n_lines;
     };    
 }
-
-#endif

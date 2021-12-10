@@ -1,5 +1,4 @@
-#ifndef PIECE_H
-#define PIECE_H
+#pragma once
 
 #include <cstddef>
 #include "../utils/slice.h"
@@ -20,4 +19,3 @@ namespace buffers {
         PieceCursor from(const size_t pos, const utils::Slice<Piece>& pieces);
     }
 }
-#endif

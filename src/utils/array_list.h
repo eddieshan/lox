@@ -1,5 +1,4 @@
-#ifndef ARRAY_LIST_H
-#define ARRAY_LIST_H
+#pragma once
 
 #include <cstddef>
 #include <memory>
@@ -58,5 +57,3 @@ namespace utils
             }            
     };    
 }
-
-#endif

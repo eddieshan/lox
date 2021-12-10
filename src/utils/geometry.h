@@ -1,5 +1,4 @@
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#pragma once
 
 namespace utils {
     struct Position {
@@ -14,5 +13,3 @@ namespace utils {
         unsigned int cols;
     };
 }
-
-#endif
