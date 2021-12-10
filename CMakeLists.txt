@@ -15,6 +15,7 @@ set(SOURCES
     src/text/navigation.cpp
     src/models/text_area.cpp
     src/views/text_view.cpp
+    src/views/status_bar_view.cpp
     src/views/cursor.cpp
     src/components/editor.cpp
     src/main.cpp
