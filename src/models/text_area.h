@@ -36,6 +36,11 @@ namespace models {
 
             void move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step), const size_t step = 1);
     };
+
+    struct TextState {
+        utils::Position pos;
+        size_t n_lines;
+    };    
 }
 
 #endif
