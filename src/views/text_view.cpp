@@ -5,14 +5,16 @@
 #include "../utils/ascii.h"
 #include "../term/ansi.h"
 #include "../text/navigation.h"
+#include "../models/text_area.h"
 
 #include "text_view.h"
 
 using namespace utils;
 using namespace term;
 using namespace views;
+using namespace models;
 
-Position text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer) {
+TextState text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer) {
     size_t last_cr = 0, lines = 1;
     auto screen_pos = Position { row: 0, col: 0};
 
@@ -47,25 +49,5 @@ Position text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers
         buffer.write(text.data + last_cr + offset, text.size - last_cr);
     }
 
-    std::array<uint8_t, 3> line_count = { 0, 0, 0 };
-
-    buffer.write(ansi::Home);
-    buffer.write(ansi::Dim);
-    
-    for(auto i = 0; i < lines; ++i) {
-        std::to_chars((char*)line_count.data(), (char*)line_count.data() + line_count.size(), i + 1);
-        if(i == screen_pos.row) {
-            buffer.write(ansi::ResetDim);
-            buffer.write(line_count);
-            buffer.write(ansi::Dim);
-        } else {
-            buffer.write(line_count);
-        }
-
-        buffer.write(ansi::NextLine);
-    }
-
-    buffer.write(ansi::ResetDim);
-
-    return screen_pos;
+    return TextState { pos: screen_pos, n_lines: lines };
 }

@@ -3,12 +3,12 @@
 
 #include <memory>
 
-#include "../utils/geometry.h"
 #include "../utils/slice.h"
 #include "../buffers/fixed_buffer.h"
+#include "../models/text_area.h"
 
 namespace views::status_bar_view {
-    void render(const utils::Position& pos, const utils::WindowSize& window_size, buffers::FixedBuffer& buffer);
+    void render(const models::TextState& text_state, const utils::WindowSize& window_size, buffers::FixedBuffer& buffer);
 }
 
 #endif
