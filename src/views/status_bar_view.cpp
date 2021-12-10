@@ -1,7 +1,6 @@
 #include <charconv>
 #include <array>
 
-#include "../utils/ascii.h"
 #include "../term/ansi.h"
 #include "../models/text_area.h"
 #include "status_bar_view.h"
