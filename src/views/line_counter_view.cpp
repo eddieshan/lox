@@ -1,8 +1,5 @@
 #include <charconv>
 
-#include "../utils/geometry.h"
-#include "../utils/slice.h"
-#include "../utils/ascii.h"
 #include "../term/ansi.h"
 #include "../text/navigation.h"
 
