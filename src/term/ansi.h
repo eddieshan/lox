@@ -1,5 +1,4 @@
-#ifndef ANSI_H
-#define ANSI_H
+#pragma once
 
 #include <array>
 
@@ -48,5 +47,3 @@ namespace term::ansi {
     std::array<uint8_t, 11> foreground(const std::array<char, 3>& color_code);
     std::array<uint8_t, 11> background(const std::array<char, 3>& color_code);
 }
-
-#endif

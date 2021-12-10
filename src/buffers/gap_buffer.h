@@ -1,5 +1,4 @@
-#ifndef GAP_BUFFER_H
-#define GAP_BUFFER_H
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -44,5 +43,3 @@ namespace buffers {
             }
     };
 }
-
-#endif

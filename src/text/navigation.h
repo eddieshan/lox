@@ -1,5 +1,4 @@
-#ifndef NAVIGATION_H
-#define NAVIGATION_H
+#pragma once
 
 #include <memory>
 
@@ -19,5 +18,3 @@ namespace text::navigation {
     size_t row_forward(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step);
     size_t row_back(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step);    
 }
-
-#endif

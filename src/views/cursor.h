@@ -1,5 +1,4 @@
-#ifndef CURSOR_H
-#define CURSOR_H
+#pragma once
 
 #include "../utils/geometry.h"
 #include "../buffers/fixed_buffer.h"
@@ -10,5 +9,3 @@ namespace views::cursor {
     // VT100 screen coordinates are 1 based so row and col are incremented by 1.
     void render(const utils::Position& pos, buffers::FixedBuffer& buffer);
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ARRAY_H
-#define ARRAY_H
+#pragma once
 
 #include <array>
 
@@ -46,5 +45,3 @@ namespace utils::array {
         return result;
     }     
 }
-
-#endif

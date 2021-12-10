@@ -1,5 +1,4 @@
-#ifndef TERM_H
-#define TERM_H
+#pragma once
 
 #include <cstdint>
 #include <cstddef>
@@ -26,6 +25,4 @@ namespace term {
     utils::WindowSize get_window_size();
     void write(const utils::Slice<uint8_t>& buffer);
     void flush();
-
 }
-#endif

@@ -1,5 +1,4 @@
-#ifndef PIECE_TABLE_H
-#define PIECE_TABLE_H
+#pragma once
 
 #include <cstddef>
 #include <memory>
@@ -40,5 +39,3 @@ namespace buffers {
             }
     };
 }
-
-#endif
