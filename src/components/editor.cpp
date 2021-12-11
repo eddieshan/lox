@@ -62,8 +62,10 @@ bool process(const term::Key& key, EditorState& state) {
         case ascii::Htab:
             break;
         case ascii::LnStart:
+            state.text_area.move_to(navigation::row_start);
             break;
         case ascii::LnEnd:
+            state.text_area.move_to(navigation::row_end);
             break;
         case ascii::Del:
             break;

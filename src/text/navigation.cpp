@@ -70,3 +70,19 @@ size_t navigation::row_back(const utils::Slice<uint8_t>& text, const size_t pos,
     const auto new_col = current_col > last_prev_col? last_prev_col : current_col;
     return new_cursor == 0? new_col : new_cursor + new_col + 1;
 }
+
+size_t navigation::row_start(const utils::Slice<uint8_t>& text, const size_t pos) {    
+    auto i = pos == 0? pos : pos - 1;
+    for(; i > 0 && text.data[i] != ascii::CarriageReturn; --i) {
+    }
+    
+    return i == 0? i : i + 1;
+}
+
+size_t navigation::row_end(const utils::Slice<uint8_t>& text, const size_t pos) {
+    auto i = pos;
+    for(; i < text.size && text.data[i] != ascii::CarriageReturn; ++i) {
+    }
+
+    return i;
+}
