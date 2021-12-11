@@ -1,5 +1,4 @@
-#include <charconv>
-
+#include "../utils/convert.h"
 #include "../utils/geometry.h"
 #include "../utils/slice.h"
 #include "../utils/ascii.h"
@@ -18,8 +17,10 @@ TextState text_view::render(const Slice<uint8_t>& text, const size_t pos, buffer
     size_t last_cr = 0, lines = 1;
     auto screen_pos = Position { row: 0, col: 0};
 
-    constexpr auto move_to_start_col = ansi::escape(array::from<char>('3', 'C'));
-    constexpr auto next_line = array::concat(ansi::NextLine, move_to_start_col);
+    auto move_to_start_col = ansi::escape(array::from<char>('\0', '\0', '\0', 'C'));
+    convert::to_chars_3(text_view::StartPos.col, (uint8_t*)move_to_start_col.data() + 2);
+
+    auto next_line = array::concat(ansi::NextLine, move_to_start_col);
 
     buffer.write(move_to_start_col);
 

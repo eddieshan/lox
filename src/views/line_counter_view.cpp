@@ -1,5 +1,4 @@
-#include <charconv>
-
+#include "../utils/convert.h"
 #include "../term/ansi.h"
 #include "../text/navigation.h"
 
@@ -10,13 +9,13 @@ using namespace term;
 using namespace views;
 
 void line_counter_view::render(const models::TextState& text_state, buffers::FixedBuffer& buffer) {
-    std::array<uint8_t, 3> line_count = { 0, 0, 0 };
+    std::array<uint8_t, 3> line_count = { (uint8_t)' ', (uint8_t)' ', (uint8_t)' ' };
 
     buffer.write(ansi::Home);
     buffer.write(ansi::Dim);
     
     for(auto i = 0; i < text_state.n_lines; ++i) {
-        std::to_chars((char*)line_count.data(), (char*)line_count.data() + line_count.size(), i + 1);
+        convert::to_chars_3(i + 1, line_count.data());
         if(i == text_state.pos.row) {
             buffer.write(ansi::ResetDim);
             buffer.write(line_count);

@@ -1,7 +1,5 @@
-#include <array>
-#include <charconv>
-
 #include "../utils/geometry.h"
+#include "../utils/convert.h"
 #include "../utils/slice.h"
 #include "../utils/array.h"
 #include "../term/ansi.h"
@@ -17,15 +15,12 @@ using namespace utils;
 // This works based on two assumptions,
 // - that rows and cols will never be greater than 999 each,
 // - empty chars in an VT100 sequence are ignored.
-// TODO: 
-//  Returning the escape array by value is not very efficient.
-//  Find out if there is a better implementation.
 void cursor::render(const Position& screen_pos, buffers::FixedBuffer& buffer) {
     auto pos = term::ansi::CursorMv;
     const auto row_start = pos.data() + 2, col_start = pos.data() + 6;
  
-    std::to_chars((char*)row_start, (char*)row_start + 2, screen_pos.row + 1);
-    std::to_chars((char*)col_start, (char*)col_start + 2, screen_pos.col + 1);
+    convert::to_chars_3(screen_pos.row + 1, row_start);
+    convert::to_chars_3(screen_pos.col + 1, col_start);
 
     buffer.write(pos);
 }
