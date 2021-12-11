@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "../utils/geometry.h"
 #include "../utils/slice.h"
 
@@ -16,5 +14,7 @@ namespace text::navigation {
     size_t col_forward(const utils::Slice<uint8_t>& text, const size_t pos);
     size_t col_back(const utils::Slice<uint8_t>& text, const size_t pos);
     size_t row_forward(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step);
-    size_t row_back(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step);    
+    size_t row_back(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step);
+    size_t row_start(const utils::Slice<uint8_t>& text, const size_t pos);
+    size_t row_end(const utils::Slice<uint8_t>& text, const size_t pos);
 }
