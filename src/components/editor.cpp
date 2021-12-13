@@ -68,8 +68,15 @@ bool process(const term::Key& key, EditorState& state) {
             state.text_area.move_to(navigation::row_end);
             break;
         case ascii::Del:
+            state.text_buffer.erase(state.text_area.position());        
+            state.text_area.clear();
+            state.text_buffer.accept(&TextArea::write, state.text_area);
             break;
         case ascii::BSpace:
+            state.text_area.move_to(navigation::col_back);
+            state.text_buffer.erase(state.text_area.position());
+            state.text_area.clear();
+            state.text_buffer.accept(&TextArea::write, state.text_area);        
             break;
         default:
             if (key.size == 1) {

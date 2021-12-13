@@ -27,6 +27,8 @@ namespace buffers {
         
             size_t insert(const uint8_t v, const size_t pos);
 
+            void erase(const size_t pos);            
+
             size_t size() const;
 
             template <typename T>

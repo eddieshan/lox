@@ -21,32 +21,62 @@ PieceTable::PieceTable(const size_t capacity):
 size_t PieceTable::insert(const uint8_t v, const size_t pos) {
 
     if(_size < _capacity) {
-        if(pos == 0 || pos == _size) {
+        if(pos == _size) {
             ++_pieces[_last_piece].size;
         } else {
             auto cursor = piece_cursor::from(pos, _pieces.data());
             const auto piece = &_pieces[cursor.pos];
-            const auto index = piece->start + cursor.offset;
-
-            const auto piece_right = Piece { start: index, size: piece->size - cursor.offset };
             const auto new_piece = Piece { start: _size, size: 1 };
 
-            piece->size = cursor.offset;
+            if(cursor.offset == 0) {
+                _pieces.insert(new_piece, cursor.pos);
+                _last_piece = cursor.pos;
+            } else {
+                const auto index = piece->start + cursor.offset;
+                const auto piece_right = Piece { start: index, size: piece->size - cursor.offset };
 
-            const auto new_pos = cursor.pos + 1;
+                piece->size = cursor.offset;
 
-            _pieces.insert(piece_right, new_pos);
-            _pieces.insert(new_piece, new_pos);
+                const auto new_pos = cursor.pos + 1;
 
-            _last_piece = new_pos;
+                _pieces.insert(piece_right, new_pos);
+                _pieces.insert(new_piece, new_pos);
+
+                _last_piece = new_pos;
+            }
         }
 
-        _bytes[_size] = v;
+        _bytes.get()[_size] = v;
         ++_size;
 
         return pos + 1;
     } else {
         return 0;
+    }
+}
+
+void PieceTable::erase(const size_t pos) {
+    if(_size > 0 && pos < _size) {
+        auto cursor = piece_cursor::from(pos, _pieces.data());
+        const auto piece = &_pieces[cursor.pos];
+
+        if(cursor.offset == 0) {
+            ++piece->start;
+            --piece->size;
+        } else if(cursor.offset == piece->size - 1) {
+            --piece->size;
+        } else {
+            const auto new_size = cursor.offset;
+            const auto right_start = piece->start + new_size + 1;
+            const auto piece_right = Piece { start: right_start, size: piece->size - cursor.offset - 1 };
+
+            piece->size = new_size;
+
+            const auto new_pos = cursor.pos + 1;
+            _pieces.insert(piece_right, new_pos);
+
+            _last_piece = new_pos;
+        }
     }
 }
 
