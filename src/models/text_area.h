@@ -8,6 +8,9 @@
 
 namespace models {
 
+    typedef size_t (*finder)(const utils::Slice<uint8_t>& text, const size_t pos);
+    typedef size_t (*finder_by)(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step);
+
     class TextArea {
         private:
             std::unique_ptr<uint8_t[]> _bytes;
@@ -31,9 +34,16 @@ namespace models {
 
             void move_to(const size_t pos);
 
-            void move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos));
+            template<finder find_pos>
+            void move_to() {
+                _cursor = find_pos(utils::Slice(_bytes.get(), _size), _cursor);
+            }
 
-            void move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step), const size_t step = 1);
+            template<finder_by find_pos>
+            void move_to(const size_t step = 1) {
+                _cursor = find_pos(utils::Slice(_bytes.get(), _size), _cursor, step);
+            }
+
     };
 
     struct TextState {

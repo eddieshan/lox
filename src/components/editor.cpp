@@ -33,7 +33,7 @@ void render(EditorState& state) {
     line_counter_view::render(text_state, state.screen_buffer);
     cursor::render(text_state.pos + text_view::StartPos, state.screen_buffer);
 
-    state.screen_buffer.accept(term::write);
+    term::write(state.screen_buffer.data());
     state.screen_buffer.clear();
     
     term::flush();
@@ -48,41 +48,41 @@ bool process(const term::Key& key, EditorState& state) {
         case ascii::Cr:
             break;
         case ascii::Up:
-            state.text_area.move_to(navigation::row_back);
+            state.text_area.move_to<navigation::row_back>();
             break;
         case ascii::Down:
-            state.text_area.move_to(navigation::row_forward);
+            state.text_area.move_to<navigation::row_forward>();
             break;
         case ascii::Right:
-            state.text_area.move_to(navigation::col_forward);
+            state.text_area.move_to<navigation::col_forward>();
             break;
         case ascii::Left:
-            state.text_area.move_to(navigation::col_back);
+            state.text_area.move_to<navigation::col_back>();
             break;
         case ascii::Htab:
             break;
         case ascii::LnStart:
-            state.text_area.move_to(navigation::row_start);
+            state.text_area.move_to<navigation::row_start>();
             break;
         case ascii::LnEnd:
-            state.text_area.move_to(navigation::row_end);
+            state.text_area.move_to<navigation::row_end>();
             break;
         case ascii::Del:
             state.text_buffer.erase(state.text_area.position());        
             state.text_area.clear();
-            state.text_buffer.accept(&TextArea::write, state.text_area);
+            state.text_buffer.accept<TextArea, &TextArea::write>(state.text_area);
             break;
         case ascii::BSpace:
-            state.text_area.move_to(navigation::col_back);
+            state.text_area.move_to<navigation::col_back>();
             state.text_buffer.erase(state.text_area.position());
             state.text_area.clear();
-            state.text_buffer.accept(&TextArea::write, state.text_area);        
+            state.text_buffer.accept<TextArea, &TextArea::write>(state.text_area);        
             break;
         default:
             if (key.size == 1) {
                 const auto next_pos = state.text_buffer.insert(key.code, state.text_area.position());                
                 state.text_area.clear();
-                state.text_buffer.accept(&TextArea::write, state.text_area);
+                state.text_buffer.accept<TextArea, &TextArea::write>(state.text_area);
                 state.text_area.move_to(next_pos);
             }
     };

@@ -31,12 +31,12 @@ namespace buffers {
 
             size_t size() const;
 
-            template <typename T>
-            void accept(void (T::*visit)(const utils::Slice<uint8_t>&), T& v) {
+            template <typename T, void (T::*visit)(const utils::Slice<uint8_t>&)>
+            void accept(T& visitor) {
                 for(size_t i = 0; i < _pieces.size(); i++) {
                     const auto start = _bytes.get() + _pieces[i].start;
                     const auto slice = utils::Slice<uint8_t>(start, _pieces[i].size);
-                    (v.*visit)(slice);
+                    (visitor.*visit)(slice);
                 }
             }
     };

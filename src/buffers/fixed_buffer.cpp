@@ -30,8 +30,8 @@ void FixedBuffer::write(const uint8_t* bytes, size_t size) {
     }
 }
 
-void FixedBuffer::accept(void (*visit)(const Slice<uint8_t>&)) {
-    visit(Slice(_bytes.get(), _size));
+Slice<uint8_t> FixedBuffer::data() const {
+    return Slice(_bytes.get(), _size);
 }
 
 void FixedBuffer::clear() {
