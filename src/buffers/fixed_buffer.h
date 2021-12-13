@@ -26,7 +26,7 @@ namespace buffers {
 
             void write(const uint8_t*, size_t);
 
-            void accept(void (*visit)(const utils::Slice<uint8_t>&));
+            utils::Slice<uint8_t> data() const;
 
             void clear();
     };

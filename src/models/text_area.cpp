@@ -42,14 +42,6 @@ void TextArea::move_to(const size_t pos) {
     }
 }
 
-void TextArea::move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos)) {
-    _cursor = find_pos(Slice(_bytes.get(), _size), _cursor);
-}
-
-void TextArea::move_to(size_t (*find_pos)(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step), const size_t step) {
-    _cursor = find_pos(Slice(_bytes.get(), _size), _cursor, step);
-}
-
 size_t TextArea::size() const {
     return _size;
 }
