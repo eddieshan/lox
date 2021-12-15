@@ -33,15 +33,27 @@ namespace utils::array {
         std::array<T, total_size> result = {0};
 
         auto index = 0;
-        for(auto i = 0; i < n_arrays; i++)
+        for(auto i = 0; i < n_arrays; ++i)
         {
-            for(auto j = 0; j < sizes[i]; j++)
+            for(auto j = 0; j < sizes[i]; ++j)
             {
                 result[index] = expanded_arrays[i][j];
-                index++;
+                ++index;
             }
         }
 
         return result;
-    }     
+    }
+
+    template<std::size_t Size>
+    constexpr std::array<uint8_t, Size - 1> to_uint8_t(const char (&chars)[Size]) {
+        constexpr auto new_size = Size - 1;
+        std::array<uint8_t, new_size> result { };
+
+        for(auto i = 0; i < new_size; ++i) {
+            result[i] = (uint8_t)chars[i];
+        }
+
+        return result;
+    };    
 }

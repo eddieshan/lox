@@ -6,8 +6,6 @@
 #include "../utils/ascii.h"
 #include "../utils/geometry.h"
 
-#include "term.h"
-
 namespace term::ansi {
     constexpr auto Csi = utils::array::from<uint8_t>(utils::ascii::Esc, (uint8_t)'[');
 
@@ -28,21 +26,43 @@ namespace term::ansi {
         return result;
     }
 
-    constexpr auto Home = escape(utils::array::from<char>('H'));
-    constexpr auto NextLine = escape(utils::array::from<char>('1', 'E'));
-    constexpr auto Clear = escape(utils::array::from<char>('2', 'J'));
-    constexpr auto CursorDn = escape(utils::array::from<char>('B'));
-    constexpr auto CursorRt = escape(utils::array::from<char>('C'));
-    constexpr auto CursorMv = escape(utils::array::from<char>('\0', '\0', '\0', ';' , '\0', '\0', '\0', 'H'));
+    // Creates an escape sequence prefixed with CSI.
+    // chars is expected to be a zero terminated char array.
+    // The terminating zero is not copied so the size of the
+    // result is Size - 1.
+    template<size_t Size>
+    constexpr std::array<uint8_t, Size + Csi.size() - 1> escape(const char (&chars)[Size]) {
+        constexpr auto csi_size = Csi.size();
+        constexpr auto total_size = Size + csi_size - 1;
+        std::array<uint8_t, total_size> result { 0 };
 
-    constexpr auto Dim = escape(utils::array::from<char>('2', 'm'));
-    constexpr auto ResetDim = escape(utils::array::from<char>('2', '2', 'm'));
-    constexpr auto Reset = escape(utils::array::from<char>('0', 'm'));
+        for(auto i = 0; i < csi_size; ++i) {
+            result[i] = Csi[i];
+        }
+
+        for(size_t i = csi_size, j = 0; i < total_size; ++i, ++j) {
+            result[i] = (uint8_t)chars[j];
+        }
+
+        return result;
+    }    
+
+    constexpr auto Home = escape("H");
+    constexpr auto NextLine = escape("1E");
+    constexpr auto Clear = escape("2J");
+    constexpr auto CursorDn = escape("B");
+    constexpr auto CursorRt = escape("C");
+    constexpr auto CursorMv = escape("\0\0\0;\0\0\0H");
+
+    constexpr auto Dim = escape("2m");
+    constexpr auto ResetDim = escape("22m");
+    constexpr auto ResetForeground = escape("39m");
+    constexpr auto Reset = escape("0m");
 
     constexpr auto ClearScreen = utils::array::concat(Clear, Home);
 
-    constexpr auto Foreground = escape(utils::array::from<char>('3', '8', ';', '5', ';', '\0', '\0', '\0', 'm'));
-    constexpr auto Background = escape(utils::array::from<char>('4', '8', ';', '5', ';', '\0', '\0', '\0', 'm'));
+    constexpr auto Foreground = escape("38;5;\0\0\0m");
+    constexpr auto Background = escape("48;5;\0\0\0m");
 
     std::array<uint8_t, 11> foreground(const std::array<char, 3>& color_code);
     std::array<uint8_t, 11> background(const std::array<char, 3>& color_code);
