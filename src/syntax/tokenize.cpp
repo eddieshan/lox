@@ -9,66 +9,59 @@
 using namespace utils;
 using namespace syntax;
 
-TokenGroup syntax::tokens(const char* tokens, const TokenType token_type) {
-    size_t tokens_length = 0, n_tokens = 1;
+constexpr auto TokenDelimiter = '|';
 
-    while(tokens[tokens_length] != '\0') {
-        if(tokens[tokens_length] == '|') {
-            ++n_tokens;
-        }
-        ++tokens_length;
-    }
+TokenGroup syntax::tokens(const char* tokens_def, const TokenType token_type) {
 
-    const auto size = tokens_length - n_tokens - 1;
+    const auto tokens_length = strlen(tokens_def) + 1;
 
     auto token_group = TokenGroup {
-        tokens: std::make_unique<uint8_t[]>(size),
-        tokens_sizes: std::make_unique<uint8_t[]>(n_tokens),
-        n_tokens: n_tokens,
+        tokens: std::make_unique<uint8_t[]>(tokens_length),
+        size: tokens_length,
         type: token_type
     };
 
-    auto indices = token_group.tokens_sizes.get();
-    auto token_start = token_group.tokens.get();
+    const auto tokens = token_group.tokens.get();
+    auto index = 0;
 
-    auto segment_index = 0, last_index = 0;
-
-    for(auto i = 0; i <= tokens_length; ++i) {
-        if(tokens[i] == '|' || tokens[i] == '\0') {
-            const auto offset = last_index == 0? last_index : last_index + 1;
+    for(auto i = 0; i < tokens_length; ++i) {
+        if(tokens_def[i] == TokenDelimiter || tokens_def[i] == '\0') {
+            const auto offset = index == 0? index : index + 1;
             const auto token_size = i - offset;
 
-            std::copy(tokens + offset, tokens + i, token_start);
-            token_start += token_size;
+            tokens[offset] = token_size;
+            std::copy(tokens_def + offset, tokens_def + i, tokens + offset + 1);
 
-            indices[segment_index] = token_size;
-            last_index = i;
-
-            ++segment_index;
+            index = i;
         }
     }
 
     return token_group;
 }
 
+const auto Grammar = utils::array::from<TokenGroup>(
+    syntax::tokens(cpp::Keywords, syntax::TokenType::Keyword),
+    syntax::tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword)
+);
+
 TokenType syntax::token_type(const Slice<uint8_t>& sequence) {
 
-    for(auto i = 0; i < cpp::Grammar.size(); ++i) {
-        const auto token_group = &cpp::Grammar[i];
-        auto token_start = token_group->tokens.get();
-        const auto tokens_sizes = token_group->tokens_sizes.get();
+    for(auto i = 0; i < Grammar.size(); ++i) {
+        const auto tokens = Grammar[i].tokens.get();
 
-        for(auto j = 0; j < token_group->n_tokens; ++j) {
+        size_t length_index = 0;
 
-            const auto token_size = tokens_sizes[j];
+        while(length_index < Grammar[i].size) {
+            const auto token_size = tokens[length_index];
+            const auto token_index = length_index + 1;
 
             if(token_size == sequence.size) {
-                if(std::memcmp(token_start, sequence.data, token_size) == 0) {
-                    return token_group->type;
+                if(std::memcmp(tokens + token_index, sequence.data, token_size) == 0) {
+                    return Grammar[i].type;
                 }
             }
 
-            token_start += token_size;
+            length_index += (token_size + 1);
         }
     }
 

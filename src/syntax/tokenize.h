@@ -16,8 +16,7 @@ namespace syntax {
 
     struct TokenGroup {
         std::unique_ptr<uint8_t[]> tokens;
-        std::unique_ptr<uint8_t[]> tokens_sizes;
-        size_t n_tokens;
+        size_t size;
         TokenType type;
     };
 
