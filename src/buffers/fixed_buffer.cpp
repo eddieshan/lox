@@ -30,6 +30,10 @@ void FixedBuffer::write(const uint8_t* bytes, size_t size) {
     }
 }
 
+void FixedBuffer::write(const Slice<uint8_t>& slice) {
+    write(slice.data, slice.size);
+}
+
 Slice<uint8_t> FixedBuffer::data() const {
     return Slice(_bytes.get(), _size);
 }
