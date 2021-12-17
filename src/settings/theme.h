@@ -11,4 +11,8 @@ namespace {
 namespace settings::theme {
     const auto Foreground = term::ansi::foreground(ForegroundCode);
     const auto Background = term::ansi::background(BackgroundCode);
+
+    constexpr auto Plain = term::ansi::escape("38;5;254m");
+    constexpr auto Keyword = term::ansi::escape("38;5;169m");
+    constexpr auto TypeKeyword = term::ansi::escape("38;5;35m");
 }

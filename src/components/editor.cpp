@@ -9,6 +9,7 @@
 #include "../text/navigation.h"
 #include "../models/text_area.h"
 #include "../views/text_view.h"
+#include "../views/syntax_view.h"
 #include "../views/status_bar_view.h"
 #include "../views/line_counter_view.h"
 #include "../views/cursor.h"
@@ -28,7 +29,7 @@ constexpr auto ScreenBufferSize = units::Kb;
 constexpr auto TempTextBufferSize = units::Kb;
 
 void render(EditorState& state) {
-    const auto text_state = text_view::render(state.text_area.text(), state.text_area.position(), state.screen_buffer);
+    const auto text_state = syntax_view::render(state.text_area.text(), state.text_area.position(), state.screen_buffer);
     status_bar_view::render(text_state, state.window_size, state.screen_buffer);
     line_counter_view::render(text_state, state.screen_buffer);
     cursor::render(text_state.pos + text_view::StartPos, state.screen_buffer);
