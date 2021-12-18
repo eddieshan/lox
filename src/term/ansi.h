@@ -61,9 +61,8 @@ namespace term::ansi {
 
     constexpr auto ClearScreen = utils::array::concat(Clear, Home);
 
-    constexpr auto Foreground = escape("38;5;\0\0\0m");
-    constexpr auto Background = escape("48;5;\0\0\0m");
+    constexpr uint8_t ForegroundAttr = 38;
+    constexpr uint8_t BackgroundAttr = 48;
 
-    std::array<uint8_t, 11> foreground(const std::array<char, 3>& color_code);
-    std::array<uint8_t, 11> background(const std::array<char, 3>& color_code);
+    std::array<uint8_t, 11> color_256(const uint8_t attr_code, const uint8_t color_code);
 }

@@ -1,18 +1,11 @@
-#include <cstddef>
-
 #include "../utils/array.h"
 #include "../term/ansi.h"
 
-namespace {
-    constexpr auto ForegroundCode = utils::array::from<char>('2', '5', '4');
-    constexpr auto BackgroundCode = utils::array::from<char>('2', '3', '5');
-}
-
 namespace settings::theme {
-    const auto Foreground = term::ansi::foreground(ForegroundCode);
-    const auto Background = term::ansi::background(BackgroundCode);
+    const auto Foreground = term::ansi::color_256(term::ansi::ForegroundAttr, 254);
+    const auto Background = term::ansi::color_256(term::ansi::BackgroundAttr, 235);
 
-    constexpr auto Plain = term::ansi::escape("38;5;87m");
-    constexpr auto Keyword = term::ansi::escape("38;5;174m");
-    constexpr auto TypeKeyword = term::ansi::escape("38;5;75m");
+    const auto Plain = term::ansi::color_256(term::ansi::ForegroundAttr, 87);
+    const auto Keyword = term::ansi::color_256(term::ansi::ForegroundAttr, 174);
+    const auto TypeKeyword = term::ansi::color_256(term::ansi::ForegroundAttr, 75);
 }
