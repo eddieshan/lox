@@ -5,22 +5,13 @@
 #include "../utils/array.h"
 #include "../utils/ascii.h"
 #include "tokenize.h"
-#include "cpp.h"
-
-#include "../term/term.h"
 
 using namespace utils;
 using namespace syntax;
 
 constexpr auto TokenDelimiter = '|';
 
-struct TokenGroup {
-    std::unique_ptr<uint8_t[]> tokens;
-    size_t size;
-    TokenType type;
-};
-
-TokenGroup tokens(const char* tokens_def, const TokenType token_type) {
+TokenGroup syntax::tokens(const char* tokens_def, const TokenType token_type) {
 
     const auto tokens_length = strlen(tokens_def) + 1;
 
@@ -48,25 +39,20 @@ TokenGroup tokens(const char* tokens_def, const TokenType token_type) {
     return token_group;
 }
 
-const auto Grammar = utils::array::from<TokenGroup>(
-    tokens(cpp::Keywords, syntax::TokenType::Keyword),
-    tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword)
-);
+TokenType token_type(const Slice<uint8_t>& sequence, const Grammar& grammar) {
 
-TokenType syntax::token_type(const Slice<uint8_t>& sequence) {
-
-    for(auto i = 0; i < Grammar.size(); ++i) {
-        const auto tokens = Grammar[i].tokens.get();
+    for(auto i = 0; i < grammar.tokens.size; ++i) {
+        const auto tokens = grammar.tokens.data[i].tokens.get();
 
         size_t length_index = 0;
 
-        while(length_index < Grammar[i].size) {
+        while(length_index < grammar.tokens.data[i].size) {
             const auto token_size = tokens[length_index];
             const auto token_index = length_index + 1;
 
             if(token_size == sequence.size) {
                 if(std::memcmp(tokens + token_index, sequence.data, token_size) == 0) {
-                    return Grammar[i].type;
+                    return grammar.tokens.data[i].type;
                 }
             }
 
@@ -77,16 +63,17 @@ TokenType syntax::token_type(const Slice<uint8_t>& sequence) {
     return TokenType::Plain;
 }
 
-bool is_delimiter(const uint8_t val) {
-    return val == cpp::Delimiter;
+bool is_delimiter(const uint8_t val, const Grammar& grammar) {
+    return val == grammar.delimiter;
 }
 
-bool is_not_delimiter(const uint8_t val) {
-    return val != cpp::Delimiter;
+bool is_not_delimiter(const uint8_t val, const Grammar& grammar) {
+    return val != grammar.delimiter;
 }
 
-Tokenizer::Tokenizer(Slice<uint8_t>& text): 
+Tokenizer::Tokenizer(const Slice<uint8_t>& text, const Grammar& grammar): 
     _text(text),
+    _grammar(grammar),
     _pos(0) {}
 
 bool Tokenizer::is_end() const {
@@ -106,14 +93,12 @@ Token Tokenizer::next() {
             span: Slice(_text.data, 0)
         };
     } else {
-        const auto marker = is_delimiter(_text.data[_pos])? find_next<is_not_delimiter>() : find_next<is_delimiter>();
+        const auto marker = is_delimiter(_text.data[_pos], _grammar)? find_next<is_not_delimiter>() : find_next<is_delimiter>();
         const auto span = Slice(_text.data + _pos, marker - _pos);
         _pos = marker;
 
-        const auto token_type = syntax::token_type(span);
-
         return Token {
-            type: token_type,
+            type: token_type(span, _grammar),
             span: span
         };
     }

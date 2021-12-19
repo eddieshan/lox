@@ -6,9 +6,11 @@
 #include "../term/ansi.h"
 #include "../settings/theme.h"
 #include "../buffers/piece_table.h"
+#include "../syntax/tokenize.h"
 #include "../text/navigation.h"
 #include "../models/text_area.h"
 #include "../syntax/tokenize.h"
+#include "../syntax/grammar.h"
 #include "../views/text_view.h"
 #include "../views/syntax_view.h"
 #include "../views/status_bar_view.h"
@@ -29,9 +31,13 @@ constexpr auto TextBufferSize = 64*units::Kb;
 constexpr auto ScreenBufferSize = units::Kb;
 constexpr auto TempTextBufferSize = units::Kb;
 
-void render(EditorState& state) {
-    auto text = state.text_area.text();
-    auto tokenizer = syntax::Tokenizer(text);
+struct Config {
+    syntax::Grammar grammar;
+};
+
+void render(EditorState& state, const Config& config) {
+    const auto text = state.text_area.text();
+    auto tokenizer = syntax::Tokenizer(text, config.grammar);
     const auto text_pos = state.text_area.position();
     syntax_view::render(tokenizer, text_pos, state.screen_buffer);
  
@@ -95,8 +101,6 @@ bool process(const term::Key& key, EditorState& state) {
             }
     };
 
-    render(state);
-
     return true;
 }
 
@@ -113,13 +117,18 @@ void editor::run() {
         window_size: term::get_window_size()
     };
 
-    render(state);
+    const auto config = Config {
+        grammar: syntax::build()
+    };
+
+    render(state, config);
 
     do {
         const auto key = term::read_key();
 
         if(key.size > 0) {
             wait_for_events = process(key, state);
+            render(state, config);
         }
     } while(wait_for_events);
 }

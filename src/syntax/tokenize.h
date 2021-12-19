@@ -7,8 +7,6 @@
 
 namespace syntax {
 
-    typedef bool (*predicate)(const uint8_t val);
-
     enum class TokenType {
         Plain,
         Keyword,
@@ -24,27 +22,42 @@ namespace syntax {
         utils::Slice<uint8_t> span;
     };
 
-    TokenType token_type(const utils::Slice<uint8_t>& sequence);
+    struct TokenGroup {
+        std::unique_ptr<uint8_t[]> tokens;
+        size_t size;
+        TokenType type;
+    };
+
+    struct Grammar {
+        utils::Slice<TokenGroup> tokens;
+        uint8_t delimiter;
+    };
+
+    typedef bool (*predicate)(const uint8_t val, const Grammar& grammar);
+
+    TokenGroup tokens(const char* tokens_def, const TokenType token_type);
 
     class Tokenizer {
         private:
-            utils::Slice<uint8_t>& _text;
+            const utils::Slice<uint8_t>& _text;
+            const Grammar& _grammar;
             size_t _pos;
-
-        public:
-            Tokenizer(utils::Slice<uint8_t>& text);
-            bool is_end() const;
-            Token next();
 
             template<predicate pred>
             size_t find_next() {
                 for(auto i = _pos; i < _text.size; ++i) {
-                    if(pred(_text.data[i]) || _text.data[i] == utils::ascii::CarriageReturn) {
+                    if(pred(_text.data[i], _grammar) || _text.data[i] == utils::ascii::CarriageReturn) {
                         return i;
                     }
                 }
 
                 return _text.size;
             }
+
+        public:
+            Tokenizer(const utils::Slice<uint8_t>& text, const Grammar& grammar);
+            bool is_end() const;
+            Token next();
+
     };
 }
