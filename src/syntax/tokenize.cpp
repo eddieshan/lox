@@ -3,15 +3,24 @@
 
 #include "../utils/slice.h"
 #include "../utils/array.h"
+#include "../utils/ascii.h"
 #include "tokenize.h"
 #include "cpp.h"
+
+#include "../term/term.h"
 
 using namespace utils;
 using namespace syntax;
 
 constexpr auto TokenDelimiter = '|';
 
-TokenGroup syntax::tokens(const char* tokens_def, const TokenType token_type) {
+struct TokenGroup {
+    std::unique_ptr<uint8_t[]> tokens;
+    size_t size;
+    TokenType type;
+};
+
+TokenGroup tokens(const char* tokens_def, const TokenType token_type) {
 
     const auto tokens_length = strlen(tokens_def) + 1;
 
@@ -40,8 +49,8 @@ TokenGroup syntax::tokens(const char* tokens_def, const TokenType token_type) {
 }
 
 const auto Grammar = utils::array::from<TokenGroup>(
-    syntax::tokens(cpp::Keywords, syntax::TokenType::Keyword),
-    syntax::tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword)
+    tokens(cpp::Keywords, syntax::TokenType::Keyword),
+    tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword)
 );
 
 TokenType syntax::token_type(const Slice<uint8_t>& sequence) {
@@ -68,6 +77,44 @@ TokenType syntax::token_type(const Slice<uint8_t>& sequence) {
     return TokenType::Plain;
 }
 
-bool syntax::is_delimiter(const uint8_t val) {
+bool is_delimiter(const uint8_t val) {
     return val == cpp::Delimiter;
+}
+
+bool is_not_delimiter(const uint8_t val) {
+    return val != cpp::Delimiter;
+}
+
+Tokenizer::Tokenizer(Slice<uint8_t>& text): 
+    _text(text),
+    _pos(0) {}
+
+bool Tokenizer::is_end() const {
+    return _text.size == 0 || _pos == _text.size;
+}
+
+Token Tokenizer::next() {
+
+    const auto is_new_line = _text.data[_pos] == ascii::CarriageReturn;
+
+    if(is_new_line) {
+        if(_pos < _text.size) {
+            ++_pos;
+        }
+        return Token {
+            type: TokenType::NewLine,
+            span: Slice(_text.data, 0)
+        };
+    } else {
+        const auto marker = is_delimiter(_text.data[_pos])? find_next<is_not_delimiter>() : find_next<is_delimiter>();
+        const auto span = Slice(_text.data + _pos, marker - _pos);
+        _pos = marker;
+
+        const auto token_type = syntax::token_type(span);
+
+        return Token {
+            type: token_type,
+            span: span
+        };
+    }
 }

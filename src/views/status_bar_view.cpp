@@ -9,7 +9,7 @@ using namespace utils;
 using namespace term;
 using namespace views;
 
-void status_bar_view::render(const models::TextState& text_state, const WindowSize& window_size, buffers::FixedBuffer& buffer) {
+void status_bar_view::render(const models::TextCursor& text_state, const WindowSize& window_size, buffers::FixedBuffer& buffer) {
     constexpr auto caption = array::from<uint8_t>((uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)':', (uint8_t)0, (uint8_t)0, (uint8_t)0);
 
     convert::to_chars_3(text_state.pos.row + 1, (uint8_t*)caption.data());

@@ -8,6 +8,7 @@
 #include "../buffers/piece_table.h"
 #include "../text/navigation.h"
 #include "../models/text_area.h"
+#include "../syntax/tokenize.h"
 #include "../views/text_view.h"
 #include "../views/syntax_view.h"
 #include "../views/status_bar_view.h"
@@ -29,7 +30,13 @@ constexpr auto ScreenBufferSize = units::Kb;
 constexpr auto TempTextBufferSize = units::Kb;
 
 void render(EditorState& state) {
-    const auto text_state = syntax_view::render(state.text_area.text(), state.text_area.position(), state.screen_buffer);
+    auto text = state.text_area.text();
+    auto tokenizer = syntax::Tokenizer(text);
+    const auto text_pos = state.text_area.position();
+    syntax_view::render(tokenizer, text_pos, state.screen_buffer);
+ 
+    const auto text_state = navigation::text_cursor(text, text_pos);
+
     status_bar_view::render(text_state, state.window_size, state.screen_buffer);
     line_counter_view::render(text_state, state.screen_buffer);
     cursor::render(text_state.pos + text_view::StartPos, state.screen_buffer);
@@ -81,7 +88,7 @@ bool process(const term::Key& key, EditorState& state) {
             break;
         default:
             if (key.size == 1) {
-                const auto next_pos = state.text_buffer.insert(key.code, state.text_area.position());                
+                const auto next_pos = state.text_buffer.insert(key.code, state.text_area.position());
                 state.text_area.clear();
                 state.text_buffer.accept<TextArea, &TextArea::write>(state.text_area);
                 state.text_area.move_to(next_pos);
@@ -92,7 +99,6 @@ bool process(const term::Key& key, EditorState& state) {
 
     return true;
 }
-
 
 void editor::run() {
     const auto result = term::enable_raw_mode();

@@ -46,7 +46,7 @@ namespace models {
 
     };
 
-    struct TextState {
+    struct TextCursor {
         utils::Position pos;
         size_t n_lines;
     };    

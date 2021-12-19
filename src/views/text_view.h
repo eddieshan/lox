@@ -7,5 +7,5 @@
 namespace views::text_view {
     constexpr utils::Position StartPos = utils::Position { row: 0, col: 4 };
 
-    models::TextState render(const utils::Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer);
+    void render(const utils::Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer);
 }
