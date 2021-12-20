@@ -30,7 +30,7 @@ namespace syntax {
 
     struct Grammar {
         utils::Slice<TokenGroup> tokens;
-        uint8_t delimiter;
+        utils::Slice<uint8_t> delimiters;
     };
 
     typedef bool (*predicate)(const uint8_t val, const Grammar& grammar);
@@ -45,7 +45,7 @@ namespace syntax {
 
             template<predicate pred>
             size_t find_next() {
-                for(auto i = _pos; i < _text.size; ++i) {
+                for(auto i = _pos + 1; i < _text.size; ++i) {
                     if(pred(_text.data[i], _grammar) || _text.data[i] == utils::ascii::CarriageReturn) {
                         return i;
                     }
@@ -53,6 +53,19 @@ namespace syntax {
 
                 return _text.size;
             }
+
+            template<predicate pred>
+            size_t advance_while() {
+                for(auto i = _pos + 1; i < _text.size; ++i) {
+                    if(!pred(_text.data[i], _grammar) || _text.data[i] == utils::ascii::CarriageReturn) {
+                        return i;
+                    }
+                }
+
+                return _text.size;
+            }            
+
+            size_t find_next(const uint8_t);
 
         public:
             Tokenizer(const utils::Slice<uint8_t>& text, const Grammar& grammar);

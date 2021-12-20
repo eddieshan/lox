@@ -48,6 +48,6 @@ const auto default_tokens = array::from<TokenGroup>(
 Grammar syntax::build() {
     return Grammar {
         tokens: slice::from(default_tokens),
-        delimiter: cpp::Delimiter
+        delimiters: slice::from(cpp::Delimiters)
     };
 }
