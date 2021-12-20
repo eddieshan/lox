@@ -30,14 +30,7 @@ void syntax_view::render(Tokenizer& tokenizer, const size_t pos, buffers::FixedB
         if(token.type == TokenType::NewLine) {
             buffer.write(next_line);
         } else {
-            if(token.type == TokenType::Keyword) {
-                buffer.write(theme::Keyword);
-            } else if(token.type == TokenType::TypeKeyword) {
-                buffer.write(theme::TypeKeyword);
-            } else {
-                buffer.write(theme::Plain);
-            }
-
+            buffer.write(theme::syntax_style(token.type));
             buffer.write(token.span);
             buffer.write(ansi::ResetForeground);
         }
