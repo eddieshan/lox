@@ -8,7 +8,7 @@ using namespace utils;
 using namespace term;
 using namespace views;
 
-void line_counter_view::render(const models::TextState& text_state, buffers::FixedBuffer& buffer) {
+void line_counter_view::render(const models::TextCursor& text_state, buffers::FixedBuffer& buffer) {
     std::array<uint8_t, 3> line_count = { (uint8_t)' ', (uint8_t)' ', (uint8_t)' ' };
 
     buffer.write(ansi::Home);

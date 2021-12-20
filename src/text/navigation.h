@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../utils/geometry.h"
+#include "../models/text_area.h"
 #include "../utils/slice.h"
 
 // Navigation module providing free functions to calculate the next position 
@@ -9,7 +9,7 @@
 // Boundary check is not guaranteed, the caller is responsible for passing a valid position value.
 namespace text::navigation {
 
-    utils::Position screen_position(const utils::Slice<uint8_t>& text, const size_t pos);
+    models::TextCursor text_cursor(const utils::Slice<uint8_t>& text, const size_t pos);
 
     size_t col_forward(const utils::Slice<uint8_t>& text, const size_t pos);
     size_t col_back(const utils::Slice<uint8_t>& text, const size_t pos);

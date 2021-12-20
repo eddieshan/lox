@@ -13,13 +13,19 @@ set(SOURCES
     src/buffers/fixed_buffer.cpp
     src/buffers/piece.cpp
     src/buffers/piece_table.cpp
+    src/syntax/tokenize.cpp
+    src/syntax/grammar.cpp
     src/text/navigation.cpp
     src/models/text_area.cpp
     src/views/text_view.cpp
+    src/views/syntax_view.cpp
     src/views/line_counter_view.cpp
     src/views/status_bar_view.cpp
     src/views/cursor.cpp
+    src/components/controller.cpp
+    src/components/view.cpp
     src/components/editor.cpp
+    src/settings/theme.cpp    
     src/main.cpp
 )
 

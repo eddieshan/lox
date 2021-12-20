@@ -25,5 +25,16 @@ namespace utils {
         Slice<T> from(const std::array<T, Size>& array) {
             return Slice<T>(array.data(), array.size());
         };
+
+        template<typename T>
+        bool contains(const Slice<T>& slice, const T val) {
+            for(auto i = 0; i < slice.size; ++i) {
+                if(slice.data[i] == val) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

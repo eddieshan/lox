@@ -1,25 +1,37 @@
-#include "../utils/geometry.h"
 #include "../utils/slice.h"
 #include "../utils/ascii.h"
+#include "../models/text_area.h"
+
 #include "navigation.h"
 
 using namespace utils;
+using namespace models;
 using namespace text;
 
-Position navigation::screen_position(const utils::Slice<uint8_t>& text, const size_t pos) {
-    auto screen_pos = Position { 0, 0 };
-    size_t last_cr = 0;
+TextCursor navigation::text_cursor(const utils::Slice<uint8_t>& text, const size_t pos) {
+    auto cursor = TextCursor {
+        pos: Position { 0, 0 },
+        n_lines: 1
+    };
 
-    for(auto i = 0; i < pos; ++i) {
-        if(text.data[i] == ascii::CarriageReturn) {
-            ++screen_pos.row;
-            screen_pos.col = 0;
-        } else {
-            ++screen_pos.col;
+    for(auto i = 0; i < text.size; ++i) {
+        const auto is_line_break = text.data[i] == ascii::CarriageReturn;
+
+        if(i < pos) {
+            if(is_line_break) {
+                ++cursor.pos.row;
+                cursor.pos.col = 0;
+            } else {
+                ++cursor.pos.col;
+            }
+        }
+        
+        if(is_line_break) {
+            ++cursor.n_lines;
         }
     }
 
-    return screen_pos;
+    return cursor;
 }
 
 size_t navigation::col_forward(const utils::Slice<uint8_t>& text, const size_t pos) {
