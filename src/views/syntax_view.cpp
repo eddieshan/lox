@@ -1,7 +1,6 @@
 #include "../utils/convert.h"
 #include "../utils/geometry.h"
 #include "../utils/slice.h"
-#include "../utils/ascii.h"
 #include "../settings/theme.h"
 #include "../term/ansi.h"
 #include "../term/term.h"

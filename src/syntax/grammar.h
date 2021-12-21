@@ -1,6 +1,34 @@
 #pragma once
-#include "tokenize.h"
 
-namespace syntax {    
+#include <memory>
+
+namespace syntax {
+
+    enum class TokenType {
+        Plain,
+        Keyword,
+        TypeKeyword,
+        NumericLiteral,
+        StringLiteral,
+        Identifier,
+        NewLine
+    };
+
+    struct Token {
+        TokenType type;
+        utils::Slice<uint8_t> span;
+    };    
+
+    struct TokenGroup {
+        std::unique_ptr<uint8_t[]> tokens;
+        size_t size;
+        TokenType type;
+    };
+
+    struct Grammar {
+        utils::Slice<TokenGroup> tokens;
+        utils::Slice<uint8_t> delimiters;
+    };
+
     Grammar build();
 }

@@ -3,7 +3,6 @@
 
 #include "../utils/slice.h"
 #include "../utils/array.h"
-#include "tokenize.h"
 #include "grammar.h"
 #include "cpp.h"
 
@@ -12,7 +11,7 @@ using namespace syntax;
 
 constexpr auto TokenDelimiter = '|';
 
-TokenGroup syntax::tokens(const char* tokens_def, const TokenType token_type) {
+TokenGroup tokens(const char* tokens_def, const TokenType token_type) {
 
     const auto tokens_length = strlen(tokens_def) + 1;
 
