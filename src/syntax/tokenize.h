@@ -1,37 +1,10 @@
 #pragma once
 
-#include <memory>
-
 #include "../utils/slice.h"
 #include "../utils/ascii.h"
+#include "grammar.h"
 
 namespace syntax {
-
-    enum class TokenType {
-        Plain,
-        Keyword,
-        TypeKeyword,
-        NumericLiteral,
-        StringLiteral,
-        Identifier,
-        NewLine
-    };
-
-    struct Token {
-        TokenType type;
-        utils::Slice<uint8_t> span;
-    };
-
-    struct TokenGroup {
-        std::unique_ptr<uint8_t[]> tokens;
-        size_t size;
-        TokenType type;
-    };
-
-    struct Grammar {
-        utils::Slice<TokenGroup> tokens;
-        utils::Slice<uint8_t> delimiters;
-    };
 
     typedef bool (*predicate)(const uint8_t val, const Grammar& grammar);
 
@@ -53,17 +26,6 @@ namespace syntax {
 
                 return _text.size;
             }
-
-            template<predicate pred>
-            size_t advance_while() {
-                for(auto i = _pos + 1; i < _text.size; ++i) {
-                    if(!pred(_text.data[i], _grammar) || _text.data[i] == utils::ascii::CarriageReturn) {
-                        return i;
-                    }
-                }
-
-                return _text.size;
-            }            
 
             size_t find_next(const uint8_t);
 

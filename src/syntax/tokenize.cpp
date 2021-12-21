@@ -4,6 +4,7 @@
 #include "../utils/array.h"
 #include "../utils/ascii.h"
 #include "../term/term.h"
+#include "grammar.h"
 #include "tokenize.h"
 
 using namespace utils;
