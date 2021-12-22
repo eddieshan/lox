@@ -19,7 +19,7 @@ namespace syntax {
             template<predicate pred>
             size_t find_next() {
                 for(auto i = _pos + 1; i < _text.size; ++i) {
-                    if(pred(_text.data[i], _grammar) || _text.data[i] == utils::ascii::CarriageReturn) {
+                    if(pred(_text.data[i], _grammar) || _text.data[i] == utils::ascii::Lf) {
                         return i;
                     }
                 }
