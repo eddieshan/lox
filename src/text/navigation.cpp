@@ -1,6 +1,6 @@
 #include "../utils/slice.h"
 #include "../utils/ascii.h"
-#include "../models/text_area.h"
+#include "../models/common.h"
 
 #include "navigation.h"
 

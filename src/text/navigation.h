@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../models/text_area.h"
+#include "../models/common.h"
 #include "../utils/slice.h"
 
 // Navigation module providing free functions to calculate the next position 

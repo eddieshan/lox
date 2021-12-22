@@ -1,11 +1,8 @@
-#include <stdio.h>
-
 #include "../utils/units.h"
 #include "../utils/array.h"
 #include "../term/term.h"
 #include "../settings/theme.h"
 #include "../buffers/piece_table.h"
-#include "../models/text_area.h"
 #include "../syntax/tokenize.h"
 #include "../syntax/grammar.h"
 #include "common.h"
@@ -16,13 +13,12 @@
 using namespace utils;
 using namespace term;
 using namespace buffers;
-using namespace models;
 using namespace components;
 using namespace settings;
 
 constexpr auto TextBufferSize = 64*units::Kb;
-constexpr auto ScreenBufferSize = units::Kb;
-constexpr auto TempTextBufferSize = units::Kb;
+constexpr auto ScreenBufferSize = 16*units::Kb;
+constexpr auto TempTextBufferSize = 64*units::Kb;
 
 void editor::run() {
     const auto result = term::enable_raw_mode();
@@ -32,7 +28,7 @@ void editor::run() {
 
     auto state = EditorState {
         text_buffer: PieceTable(TextBufferSize),
-        text_area: TextArea(TempTextBufferSize),
+        text_area: Buffer(TempTextBufferSize),
         screen_buffer: FixedBuffer(ScreenBufferSize, slice::from(preamble)),
         window_size: term::get_window_size()
     };

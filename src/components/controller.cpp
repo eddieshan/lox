@@ -1,16 +1,21 @@
+#include <fstream>
+
 #include "../utils/ascii.h"
 #include "../term/term.h"
 #include "../text/navigation.h"
-#include "../models/text_area.h"
+#include "../buffers/buffer.h"
 #include "common.h"
 #include "controller.h"
 
-using namespace components;
 using namespace utils;
+using namespace buffers;
+using namespace components;
 using namespace text;
 using namespace models;
 
 bool controller::process(const term::Key& key, EditorState& state) {
+
+    auto text_changed = false;
 
     switch (key.code) {
         case ascii::CtrlQ:
@@ -19,44 +24,46 @@ bool controller::process(const term::Key& key, EditorState& state) {
         case ascii::Cr:
             break;
         case ascii::Up:
-            state.text_area.move_to<navigation::row_back>();
+            state.pos = navigation::row_back(state.text_area.text(), state.pos, 1);
             break;
         case ascii::Down:
-            state.text_area.move_to<navigation::row_forward>();
+            state.pos = navigation::row_forward(state.text_area.text(), state.pos, 1);
             break;
         case ascii::Right:
-            state.text_area.move_to<navigation::col_forward>();
+            state.pos = navigation::col_forward(state.text_area.text(), state.pos);
             break;
         case ascii::Left:
-            state.text_area.move_to<navigation::col_back>();
+            state.pos = navigation::col_back(state.text_area.text(), state.pos);
             break;
         case ascii::Htab:
             break;
         case ascii::LnStart:
-            state.text_area.move_to<navigation::row_start>();
+            state.pos = navigation::row_start(state.text_area.text(), state.pos);
             break;
         case ascii::LnEnd:
-            state.text_area.move_to<navigation::row_end>();
+            state.pos = navigation::row_end(state.text_area.text(), state.pos);            
             break;
         case ascii::Del:
-            state.text_buffer.erase(state.text_area.position());        
-            state.text_area.clear();
-            state.text_buffer.accept<TextArea, &TextArea::write>(state.text_area);
+            state.text_buffer.erase(state.pos);
+            text_changed = true;
             break;
         case ascii::BSpace:
-            state.text_area.move_to<navigation::col_back>();
-            state.text_buffer.erase(state.text_area.position());
-            state.text_area.clear();
-            state.text_buffer.accept<TextArea, &TextArea::write>(state.text_area);        
+            state.pos = navigation::col_back(state.text_area.text(), state.pos);
+            state.text_buffer.erase(state.pos);
+            text_changed = true;
             break;
         default:
             if (key.size == 1) {
-                const auto next_pos = state.text_buffer.insert(key.code, state.text_area.position());
-                state.text_area.clear();
-                state.text_buffer.accept<TextArea, &TextArea::write>(state.text_area);
-                state.text_area.move_to(next_pos);
+                state.pos = state.text_buffer.insert(key.code, state.pos);
+                state.text_buffer.erase(state.pos);
+                text_changed = true;                
             }
     };
+
+    if(text_changed) {
+        state.text_area.clear();
+        state.text_buffer.accept<Buffer, &Buffer::write>(state.text_area);
+    }
 
     return true;
 }

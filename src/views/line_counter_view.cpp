@@ -1,5 +1,6 @@
 #include "../utils/convert.h"
 #include "../term/ansi.h"
+#include "../models/common.h"
 #include "../text/navigation.h"
 
 #include "line_counter_view.h"

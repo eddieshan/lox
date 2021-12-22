@@ -2,7 +2,7 @@
 
 #include "../utils/convert.h"
 #include "../term/ansi.h"
-#include "../models/text_area.h"
+#include "../models/common.h"
 #include "status_bar_view.h"
 
 using namespace utils;
