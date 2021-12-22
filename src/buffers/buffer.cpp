@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <cstring>
 #include <memory>
 
 #include "../utils/slice.h"
@@ -18,6 +19,16 @@ void Buffer::write(const utils::Slice<uint8_t>& slice) {
     if(new_size < _capacity) {
         const auto current = _bytes.get() + _size;
         std::copy(slice.data, slice.data + slice.size, current);
+        _size = new_size;
+    }
+}
+
+void Buffer::write(const char* data) {
+    const auto length = strlen(data);
+    const auto new_size = _size + length;
+    if(new_size < _capacity) {
+        const auto current = _bytes.get() + _size;
+        std::copy(data, data + length, current);
         _size = new_size;
     }
 }

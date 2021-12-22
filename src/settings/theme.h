@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../utils/array.h"
 #include "../term/ansi.h"
 #include "../syntax/tokenize.h"

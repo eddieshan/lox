@@ -1,25 +1,51 @@
 #include <fstream>
 
+#include "../utils/array.h"
+#include "../utils/slice.h"
 #include "../utils/ascii.h"
 #include "../term/term.h"
 #include "../text/navigation.h"
 #include "../buffers/buffer.h"
-#include "common.h"
+#include "../models/editor_state.h"
 #include "controller.h"
 
 using namespace utils;
 using namespace buffers;
-using namespace components;
+using namespace controllers;
 using namespace text;
 using namespace models;
+
+void open_file(EditorState& state, const char* path) {
+
+    state.command.text.write(path);
+
+    std::ifstream reader(path, std::ifstream::in);
+
+    auto pos = 0;
+
+    while (reader.good()) {
+        const auto c = reader.get();
+        pos = state.text_buffer.insert(c, pos);
+    }
+
+    reader.close();
+}
 
 bool controller::process(const term::Key& key, EditorState& state) {
 
     auto text_changed = false;
+    const auto path = "/home/dev/development/test.cpp";
 
     switch (key.code) {
         case ascii::CtrlQ:
             return false;
+            break;
+        case ascii::CtrlO:
+            //const auto path = "/home/dev/Downloads/piecechain/SpanView.h";
+            //printf("Open: %s", path);
+            open_file(state, path);
+            text_changed = true;
+            state.pos = 0;
             break;
         case ascii::Cr:
             break;

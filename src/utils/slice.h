@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+#include <cstring>
 #include <array>
 
 namespace utils {
@@ -24,7 +26,7 @@ namespace utils {
         template<typename T, std::size_t Size>
         Slice<T> from(const std::array<T, Size>& array) {
             return Slice<T>(array.data(), array.size());
-        };
+        }
 
         template<typename T>
         bool contains(const Slice<T>& slice, const T val) {
@@ -36,5 +38,6 @@ namespace utils {
 
             return false;
         }
+
     }
 }

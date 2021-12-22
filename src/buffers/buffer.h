@@ -19,6 +19,8 @@ namespace buffers {
 
             void write(const utils::Slice<uint8_t>& data);
 
+            void write(const char* data);            
+
             utils::Slice<uint8_t> text() const;
 
             void clear();
