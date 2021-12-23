@@ -47,16 +47,18 @@ bool controller::process(const term::Key& key, EditorState& state) {
         case ascii::CtrlQ:
             return false;
             break;
+        case ascii::Esc:
+            state.action_type = ActionType::Edit;
+            break;            
         case ascii::CtrlO:
             state.command.type = CommandType::OpenFile;
             state.action_type = ActionType::Command;
+            state.pos = 0;
             break;
         case ascii::Cr:
             if(state.action_type == ActionType::Command) {
                 execute_command(state);
                 text_changed = true;
-            } else {
-
             }
             break;
         case ascii::Up:
