@@ -1,5 +1,4 @@
 #include "../utils/geometry.h"
-#include "../term/term.h"
 #include "../text/navigation.h"
 #include "../syntax/tokenize.h"
 #include "../models/command.h"
@@ -16,7 +15,6 @@
 
 using namespace views;
 using namespace text;
-using namespace term;
 using namespace models;
 using namespace utils;
 
@@ -36,9 +34,4 @@ void main_view::render(EditorState& state, const settings::Config& config) {
     } else {
         cursor::render(text_state.pos + text_view::StartPos, state.screen_buffer);
     }
-
-    term::write(state.screen_buffer.data());
-    state.screen_buffer.clear();
-    
-    term::flush();
 }

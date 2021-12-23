@@ -16,6 +16,13 @@ using namespace views;
 using namespace settings;
 using namespace models;
 
+void render(EditorState& state, const Config& config) {
+    main_view::render(state, config);
+    term::write(state.screen_buffer.data());    
+    term::flush();
+    state.screen_buffer.clear();
+}
+
 void editor::run() {
     const auto result = term::enable_raw_mode();
 
@@ -26,14 +33,14 @@ void editor::run() {
         grammar: syntax::build()
     };
 
-    main_view::render(state, config);
+    render(state, config);
 
     do {
         const auto key = term::read_key();
 
         if(key.size > 0) {
             wait_for_events = controller::process(key, state);
-            main_view::render(state, config);
+            render(state, config);
         }
     } while(wait_for_events);
 }
