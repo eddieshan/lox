@@ -59,6 +59,9 @@ bool controller::process(const term::Key& key, EditorState& state) {
             if(state.action_type == ActionType::Command) {
                 execute_command(state);
                 text_changed = true;
+            } else {
+                state.pos = state.text_buffer.insert(ascii::Lf, state.pos);
+                text_changed = true;
             }
             break;
         case ascii::Up:
