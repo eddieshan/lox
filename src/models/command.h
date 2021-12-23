@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../buffers/buffer.h"
+#include <cstddef>
+#include "../utils/array_list.h"
 
 namespace models {
 
@@ -10,6 +11,6 @@ namespace models {
 
     struct Command {
         CommandType type;
-        buffers::Buffer text;
+        utils::ArrayList<uint8_t> text;
     };
 }

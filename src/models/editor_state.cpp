@@ -5,7 +5,7 @@
 #include "../settings/theme.h"
 #include "../buffers/piece_table.h"
 #include "../buffers/fixed_buffer.h"
-#include "../buffers/buffer.h"
+#include "../utils/array_list.h"
 #include "../term/term.h"
 
 #include "command.h"
@@ -31,7 +31,7 @@ EditorState editor_state::build() {
         window_size: term::get_window_size(),
         command: models::Command {
             type: models::CommandType::OpenFile,
-            text: Buffer(1000)
+            text: ArrayList<uint8_t>(1000)
         },
         action_type: ActionType::Edit
     };

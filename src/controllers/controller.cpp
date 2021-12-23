@@ -15,9 +15,9 @@ using namespace controllers;
 using namespace text;
 using namespace models;
 
-void open_file(EditorState& state, const char* path) {
+void open_file(EditorState& state) {
 
-    state.command.text.write(path);
+    const auto path = (char*)state.command.text.data().data;
 
     std::ifstream reader(path, std::ifstream::in);
 
@@ -31,23 +31,33 @@ void open_file(EditorState& state, const char* path) {
     reader.close();
 }
 
+void execute_command(EditorState& state) {
+    if(state.command.type == CommandType::OpenFile) {
+        open_file(state);
+        state.pos = 0;
+        state.action_type = ActionType::Edit;
+    }
+}
+
 bool controller::process(const term::Key& key, EditorState& state) {
 
     auto text_changed = false;
-    const auto path = "/home/dev/development/test.cpp";
 
     switch (key.code) {
         case ascii::CtrlQ:
             return false;
             break;
         case ascii::CtrlO:
-            //const auto path = "/home/dev/Downloads/piecechain/SpanView.h";
-            //printf("Open: %s", path);
-            open_file(state, path);
-            text_changed = true;
-            state.pos = 0;
+            state.command.type = CommandType::OpenFile;
+            state.action_type = ActionType::Command;
             break;
         case ascii::Cr:
+            if(state.action_type == ActionType::Command) {
+                execute_command(state);
+                text_changed = true;
+            } else {
+
+            }
             break;
         case ascii::Up:
             state.pos = navigation::row_back(state.text_area.text(), state.pos, 1);
@@ -80,9 +90,15 @@ bool controller::process(const term::Key& key, EditorState& state) {
             break;
         default:
             if (key.size == 1) {
-                state.pos = state.text_buffer.insert(key.code, state.pos);
-                state.text_buffer.erase(state.pos);
-                text_changed = true;                
+                if(state.action_type == ActionType::Command) {
+                    if(state.command.type == CommandType::OpenFile) {
+                        state.command.text.insert(key.code, state.pos);
+                        ++state.pos;
+                    }
+                } else {
+                    state.pos = state.text_buffer.insert(key.code, state.pos);
+                    text_changed = true;
+                }
             }
     };
 

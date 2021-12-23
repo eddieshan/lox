@@ -5,5 +5,5 @@
 #include "../models/command.h"
 
 namespace views::command_view {
-    void render(const models::Command& command, const utils::WindowSize& window_size, buffers::FixedBuffer& buffer);
+    utils::Position render(const models::Command& command, const utils::WindowSize& window_size, buffers::FixedBuffer& buffer);
 }
