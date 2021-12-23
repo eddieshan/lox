@@ -62,10 +62,10 @@ bool controller::process(const term::Key& key, EditorState& state) {
             }
             break;
         case ascii::Up:
-            state.pos = navigation::row_back(state.text_area.text(), state.pos, 1);
+            state.pos = navigation::row_back(state.text_area.text(), state.pos);
             break;
         case ascii::Down:
-            state.pos = navigation::row_forward(state.text_area.text(), state.pos, 1);
+            state.pos = navigation::row_forward(state.text_area.text(), state.pos);
             break;
         case ascii::Right:
             state.pos = navigation::col_forward(state.text_area.text(), state.pos);

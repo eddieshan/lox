@@ -1,7 +1,4 @@
-#include <cstddef>
-
 #include "../utils/units.h"
-#include "../utils/array.h"
 #include "../buffers/piece_table.h"
 #include "../buffers/fixed_buffer.h"
 #include "../utils/array_list.h"
