@@ -13,6 +13,7 @@ namespace settings::theme {
     const auto TypeKeyword = term::ansi::color_256(term::ansi::ForegroundAttr, 75);
     const auto Number = term::ansi::color_256(term::ansi::ForegroundAttr, 10);
     const auto String = term::ansi::color_256(term::ansi::ForegroundAttr, 136);
+    const auto Command = term::ansi::color_256(term::ansi::ForegroundAttr, 226);
 
     const std::array<uint8_t, 11>& syntax_style(syntax::TokenType token_type);
 }

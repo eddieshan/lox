@@ -2,11 +2,13 @@
 #include "../utils/geometry.h"
 #include "../utils/convert.h"
 #include "../term/ansi.h"
+#include "../settings/theme.h"
 #include "command_view.h"
 
 using namespace utils;
 using namespace term;
 using namespace views;
+using namespace settings;
 
 namespace messages {
     constexpr auto Open = array::to_uint8_t("Open: ");
@@ -19,6 +21,7 @@ Position command_view::render(const models::Command& command, const WindowSize& 
     convert::to_chars_3(window_size.rows, (uint8_t*)row_start);
     convert::to_chars_3(0, (uint8_t*)col_start);
 
+    buffer.write(theme::Command);
     buffer.write(cursor_seq);
     buffer.write(messages::Open);
     buffer.write(command.text.data());
