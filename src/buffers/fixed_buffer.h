@@ -24,7 +24,9 @@ namespace buffers {
                 write(array.data(), size);
             }
 
-            void write(const uint8_t*, size_t);
+            void write(const uint8_t* bytes, size_t size);
+
+            void write_n(const uint8_t val, size_t n);
 
             void write(const utils::Slice<uint8_t>& slice);
 

@@ -34,6 +34,15 @@ void FixedBuffer::write(const Slice<uint8_t>& slice) {
     write(slice.data, slice.size);
 }
 
+void FixedBuffer::write_n(const uint8_t val, size_t n) {
+    const auto new_size = _size + n;
+    if(new_size < _capacity) {
+        const auto current = _bytes.get() + _size;
+        std::memset(current, val, n);
+        _size = new_size;
+    }
+}
+
 Slice<uint8_t> FixedBuffer::data() const {
     return Slice(_bytes.get(), _size);
 }

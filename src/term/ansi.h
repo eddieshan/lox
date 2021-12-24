@@ -50,6 +50,7 @@ namespace term::ansi {
     constexpr auto Home = escape("H");
     constexpr auto NextLine = escape("1E");
     constexpr auto Clear = escape("2J");
+    constexpr auto ClearLine = escape("K");
     constexpr auto CursorDn = escape("B");
     constexpr auto CursorRt = escape("C");
     constexpr auto CursorMv = escape("\0\0\0;\0\0\0H");

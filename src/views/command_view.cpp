@@ -11,7 +11,7 @@ using namespace views;
 using namespace settings;
 
 namespace messages {
-    constexpr auto Open = array::to_uint8_t("Open: ");
+    constexpr auto Open = array::to_uint8_t(" Open: ");
 }
 
 Position command_view::render(const models::Command& command, const WindowSize& window_size, buffers::FixedBuffer& buffer) {
@@ -23,6 +23,7 @@ Position command_view::render(const models::Command& command, const WindowSize& 
 
     buffer.write(theme::Command);
     buffer.write(cursor_seq);
+    buffer.write(term::ansi::ClearLine);
     buffer.write(messages::Open);
     buffer.write(command.text.data());
 
