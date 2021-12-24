@@ -1,18 +1,12 @@
 #include <fstream>
 
-#include "../utils/array.h"
-#include "../utils/slice.h"
 #include "../utils/ascii.h"
 #include "../term/term.h"
 #include "../text/navigation.h"
-#include "../buffers/buffer.h"
 #include "../models/editor_state.h"
-#include "common.h"
-#include "edit_controller.h"
-#include "command_controller.h"
+#include "controllers.h"
 
 using namespace utils;
-using namespace buffers;
 using namespace controllers;
 using namespace text;
 using namespace models;
@@ -40,10 +34,10 @@ void execute_command(EditorState& state) {
     }
 }
 
-ControllerResult command_controller::process(const term::Key& key, EditorState& state) {
+ControllerResult controllers::command_line(const term::Key& key, EditorState& state) {
 
     auto result = ControllerResult {
-        controller: command_controller::process,
+        controller: controllers::command_line,
         exit: false,
         text_updated: false,
         active_views: active_views::Command | active_views::Edit
@@ -54,7 +48,7 @@ ControllerResult command_controller::process(const term::Key& key, EditorState& 
             result.exit = true;
             break;
         case ascii::Esc:
-            result.controller = edit_controller::process;
+            result.controller = controllers::edit;
             result.active_views = active_views::Edit;
             break;            
         case ascii::CtrlO:
@@ -64,7 +58,7 @@ ControllerResult command_controller::process(const term::Key& key, EditorState& 
         case ascii::Cr:
             execute_command(state);
             result.text_updated = true;
-            result.controller = edit_controller::process;
+            result.controller = controllers::edit;
             result.active_views = active_views::Edit;
             break;
         case ascii::Right:

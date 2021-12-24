@@ -15,4 +15,8 @@ namespace controllers {
         bool text_updated;
         uint8_t active_views;
     };
+
+    ControllerResult command_line(const term::Key& key, models::EditorState& state);
+
+    ControllerResult edit(const term::Key& key, models::EditorState& state);
 }

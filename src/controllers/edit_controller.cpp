@@ -1,25 +1,20 @@
 #include <fstream>
 
-#include "../utils/array.h"
-#include "../utils/slice.h"
 #include "../utils/ascii.h"
 #include "../term/term.h"
 #include "../text/navigation.h"
-#include "../buffers/buffer.h"
 #include "../models/editor_state.h"
-#include "command_controller.h"
-#include "edit_controller.h"
+#include "controllers.h"
 
 using namespace utils;
-using namespace buffers;
 using namespace controllers;
 using namespace text;
 using namespace models;
 
-ControllerResult edit_controller::process(const term::Key& key, EditorState& state) {
+ControllerResult controllers::edit(const term::Key& key, EditorState& state) {
 
     auto result = ControllerResult {
-        controller: edit_controller::process,
+        controller: controllers::edit,
         exit: false,
         text_updated: false,
         active_views: active_views::Edit
@@ -32,7 +27,7 @@ ControllerResult edit_controller::process(const term::Key& key, EditorState& sta
         case ascii::CtrlO:
             state.command.type = CommandType::OpenFile;
             state.pos = 0;
-            result.controller = command_controller::process;
+            result.controller = controllers::command_line;
             result.active_views = active_views::Edit | active_views::Command;
             break;
         case ascii::Cr:

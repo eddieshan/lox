@@ -6,7 +6,7 @@
 #include "../syntax/grammar.h"
 #include "../models/editor_state.h"
 #include "../views/main_view.h"
-#include "../controllers/edit_controller.h"
+#include "../controllers/controllers.h"
 #include "../settings/theme.h"
 
 #include "editor.h"
@@ -41,7 +41,7 @@ void editor::run() {
         grammar: syntax::build()
     };
 
-    auto controller = edit_controller::process;
+    auto controller = controllers::edit;
 
     render(state, config, screen_buffer, active_views::Edit);
 
