@@ -1,3 +1,5 @@
+#include <cstdint>
+
 #include "../utils/geometry.h"
 #include "../buffers/fixed_buffer.h"
 #include "../text/navigation.h"
@@ -19,7 +21,7 @@ using namespace text;
 using namespace models;
 using namespace utils;
 
-void main_view::render(const EditorState& state, const settings::Config& config, buffers::FixedBuffer& screen_buffer) {
+void main_view::render(const EditorState& state, const settings::Config& config, const uint8_t active_views, buffers::FixedBuffer& screen_buffer) {
     const auto text = state.text_area.text();
     auto tokenizer = syntax::Tokenizer(text, config.grammar);
     syntax_view::render(tokenizer, state.pos, screen_buffer);
@@ -29,7 +31,7 @@ void main_view::render(const EditorState& state, const settings::Config& config,
     status_bar_view::render(text_state, state.window_size, screen_buffer);
     line_counter_view::render(text_state, screen_buffer);
 
-    if(state.action_type == ActionType::Command) {
+    if((active_views & active_views::Command) == active_views::Command) {
         const auto pos = command_view::render(state.command, state.window_size, screen_buffer);
         cursor::render(Position { row: 0, col: (uint32_t) state.pos } + pos, screen_buffer);
     } else {

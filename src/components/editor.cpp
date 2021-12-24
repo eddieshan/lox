@@ -6,7 +6,7 @@
 #include "../syntax/grammar.h"
 #include "../models/editor_state.h"
 #include "../views/main_view.h"
-#include "../controllers/controller.h"
+#include "../controllers/edit_controller.h"
 #include "../settings/theme.h"
 
 #include "editor.h"
@@ -20,8 +20,8 @@ using namespace views;
 using namespace settings;
 using namespace models;
 
-void render(EditorState& state, const Config& config, FixedBuffer& screen_buffer) {
-    main_view::render(state, config, screen_buffer);
+void render(const EditorState& state, const Config& config, FixedBuffer& screen_buffer, uint8_t active_views) {
+    main_view::render(state, config, screen_buffer, active_views);
     term::write(screen_buffer.data());
     term::flush();
     screen_buffer.clear();
@@ -41,14 +41,24 @@ void editor::run() {
         grammar: syntax::build()
     };
 
-    render(state, config, screen_buffer);
+    auto controller = edit_controller::process;
+
+    render(state, config, screen_buffer, active_views::Edit);
 
     do {
         const auto key = term::read_key();
 
         if(key.size > 0) {
-            wait_for_events = controller::process(key, state);
-            render(state, config, screen_buffer);
+            const auto result = controller(key, state);
+            controller = result.controller;
+            wait_for_events = !result.exit;
+
+            if(result.text_updated) {
+                state.text_area.clear();
+                state.text_buffer.accept<Buffer, &Buffer::write>(state.text_area);
+            }
+
+            render(state, config, screen_buffer, result.active_views);
         }
     } while(wait_for_events);
 }

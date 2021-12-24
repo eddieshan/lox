@@ -23,7 +23,6 @@ EditorState editor_state::build() {
         command: models::Command {
             type: models::CommandType::OpenFile,
             text: ArrayList<uint8_t>(1000)
-        },
-        action_type: ActionType::Edit
+        }
     };
 }

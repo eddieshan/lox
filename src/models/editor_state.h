@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 #include "../buffers/piece_table.h"
 #include "../buffers/buffer.h"
@@ -13,13 +14,17 @@ namespace models {
         Command
     };
 
+    namespace active_views {
+        const uint8_t Edit = 1;
+        const uint8_t Command = 2;
+    }
+
     struct EditorState {
         buffers::PieceTable text_buffer;
         buffers::Buffer text_area;
         size_t pos;
         utils::WindowSize window_size;
         models::Command command;
-        ActionType action_type;
     };
 
     namespace editor_state {
