@@ -21,7 +21,7 @@ using namespace settings;
 using namespace models;
 
 void render(const EditorState& state, const Config& config, FixedBuffer& screen_buffer, uint8_t active_views) {
-    main_view::render(state, config, screen_buffer, active_views);
+    main_view::render(state, config, active_views, screen_buffer);
     term::write(screen_buffer.data());
     term::flush();
     screen_buffer.clear();

@@ -7,7 +7,7 @@ namespace controllers {
 
     struct ControllerResult;
 
-    using Controller =  ControllerResult (*)(const term::Key& key, models::EditorState& state);
+    using Controller = ControllerResult (*)(const term::Key& key, models::EditorState& state);
 
     struct ControllerResult {
         Controller controller;
