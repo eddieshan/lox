@@ -82,13 +82,11 @@ ControllerResult command_controller::process(const term::Key& key, EditorState& 
             state.pos = navigation::row_end(state.command.text.data(), state.pos);
             break;
         case ascii::Del:
-            //state.command.text.erase(state.pos);
-            result.text_updated = true;
+            state.command.text.erase(state.pos);
             break;
         case ascii::BSpace:
             state.pos = navigation::col_back(state.text_area.text(), state.pos);
-            //state.command.text.erase(state.pos);
-            result.text_updated = true;
+            state.command.text.erase(state.pos);
             break;
         default:
             if (key.size == 1) {
