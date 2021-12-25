@@ -27,9 +27,15 @@ namespace buffers {
         
             size_t insert(const uint8_t v, const size_t pos);
 
-            void erase(const size_t pos);            
+            void append(const utils::Slice<uint8_t>& data);
+
+            void erase(const size_t pos);
+
+            void clear();
 
             size_t size() const;
+
+            size_t capacity() const;
 
             template <typename T, void (T::*visit)(const utils::Slice<uint8_t>&)>
             void accept(T& visitor) {
@@ -39,5 +45,6 @@ namespace buffers {
                     (visitor.*visit)(slice);
                 }
             }
+
     };
 }

@@ -2,14 +2,14 @@
 
 #include "../utils/convert.h"
 #include "../term/ansi.h"
-#include "../models/text_area.h"
-#include "status_bar_view.h"
+#include "../models/common.h"
+#include "views.h"
 
 using namespace utils;
 using namespace term;
 using namespace views;
 
-void status_bar_view::render(const models::TextCursor& text_state, const WindowSize& window_size, buffers::FixedBuffer& buffer) {
+void views::status_bar(const models::TextCursor& text_state, const WindowSize& window_size, buffers::FixedBuffer& buffer) {
     constexpr auto caption = array::from<uint8_t>((uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)':', (uint8_t)0, (uint8_t)0, (uint8_t)0);
 
     convert::to_chars_3(text_state.pos.row + 1, (uint8_t*)caption.data());

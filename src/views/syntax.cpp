@@ -6,7 +6,7 @@
 #include "../term/term.h"
 #include "../syntax/tokenize.h"
 
-#include "syntax_view.h"
+#include "views.h"
 
 using namespace utils;
 using namespace settings;
@@ -14,10 +14,12 @@ using namespace term;
 using namespace views;
 using namespace syntax;
 
-void syntax_view::render(Tokenizer& tokenizer, const size_t pos, buffers::FixedBuffer& buffer) {
+Position views::syntax(Tokenizer& tokenizer, const size_t pos, buffers::FixedBuffer& buffer) {
+
+    constexpr Position start_pos = utils::Position { row: 0, col: 4 };
 
     auto move_to_start_col = ansi::escape("\0\0\0C");
-    convert::to_chars_3(syntax_view::StartPos.col, (uint8_t*)move_to_start_col.data() + 2);
+    convert::to_chars_3(start_pos.col, (uint8_t*)move_to_start_col.data() + 2);
 
     auto next_line = array::concat(ansi::NextLine, move_to_start_col);
 
@@ -34,4 +36,6 @@ void syntax_view::render(Tokenizer& tokenizer, const size_t pos, buffers::FixedB
             buffer.write(ansi::ResetForeground);
         }
     }
+
+    return start_pos;
 }

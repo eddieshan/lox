@@ -65,7 +65,7 @@ bool Tokenizer::is_end() const {
 
 size_t Tokenizer::find_next(const uint8_t val) {
     for(auto i = _pos + 1; i < _text.size; ++i) {
-        if(_text.data[i] == val || _text.data[i] == utils::ascii::CarriageReturn) {
+        if(_text.data[i] == val || _text.data[i] == utils::ascii::Lf) {
             return i;
         }
     }
@@ -77,7 +77,7 @@ Token Tokenizer::next() {
 
     const auto symbol = _text.data[_pos];
 
-    if(symbol == ascii::CarriageReturn) {
+    if(symbol == ascii::Lf) {
         ++_pos;
 
         return Token {

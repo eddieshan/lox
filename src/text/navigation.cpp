@@ -1,6 +1,6 @@
 #include "../utils/slice.h"
 #include "../utils/ascii.h"
-#include "../models/text_area.h"
+#include "../models/common.h"
 
 #include "navigation.h"
 
@@ -15,7 +15,7 @@ TextCursor navigation::text_cursor(const utils::Slice<uint8_t>& text, const size
     };
 
     for(auto i = 0; i < text.size; ++i) {
-        const auto is_line_break = text.data[i] == ascii::CarriageReturn;
+        const auto is_line_break = text.data[i] == ascii::Lf;
 
         if(i < pos) {
             if(is_line_break) {
@@ -45,13 +45,13 @@ size_t navigation::col_back(const utils::Slice<uint8_t>& text, const size_t pos)
 size_t navigation::row_forward(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step) {
     size_t last_cr = 0, current_col = 0;
 
-    for(auto i = 1; i <= pos && text.data[pos - i] != ascii::CarriageReturn; ++i, ++current_col) {
+    for(auto i = 1; i <= pos && text.data[pos - i] != ascii::Lf; ++i, ++current_col) {
     }
 
     size_t new_cursor = pos, row = 0, next_col = 0;
 
     while(new_cursor < text.size && row <= step && next_col <= current_col) {
-        if(text.data[new_cursor] == ascii::CarriageReturn) {
+        if(text.data[new_cursor] == ascii::Lf) {
             ++row;
         }
         next_col += (row/step);
@@ -68,7 +68,7 @@ size_t navigation::row_back(const utils::Slice<uint8_t>& text, const size_t pos,
     while(distance <= pos && row <= step) {
         new_cursor = pos - distance;
 
-        if(text.data[new_cursor] == ascii::CarriageReturn) {
+        if(text.data[new_cursor] == ascii::Lf) {
             ++row;
         } else if(row == step) {
             ++last_prev_col;
@@ -85,7 +85,7 @@ size_t navigation::row_back(const utils::Slice<uint8_t>& text, const size_t pos,
 
 size_t navigation::row_start(const utils::Slice<uint8_t>& text, const size_t pos) {    
     auto i = pos == 0? pos : pos - 1;
-    for(; i > 0 && text.data[i] != ascii::CarriageReturn; --i) {
+    for(; i > 0 && text.data[i] != ascii::Lf; --i) {
     }
     
     return i == 0? i : i + 1;
@@ -93,7 +93,7 @@ size_t navigation::row_start(const utils::Slice<uint8_t>& text, const size_t pos
 
 size_t navigation::row_end(const utils::Slice<uint8_t>& text, const size_t pos) {
     auto i = pos;
-    for(; i < text.size && text.data[i] != ascii::CarriageReturn; ++i) {
+    for(; i < text.size && text.data[i] != ascii::Lf; ++i) {
     }
 
     return i;

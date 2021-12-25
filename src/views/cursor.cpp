@@ -4,7 +4,7 @@
 #include "../utils/array.h"
 #include "../term/ansi.h"
 #include "../buffers/fixed_buffer.h"
-#include "cursor.h"
+#include "views.h"
 
 using namespace views;
 using namespace utils;
@@ -15,7 +15,7 @@ using namespace utils;
 // This works based on two assumptions,
 // - that rows and cols will never be greater than 999 each,
 // - empty chars in an VT100 sequence are ignored.
-void cursor::render(const Position& screen_pos, buffers::FixedBuffer& buffer) {
+void views::cursor(const Position& screen_pos, buffers::FixedBuffer& buffer) {
     auto pos = term::ansi::CursorMv;
     const auto row_start = pos.data() + 2, col_start = pos.data() + 6;
  

@@ -24,7 +24,7 @@ size_t PieceTable::insert(const uint8_t v, const size_t pos) {
         if(pos == _size) {
             ++_pieces[_last_piece].size;
         } else {
-            auto cursor = piece_cursor::from(pos, _pieces.data());
+            const auto cursor = piece_cursor::from(pos, _pieces.data());
             const auto piece = &_pieces[cursor.pos];
             const auto new_piece = Piece { start: _size, size: 1 };
 
@@ -55,6 +55,17 @@ size_t PieceTable::insert(const uint8_t v, const size_t pos) {
     }
 }
 
+void PieceTable::append(const Slice<uint8_t>& data) {
+
+    const auto remaining = _capacity - _size;
+
+    if(data.size <= remaining) {
+        std::copy(data.data, data.data + data.size, _bytes.get() + _size);
+        _pieces[_last_piece].size += data.size;
+        _size += data.size;
+    }
+}
+
 void PieceTable::erase(const size_t pos) {
     if(_size > 0 && pos < _size) {
         auto cursor = piece_cursor::from(pos, _pieces.data());
@@ -80,6 +91,17 @@ void PieceTable::erase(const size_t pos) {
     }
 }
 
+void PieceTable::clear() {
+    _pieces.clear();
+    _size = 0;
+    _last_piece = 0;
+    _pieces.insert({ start: 0, size: 0 });
+}
+
 size_t PieceTable::size() const {
     return _size;
+}
+
+size_t PieceTable::capacity() const {
+    return _capacity;
 }
