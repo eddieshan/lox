@@ -7,11 +7,12 @@
 
 namespace utils
 {
-    // A list container implemented on an owned, heap allocated array.
-    // Capacity is fixed and set during construction so it cannot grow.
-    // Insertions have no effect when capacity is reached.
-    // Since items are stored in a contiguous memory block,
-    // insert and erase operations involve mem copying.
+    // A list container implemented on an owned, heap allocated array,
+    // - Capacity is fixed and set during construction so it cannot grow.
+    // - Insertions have no effect when capacity is reached.
+    // - Only adequate for TriviallyCopyable items.
+    // - Items are guaranteed to be contiguous in memory.
+    // - Insert and erase operations involve mem copying.
     template<typename TItem>
     class ArrayList {
         private:
@@ -20,7 +21,7 @@ namespace utils
             size_t _size;
 
         public:
-            ArrayList(const size_t size):
+            explicit ArrayList(const size_t size):
                 _data(std::make_unique<TItem[]>(size)),
                 _capacity(size),
                 _size(0) {}
@@ -50,6 +51,11 @@ namespace utils
                 }
             }
 
+            void clear() {
+                std::memset(_data.get(), 0, _capacity*sizeof(TItem));
+                _size = 0;
+            }
+
             void insert(const TItem& item) {
                 if(_size < _capacity) {
                     _data[_size] = item;
@@ -71,6 +77,10 @@ namespace utils
 
             size_t size() const { 
                 return _size; 
+            }
+
+            size_t capacity() const { 
+                return _capacity; 
             }            
     };    
 }

@@ -1,35 +1,55 @@
 #include <fstream>
 
 #include "../utils/ascii.h"
+#include "../utils/units.h"
+#include "../utils/io.h"
 #include "../term/term.h"
+#include "../buffers/piece_table.h"
 #include "../text/navigation.h"
 #include "../models/editor_state.h"
 #include "controllers.h"
 
 using namespace utils;
+using namespace buffers;
 using namespace controllers;
 using namespace text;
 using namespace models;
 
-void open_file(EditorState& state) {
+void open_file(PieceTable& text_buffer, const char* path) {
 
-    const auto path = (char*)state.command.text.data().data;
+    const auto size = io::file_size(path);
 
-    std::ifstream reader(path, std::ifstream::in);
+    if(size <= text_buffer.capacity()) {
+        std::ifstream reader(path, std::ifstream::in);
 
-    auto pos = 0;
+        auto pos = 0;
 
-    while (reader.good()) {
-        const auto c = reader.get();
-        pos = state.text_buffer.insert(c, pos);
+        // TODO: using a temporary read buffer is not optimal.
+        // Reads could be done directly onto the underlying buffer of the piece table. 
+        // The problem with this is doing this safely, memory wise e.g. exposing a 
+        // pointer to the underlying buffer would be straightforward but clearly unsafe,
+        // An alternative would be using a templated visitor but the signature for 
+        // ifstream::read would introduce undesired depedencies to ifstream types in 
+        // PieceTable, so no ideal solution yet. Needs more investigation.
+        char buffer[units::Kb];
+
+        text_buffer.clear();
+
+        while (reader.good()) {
+            reader.read(buffer, units::Kb);
+            const auto read_size = reader.gcount();
+            text_buffer.append(Slice((uint8_t*)buffer, read_size));
+        }
+
+        reader.close();
     }
-
-    reader.close();
 }
 
 void execute_command(EditorState& state) {
     if(state.command.type == CommandType::OpenFile) {
-        open_file(state);
+        const auto path = (char*)state.command.text.data().data;
+
+        open_file(state.text_buffer, path);
         state.pos = 0;
     }
 }
