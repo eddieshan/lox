@@ -6,7 +6,7 @@
 
 namespace syntax {
 
-    typedef bool (*predicate)(const uint8_t val, const Grammar& grammar);
+    using predicate = bool (*)(const uint8_t val, const Grammar& grammar);
 
     TokenGroup tokens(const char* tokens_def, const TokenType token_type);
 

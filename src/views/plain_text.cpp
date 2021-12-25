@@ -5,17 +5,20 @@
 #include "../term/ansi.h"
 #include "../text/navigation.h"
 
-#include "text_view.h"
+#include "views.h"
 
 using namespace utils;
 using namespace term;
 using namespace views;
 
-void text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer) {
+Position views::plain_text(const Slice<uint8_t>& text, const size_t pos, buffers::FixedBuffer& buffer) {
+
+    constexpr utils::Position start_pos = utils::Position { row: 0, col: 4 };
+
     size_t last_cr = 0;
 
     auto move_to_start_col = ansi::escape(array::from<char>('\0', '\0', '\0', 'C'));
-    convert::to_chars_3(text_view::StartPos.col, (uint8_t*)move_to_start_col.data() + 2);
+    convert::to_chars_3(start_pos.col, (uint8_t*)move_to_start_col.data() + 2);
 
     auto next_line = array::concat(ansi::NextLine, move_to_start_col);
 
@@ -35,4 +38,6 @@ void text_view::render(const Slice<uint8_t>& text, const size_t pos, buffers::Fi
         const auto offset = last_cr == 0? 0 : 1;
         buffer.write(text.data + last_cr + offset, text.size - last_cr);
     }
+
+    return start_pos;
 }

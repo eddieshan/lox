@@ -2,6 +2,7 @@
 
 #include "../term/term.h"
 #include "../models/editor_state.h"
+#include "../views/views.h"
 
 namespace controllers {
 
@@ -11,9 +12,9 @@ namespace controllers {
 
     struct ControllerResult {
         Controller controller;
+        views::View view;
         bool exit;
         bool text_updated;
-        uint8_t active_views;
     };
 
     ControllerResult command_line(const term::Key& key, models::EditorState& state);

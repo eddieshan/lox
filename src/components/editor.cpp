@@ -5,7 +5,7 @@
 #include "../settings/config.h"
 #include "../syntax/grammar.h"
 #include "../models/editor_state.h"
-#include "../views/main_view.h"
+#include "../views/views.h"
 #include "../controllers/controllers.h"
 #include "../settings/theme.h"
 
@@ -20,8 +20,8 @@ using namespace views;
 using namespace settings;
 using namespace models;
 
-void render(const EditorState& state, const Config& config, FixedBuffer& screen_buffer, uint8_t active_views) {
-    main_view::render(state, config, active_views, screen_buffer);
+void render(const EditorState& state, const Config& config, FixedBuffer& screen_buffer, View view) {
+    view(state, config, screen_buffer);
     term::write(screen_buffer.data());
     term::flush();
     screen_buffer.clear();
@@ -43,7 +43,7 @@ void editor::run() {
 
     auto controller = controllers::edit;
 
-    render(state, config, screen_buffer, active_views::Edit);
+    render(state, config, screen_buffer, views::edit);
 
     do {
         const auto key = term::read_key();
@@ -58,7 +58,7 @@ void editor::run() {
                 state.text_buffer.accept<Buffer, &Buffer::write>(state.text_area);
             }
 
-            render(state, config, screen_buffer, result.active_views);
+            render(state, config, screen_buffer, result.view);
         }
     } while(wait_for_events);
 }

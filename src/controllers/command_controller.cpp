@@ -38,9 +38,9 @@ ControllerResult controllers::command_line(const term::Key& key, EditorState& st
 
     auto result = ControllerResult {
         controller: controllers::command_line,
+        view: views::command_line,
         exit: false,
-        text_updated: false,
-        active_views: active_views::Command | active_views::Edit
+        text_updated: false
     };
 
     switch (key.code) {
@@ -49,7 +49,7 @@ ControllerResult controllers::command_line(const term::Key& key, EditorState& st
             break;
         case ascii::Esc:
             result.controller = controllers::edit;
-            result.active_views = active_views::Edit;
+            result.view = views::edit;
             break;            
         case ascii::CtrlO:
             state.command.type = CommandType::OpenFile;
@@ -59,7 +59,7 @@ ControllerResult controllers::command_line(const term::Key& key, EditorState& st
             execute_command(state);
             result.text_updated = true;
             result.controller = controllers::edit;
-            result.active_views = active_views::Edit;
+            result.view = views::edit;
             break;
         case ascii::Right:
             state.pos = navigation::col_forward(state.command.text.data(), state.pos);
@@ -86,7 +86,6 @@ ControllerResult controllers::command_line(const term::Key& key, EditorState& st
             if (key.size == 1) {
                 state.command.text.insert(key.code, state.pos);
                 ++state.pos;
-                result.text_updated = true;
             }
     };
 

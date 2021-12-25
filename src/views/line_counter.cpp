@@ -3,13 +3,13 @@
 #include "../models/common.h"
 #include "../text/navigation.h"
 
-#include "line_counter_view.h"
+#include "views.h"
 
 using namespace utils;
 using namespace term;
 using namespace views;
 
-void line_counter_view::render(const models::TextCursor& text_state, buffers::FixedBuffer& buffer) {
+void views::line_counter(const models::TextCursor& text_state, buffers::FixedBuffer& buffer) {
     std::array<uint8_t, 3> line_count = { (uint8_t)' ', (uint8_t)' ', (uint8_t)' ' };
 
     buffer.write(ansi::Home);

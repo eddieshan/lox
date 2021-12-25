@@ -15,9 +15,9 @@ ControllerResult controllers::edit(const term::Key& key, EditorState& state) {
 
     auto result = ControllerResult {
         controller: controllers::edit,
+        view: views::edit,
         exit: false,
-        text_updated: false,
-        active_views: active_views::Edit
+        text_updated: false
     };
 
     switch (key.code) {
@@ -28,7 +28,7 @@ ControllerResult controllers::edit(const term::Key& key, EditorState& state) {
             state.command.type = CommandType::OpenFile;
             state.pos = 0;
             result.controller = controllers::command_line;
-            result.active_views = active_views::Edit | active_views::Command;
+            result.view = views::command_line;
             break;
         case ascii::Cr:
             state.pos = state.text_buffer.insert(ascii::Lf, state.pos);
