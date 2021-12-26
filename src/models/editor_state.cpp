@@ -14,6 +14,7 @@ using namespace term;
 
 constexpr auto TextBufferSize = 64*units::Kb;
 constexpr auto TempTextBufferSize = 64*units::Kb;
+constexpr auto CommandLineSize = 1000;
 
 EditorState editor_state::build() {
     return EditorState {
@@ -22,7 +23,7 @@ EditorState editor_state::build() {
         window_size: term::get_window_size(),
         command: Command {
             type: CommandType::OpenFile,
-            text: ArrayList<uint8_t>(1000)
+            text: ArrayList<uint8_t>(CommandLineSize)
         }
     };
 }
