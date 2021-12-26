@@ -12,7 +12,6 @@ set(SOURCES
     src/term/ansi.cpp
     src/term/term.cpp
     src/buffers/buffer.cpp
-    src/buffers/fixed_buffer.cpp
     src/buffers/piece.cpp
     src/buffers/piece_table.cpp
     src/syntax/tokenize.cpp
