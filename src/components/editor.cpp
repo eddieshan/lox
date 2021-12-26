@@ -39,7 +39,7 @@ void editor::run() {
 
     const auto config = Config {
         grammar: syntax::build(),
-        preamble: slice::from(preamble)
+        preamble: Slice(preamble.data(), preamble.size())
     };
 
     auto controller = controllers::edit;

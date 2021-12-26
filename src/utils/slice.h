@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <cstring>
 #include <array>
 
 namespace utils {
@@ -19,14 +18,7 @@ namespace utils {
 
     namespace slice {
 
-        // TODO:
-        //  Return type can be made constexpr, is it worth it?
-        //  Cost of creating slices is minimal, they will be typically in the stack.
-        //  Not clear whether constexpr would be beneficial, pending analysis.
-        template<typename T, std::size_t Size>
-        Slice<T> from(const std::array<T, Size>& array) {
-            return Slice<T>(array.data(), array.size());
-        }
+        Slice<uint8_t> from(const char* val);
 
         template<typename T>
         bool contains(const Slice<T>& slice, const T val) {
