@@ -1,6 +1,7 @@
 #include "../utils/array.h"
 #include "../utils/geometry.h"
 #include "../utils/convert.h"
+#include "../buffers/buffer.h"
 #include "../text/navigation.h"
 #include "../term/ansi.h"
 #include "../settings/theme.h"
@@ -19,23 +20,23 @@ namespace messages {
     constexpr auto Open = array::to_uint8_t(" Open: ");
 }
 
-Position render(const models::Command& command, const WindowSize& window_size, buffers::FixedBuffer& buffer) {
+Position render(const Command& command, const WindowSize& window_size, buffers::Buffer& buffer) {
     constexpr auto cursor_seq = term::ansi::CursorMv;
     const auto row_start = cursor_seq.data() + 2, col_start = cursor_seq.data() + 6;
 
     convert::to_chars_3(window_size.rows, (uint8_t*)row_start);
     convert::to_chars_3(0, (uint8_t*)col_start);
 
-    buffer.write(theme::Command);
-    buffer.write(cursor_seq);
-    buffer.write(term::ansi::ClearLine);
-    buffer.write(messages::Open);
+    buffer.write(theme::Command.data(), theme::Command.size());
+    buffer.write(cursor_seq.data(), cursor_seq.size());
+    buffer.write(term::ansi::ClearLine.data(), term::ansi::ClearLine.size());
+    buffer.write(messages::Open.data(), messages::Open.size());
     buffer.write(command.text.data());
 
     return Position { row: window_size.rows, col: messages::Open.size() };
 }
 
-void views::command_line(const EditorState& state, const settings::Config& config, buffers::FixedBuffer& screen_buffer) {
+void views::command_line(const EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer) {
     const auto text = state.text_area.text();
     auto tokenizer = syntax::Tokenizer(text, config.grammar);
     views::syntax(tokenizer, state.pos, screen_buffer);

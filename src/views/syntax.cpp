@@ -1,6 +1,7 @@
 #include "../utils/convert.h"
 #include "../utils/geometry.h"
 #include "../utils/slice.h"
+#include "../buffers/buffer.h"
 #include "../settings/theme.h"
 #include "../term/ansi.h"
 #include "../term/term.h"
@@ -14,7 +15,7 @@ using namespace term;
 using namespace views;
 using namespace syntax;
 
-Position views::syntax(Tokenizer& tokenizer, const size_t pos, buffers::FixedBuffer& buffer) {
+Position views::syntax(Tokenizer& tokenizer, const size_t pos, buffers::Buffer& buffer) {
 
     constexpr Position start_pos = utils::Position { row: 0, col: 4 };
 
@@ -23,17 +24,18 @@ Position views::syntax(Tokenizer& tokenizer, const size_t pos, buffers::FixedBuf
 
     auto next_line = array::concat(ansi::NextLine, move_to_start_col);
 
-    buffer.write(move_to_start_col);
+    buffer.write(move_to_start_col.data(), move_to_start_col.size());
 
     while(!tokenizer.is_end()) {
         const auto token = tokenizer.next();
 
         if(token.type == TokenType::NewLine) {
-            buffer.write(next_line);
+            buffer.write(next_line.data(), next_line.size());
         } else {
-            buffer.write(theme::syntax_style(token.type));
+            const auto style = theme::syntax_style(token.type);
+            buffer.write(style.data(), style.size());
             buffer.write(token.span);
-            buffer.write(ansi::ResetForeground);
+            buffer.write(ansi::ResetForeground.data(), ansi::ResetForeground.size());
         }
     }
 
