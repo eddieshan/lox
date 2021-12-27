@@ -13,21 +13,21 @@ using namespace views;
 void views::line_counter(const models::TextCursor& text_state, buffers::Buffer& buffer) {
     std::array<uint8_t, 3> line_count = { (uint8_t)' ', (uint8_t)' ', (uint8_t)' ' };
 
-    buffer.write(ansi::Home.data(), ansi::Home.size());
-    buffer.write(ansi::Dim.data(), ansi::Dim.size());
+    buffer.esc(ansi::Home);
+    buffer.esc(ansi::Dim);
     
     for(auto i = 0; i < text_state.n_lines; ++i) {
         convert::to_chars_3(i + 1, line_count.data());
         if(i == text_state.pos.row) {
-            buffer.write(ansi::ResetDim.data(), ansi::ResetDim.size());
+            buffer.esc(ansi::ResetDim);
             buffer.write(line_count.data(), line_count.size());
-            buffer.write(ansi::Dim.data(), ansi::Dim.size());
+            buffer.esc(ansi::Dim);
         } else {
             buffer.write(line_count.data(), line_count.size());
         }
 
-        buffer.write(ansi::NextLine.data(), ansi::NextLine.size());
+        buffer.esc(ansi::NextLine);
     }
 
-    buffer.write(ansi::ResetDim.data(), ansi::ResetDim.size());
+    buffer.esc(ansi::ResetDim);
 }

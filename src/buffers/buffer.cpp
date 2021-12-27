@@ -2,11 +2,15 @@
 #include <cstring>
 #include <memory>
 
+#include "../utils/geometry.h"
+#include "../utils/convert.h"
 #include "../utils/slice.h"
+#include "../term/ansi.h"
 
 #include "buffer.h"
 
 using namespace utils;
+using namespace term;
 using namespace buffers;
 
 Buffer::Buffer(const size_t capacity): 
@@ -14,7 +18,53 @@ Buffer::Buffer(const size_t capacity):
     _capacity(capacity),
     _size(0) {}
 
-void Buffer::write(const utils::Slice<uint8_t>& slice) {
+void Buffer::esc(const uint8_t val) {
+    write(ansi::Csi);
+
+    if(_size < _capacity) {
+        _bytes.get()[_size] = val;
+        ++_size;
+    }
+}
+
+void Buffer::esc(const utils::Position& position) {
+    write(ansi::Csi);
+
+    const auto seq_size = 8;
+    const auto remaining = _capacity - _size;
+
+    if(seq_size <= remaining) {
+        const auto current = _bytes.get() + _size;
+        std::memset(current, 0, 8);
+        convert::to_chars_3(position.row, current);
+        convert::to_chars_3(position.col, current + 4);
+        current[3] = (uint8_t)';';
+        current[7] = ansi::Home;
+        _size += seq_size;
+    }
+}
+
+void Buffer::esc(const uint32_t val, const uint8_t attr) {
+    write(ansi::Csi);
+
+    const auto seq_size = 4;
+    const auto remaining = _capacity - _size;
+
+    if(seq_size <= remaining) {
+        const auto current = _bytes.get() + _size;
+        std::memset(current, 0, 3);
+        convert::to_chars_3(val, current);
+        current[3] = attr;
+        _size += seq_size;
+    }
+}
+
+void Buffer::esc(const Slice<uint8_t>& slice) {
+    write(ansi::Csi);
+    write(slice);
+}
+
+void Buffer::write(const Slice<uint8_t>& slice) {
     const auto new_size = _size + slice.size;
     if(new_size < _capacity) {
         const auto current = _bytes.get() + _size;

@@ -1,12 +1,13 @@
 #pragma once
 
 #include <cstdint>
-#include <cstring>
 #include <array>
 
 namespace utils {
 
-    // Immutable slice type.
+    // Immutable, non owned slice type.
+    // Though it does not prevent writing the referenced memory block,
+    // it is meant to be used for sharing read only slices.
     // Copy assignment and move assignment are disabled by making properties const.
     // Disabling assignment is actually desirable for safer handling of memory slices.
     template<typename T>
@@ -19,14 +20,7 @@ namespace utils {
 
     namespace slice {
 
-        // TODO:
-        //  Return type can be made constexpr, is it worth it?
-        //  Cost of creating slices is minimal, they will be typically in the stack.
-        //  Not clear whether constexpr would be beneficial, pending analysis.
-        template<typename T, std::size_t Size>
-        Slice<T> from(const std::array<T, Size>& array) {
-            return Slice<T>(array.data(), array.size());
-        }
+        Slice<uint8_t> from(const char* val);
 
         template<typename T>
         bool contains(const Slice<T>& slice, const T val) {

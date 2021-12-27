@@ -23,5 +23,6 @@ void views::edit(const EditorState& state, const settings::Config& config, buffe
 
     views::status_bar(text_state, state.window_size, screen_buffer);
     views::line_counter(text_state, screen_buffer);
-    views::cursor(text_state.pos + start_pos, screen_buffer);
+    
+    screen_buffer.esc(text_state.pos + start_pos + Position { row: 1, col: 1 });
 }

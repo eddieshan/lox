@@ -23,10 +23,4 @@ namespace views {
     void status_bar(const models::TextCursor& text_state, const utils::WindowSize& window_size, buffers::Buffer& buffer);
 
     void line_counter(const models::TextCursor& text_state, buffers::Buffer& buffer);
-
-    // Writes a VT100 sequence to move the cursor to the desired screen position.
-    // The screen position is required to be zero based.
-    // VT100 screen coordinates are 1 based so row and col are incremented by 1.
-    void cursor(const utils::Position& pos, buffers::Buffer& buffer);
-
 }

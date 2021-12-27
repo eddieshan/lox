@@ -1,4 +1,3 @@
-#include "../utils/array.h"
 #include "../utils/units.h"
 #include "../buffers/buffer.h"
 #include "../term/term.h"
@@ -21,25 +20,26 @@ using namespace settings;
 using namespace models;
 
 void render(const Editor& editor, Buffer& screen_buffer, View view) {
-    term::write(editor.config.preamble);
+    screen_buffer.clear();
+    screen_buffer.esc(Slice(theme::Foreground.data(), theme::Foreground.size()));
+    screen_buffer.esc(Slice(theme::Background.data(), theme::Background.size()));
+    screen_buffer.esc(ansi::Clear);
+    screen_buffer.esc(ansi::Home);
     view(editor.state, editor.config, screen_buffer);
     term::write(screen_buffer.text());
     term::flush();
-    screen_buffer.clear();
 }
 
 void editor::run() {
     const auto result = term::enable_raw_mode();
     constexpr auto ScreenBufferSize = 16*units::Kb;
 
-    const auto preamble = array::concat(theme::Background, theme::Foreground, ansi::ClearScreen);
     auto screen_buffer = Buffer(ScreenBufferSize);
 
     auto wait_for_events = true;
 
     const auto config = Config {
-        grammar: syntax::build(),
-        preamble: slice::from(preamble)
+        grammar: syntax::build()
     };
 
     auto controller = controllers::edit;
