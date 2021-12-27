@@ -2,7 +2,6 @@
 #include <cstring>
 
 #include "../utils/slice.h"
-#include "../utils/array.h"
 #include "grammar.h"
 #include "cpp.h"
 
@@ -39,10 +38,10 @@ TokenGroup tokens(const char* tokens_def, const TokenType token_type) {
     return token_group;
 }
 
-const auto default_tokens = array::from<TokenGroup>(
+const auto default_tokens = std::array<TokenGroup, 2> {
     tokens(cpp::Keywords, syntax::TokenType::Keyword),
     tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword)
-);
+};
 
 Grammar syntax::build() {
     return Grammar {

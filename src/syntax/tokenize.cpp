@@ -1,7 +1,6 @@
 #include <cstring>
 
 #include "../utils/slice.h"
-#include "../utils/array.h"
 #include "../utils/ascii.h"
 #include "../term/term.h"
 #include "grammar.h"

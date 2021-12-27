@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <memory>
 
+#include "../utils/geometry.h"
 #include "../utils/slice.h"
 
 namespace buffers {
@@ -16,6 +17,14 @@ namespace buffers {
         public:
 
             explicit Buffer(const size_t capacity);
+
+            void esc(const uint8_t val);
+
+            void esc(const utils::Position& position);
+
+            void esc(const uint32_t val, const uint8_t attr);
+
+            void esc(const utils::Slice<uint8_t>& slice);
 
             void write(const utils::Slice<uint8_t>& data);
 

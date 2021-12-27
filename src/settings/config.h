@@ -6,6 +6,5 @@
 namespace settings {
     struct Config {
         syntax::Grammar grammar;
-        utils::Slice<uint8_t> preamble;
     };
 }

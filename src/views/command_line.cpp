@@ -1,4 +1,4 @@
-#include "../utils/array.h"
+#include "../utils/slice.h"
 #include "../utils/geometry.h"
 #include "../utils/convert.h"
 #include "../buffers/buffer.h"
@@ -17,23 +17,18 @@ using namespace views;
 using namespace settings;
 
 namespace messages {
-    constexpr auto Open = array::to_uint8_t(" Open: ");
+    const auto Open = slice::from(" Open: ");
 }
 
 Position render(const Command& command, const WindowSize& window_size, buffers::Buffer& buffer) {
-    constexpr auto cursor_seq = term::ansi::CursorMv;
-    const auto row_start = cursor_seq.data() + 2, col_start = cursor_seq.data() + 6;
-
-    convert::to_chars_3(window_size.rows, (uint8_t*)row_start);
-    convert::to_chars_3(0, (uint8_t*)col_start);
-
-    buffer.write(theme::Command.data(), theme::Command.size());
-    buffer.write(cursor_seq.data(), cursor_seq.size());
-    buffer.write(term::ansi::ClearLine.data(), term::ansi::ClearLine.size());
-    buffer.write(messages::Open.data(), messages::Open.size());
+    buffer.esc(Slice(theme::command_line::Background.data(), theme::command_line::Background.size()));
+    buffer.esc(Slice(theme::command_line::Foreground.data(), theme::command_line::Foreground.size()));
+    buffer.esc(Position { row: window_size.rows, col: 0 });
+    buffer.esc(term::ansi::ClearLine);
+    buffer.write(messages::Open);
     buffer.write(command.text.data());
 
-    return Position { row: window_size.rows, col: messages::Open.size() };
+    return Position { row: window_size.rows, col: (uint32_t) messages::Open.size };
 }
 
 void views::command_line(const EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer) {
@@ -47,5 +42,5 @@ void views::command_line(const EditorState& state, const settings::Config& confi
     views::line_counter(text_state, screen_buffer);
 
     const auto pos = render(state.command, state.window_size, screen_buffer);
-    views::cursor(Position { row: 0, col: (uint32_t) state.pos } + pos, screen_buffer);
+    screen_buffer.esc(Position { row: 0, col: (uint32_t) state.pos } + pos + Position { row: 1, col: 1 });
 }

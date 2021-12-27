@@ -5,7 +5,9 @@
 
 namespace utils {
 
-    // Immutable slice type.
+    // Immutable, non owned slice type.
+    // Though it does not prevent writing the referenced memory block,
+    // it is meant to be used for sharing read only slices.
     // Copy assignment and move assignment are disabled by making properties const.
     // Disabling assignment is actually desirable for safer handling of memory slices.
     template<typename T>
