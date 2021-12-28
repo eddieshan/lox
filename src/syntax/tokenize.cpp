@@ -83,8 +83,8 @@ Token Tokenizer::next() {
             type: TokenType::NewLine,
             span: Slice(_text.data, 0)
         };
-    } else if(symbol == ascii::Quote) {
-        const auto next_pos = find_next(ascii::Quote);
+    } else if(slice::contains(_grammar.string_delimiters, symbol)) {
+        const auto next_pos = find_next(symbol);
         const auto span = Slice(_text.data + _pos, next_pos - _pos + 1);
         _pos = next_pos == _text.size? _text.size : next_pos + 1;
 

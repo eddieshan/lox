@@ -46,6 +46,7 @@ const auto default_tokens = std::array<TokenGroup, 2> {
 Grammar syntax::build() {
     return Grammar {
         tokens: Slice(default_tokens.data(), default_tokens.size()),
-        delimiters: Slice(cpp::Delimiters.data(), cpp::Delimiters.size())
+        delimiters: slice::from(cpp::Delimiters),
+        string_delimiters: slice::from(cpp::StringDelimiters)
     };
 }

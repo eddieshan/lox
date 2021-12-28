@@ -28,6 +28,7 @@ namespace syntax {
     struct Grammar {
         utils::Slice<TokenGroup> tokens;
         utils::Slice<uint8_t> delimiters;
+        utils::Slice<uint8_t> string_delimiters;
     };
 
     Grammar build();
