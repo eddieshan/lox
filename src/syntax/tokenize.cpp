@@ -128,15 +128,6 @@ Token Tokenizer::next() {
             type: TokenType::NewLine,
             span: Slice(_text.data, 0)
         };
-    } else if(slice::contains(_grammar.string_delimiters, symbol)) {
-        const auto next_pos = find_next(symbol);
-        const auto span = Slice(_text.data + _pos, next_pos - _pos + 1);
-        _pos = next_pos == _text.size? _text.size : next_pos + 1;
-
-        return Token {
-            type: next_pos == _text.size? TokenType::Plain : TokenType::StringLiteral,
-            span: span
-        };
     } else if(slice::contains(_grammar.delimiters, symbol)) {
         const auto next_pos = find_next<is_not_delimiter>();
         const auto span = Slice(_text.data + _pos, next_pos - _pos);
@@ -168,6 +159,5 @@ Token Tokenizer::next() {
                 span: span
             };
         }
-
     }
 }
