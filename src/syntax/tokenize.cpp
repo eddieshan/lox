@@ -45,6 +45,51 @@ TokenType token_type(const Slice<uint8_t>& sequence, const Grammar& grammar) {
     return TokenType::Plain;
 }
 
+std::pair<bool, size_t> capture(const Slice<uint8_t>& text, const Slice<uint8_t>& start, const Slice<uint8_t>& end) {
+    if((text.size >= start.size + end.size) && (std::memcmp(start.data, text.data, start.size) == 0)) {
+        const auto limit = text.size - end.size;
+        for(auto index = start.size; index <= limit; ++index) {
+            if(std::memcmp(end.data, text.data + index, end.size) == 0) {
+                const auto last = index + end.size - 1;
+
+                // If the terminating delimiter is a line break, exclude it from the token span.
+                // Otherwise line breaks will not be rendered properly. 
+                // A horrible fix but there but there is no other way to deal with the issue.
+                // Line break handling is known for messing up lexing & parsing.
+                const auto match_size = text.data[last] == ascii::Lf? last : index + end.size;
+                return std::make_pair(true, match_size);
+            }
+        }
+    }
+
+    return std::make_pair(false, 0);
+}
+
+std::tuple<bool, size_t, TokenType> delimited_token_type(const Slice<uint8_t>& text, const Grammar& grammar) {
+
+    for(auto i = 0; i < grammar.delimited_tokens.size; ++i) {
+        const auto tokens = grammar.delimited_tokens.data[i].tokens.get();
+
+        size_t length_index = 0;
+
+        while(length_index < grammar.delimited_tokens.data[i].size) {
+            const auto start = Slice(tokens + length_index + 1, tokens[length_index]);
+            length_index += (tokens[length_index] + 1);
+            const auto end = Slice(tokens + length_index + 1, tokens[length_index]);
+            length_index += (tokens[length_index] + 1);
+
+            const auto [is_capture, match_size] = capture(text, start, end);
+
+            if(is_capture) {
+                return std::make_tuple(true, match_size, grammar.delimited_tokens.data[i].type);
+            }
+        }
+    }
+
+    return std::make_tuple(false, 0, TokenType::Plain);
+}
+
+
 bool is_delimiter(const uint8_t val, const Grammar& grammar) {
     return slice::contains(grammar.delimiters, val);
 }
@@ -100,15 +145,29 @@ Token Tokenizer::next() {
         return Token {
             type: token_type(span, _grammar),
             span: span
-        };
+        };        
     } else {
-        const auto next_pos = find_next<is_delimiter>();
-        const auto span = Slice(_text.data + _pos, next_pos - _pos);
-        _pos = next_pos;
+        const auto tail = Slice(_text.data + _pos, _text.size - _pos);
+        const auto [is_capture, match_size, type] = delimited_token_type(tail, _grammar);
 
-        return Token {
-            type: token_type(span, _grammar),
-            span: span
-        };
+        if(is_capture) {
+            const auto span = Slice(_text.data + _pos, match_size);
+            _pos += match_size;
+
+            return Token {
+                type: type,
+                span: span
+            };
+        } else {
+            const auto next_pos = find_next<is_delimiter>();
+            const auto span = Slice(_text.data + _pos, next_pos - _pos);
+            _pos = next_pos;
+
+            return Token {
+                type: token_type(span, _grammar),
+                span: span
+            };
+        }
+
     }
 }

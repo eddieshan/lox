@@ -13,6 +13,7 @@ namespace settings::theme {
     const auto TypeKeyword = term::ansi::color_256(term::ansi::ForegroundAttr, 75);
     const auto Number = term::ansi::color_256(term::ansi::ForegroundAttr, 10);
     const auto String = term::ansi::color_256(term::ansi::ForegroundAttr, 136);
+    const auto Comment = term::ansi::color_256(term::ansi::ForegroundAttr, 28);
 
     namespace command_line {
         const auto Foreground = term::ansi::color_256(term::ansi::ForegroundAttr, 255);

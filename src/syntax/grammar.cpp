@@ -43,9 +43,14 @@ const auto default_tokens = std::array<TokenGroup, 2> {
     tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword)
 };
 
+const auto delimited_tokens = std::array<TokenGroup, 1> {
+    tokens(cpp::CommentDelimiters, syntax::TokenType::Comment)
+};
+
 Grammar syntax::build() {
     return Grammar {
         tokens: Slice(default_tokens.data(), default_tokens.size()),
+        delimited_tokens: Slice(delimited_tokens.data(), delimited_tokens.size()),
         delimiters: slice::from(cpp::Delimiters),
         string_delimiters: slice::from(cpp::StringDelimiters)
     };

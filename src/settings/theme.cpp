@@ -15,6 +15,8 @@ const Slice<uint8_t> theme::syntax_style(syntax::TokenType token_type) {
         return Slice(theme::Number.data(), theme::Number.size());
     } else if(token_type == TokenType::StringLiteral) {
         return Slice(theme::String.data(), theme::String.size());
+    } else if(token_type == TokenType::Comment) {
+        return Slice(theme::Comment.data(), theme::Comment.size());
     } else {
         return Slice(theme::Plain.data(), theme::Plain.size());
     }
