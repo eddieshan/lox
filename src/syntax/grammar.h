@@ -26,11 +26,6 @@ namespace syntax {
         TokenType type;
     };
 
-    struct Capture {
-        utils::Slice<uint8_t> start;
-        utils::Slice<uint8_t> end;
-    };
-
     struct Grammar {
         utils::Slice<TokenGroup> tokens;
         utils::Slice<TokenGroup> delimited_tokens;
