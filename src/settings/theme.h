@@ -9,6 +9,8 @@ namespace settings::theme {
     const auto Background = term::ansi::color_256(term::ansi::BackgroundAttr, 235);
 
     const auto Plain = term::ansi::color_256(term::ansi::ForegroundAttr, 81);
+    const auto Operator = term::ansi::color_256(term::ansi::ForegroundAttr, 255);
+    const auto Delimiter = term::ansi::color_256(term::ansi::ForegroundAttr, 255);    
     const auto Keyword = term::ansi::color_256(term::ansi::ForegroundAttr, 177);
     const auto TypeKeyword = term::ansi::color_256(term::ansi::ForegroundAttr, 75);
     const auto Number = term::ansi::color_256(term::ansi::ForegroundAttr, 10);

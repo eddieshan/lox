@@ -38,9 +38,10 @@ TokenGroup tokens(const char* tokens_def, const TokenType token_type) {
     return token_group;
 }
 
-const auto default_tokens = std::array<TokenGroup, 2> {
+const auto fixed_tokens = std::array<TokenGroup, 3> {
     tokens(cpp::Keywords, syntax::TokenType::Keyword),
-    tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword)
+    tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword),
+    tokens(cpp::Operators, syntax::TokenType::Operator)    
 };
 
 const auto delimited_tokens = std::array<TokenGroup, 2> {
@@ -50,7 +51,7 @@ const auto delimited_tokens = std::array<TokenGroup, 2> {
 
 Grammar syntax::build() {
     return Grammar {
-        tokens: Slice(default_tokens.data(), default_tokens.size()),
+        fixed_tokens: Slice(fixed_tokens.data(), fixed_tokens.size()),
         delimited_tokens: Slice(delimited_tokens.data(), delimited_tokens.size()),
         delimiters: slice::from(cpp::Delimiters)
     };

@@ -24,17 +24,17 @@ TokenType token_type(const Slice<uint8_t>& sequence, const Grammar& grammar) {
         return TokenType::NumericLiteral;
     }
 
-    for(auto i = 0; i < grammar.tokens.size; ++i) {
-        const auto tokens = grammar.tokens.data[i].tokens.get();
+    for(auto i = 0; i < grammar.fixed_tokens.size; ++i) {
+        const auto tokens = grammar.fixed_tokens.data[i].tokens.get();
 
         size_t length_index = 0;
 
-        while(length_index < grammar.tokens.data[i].size) {
+        while(length_index < grammar.fixed_tokens.data[i].size) {
             const auto token_size = tokens[length_index];
             const auto token_start = tokens + length_index + 1;
 
             if(token_size == sequence.size && std::memcmp(token_start, sequence.data, token_size) == 0) {
-                return grammar.tokens.data[i].type;
+                return grammar.fixed_tokens.data[i].type;
             }
 
             length_index += (token_size + 1);
