@@ -133,7 +133,7 @@ Token Tokenizer::next() {
         _pos = next_pos;
 
         return Token {
-            type: token_type(span, _grammar),
+            type: TokenType::Delimiter,
             span: span
         };        
     } else {
