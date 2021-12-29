@@ -59,6 +59,8 @@ std::pair<bool, size_t> capture(const Slice<uint8_t>& text, const Slice<uint8_t>
                 return std::make_pair(true, match_size);
             }
         }
+
+        return std::make_pair(true, text.size);
     }
 
     return std::make_pair(false, 0);
@@ -128,14 +130,13 @@ Token Tokenizer::next() {
             span: Slice(_text.data, 0)
         };
     } else if(slice::contains(_grammar.delimiters, symbol)) {
-        const auto next_pos = find_next<is_not_delimiter>();
-        const auto span = Slice(_text.data + _pos, next_pos - _pos);
-        _pos = next_pos;
+        const auto prev_pos = _pos;
+        _pos = find_next<is_not_delimiter>();
 
         return Token {
             type: TokenType::Delimiter,
-            span: span
-        };        
+            span: Slice(_text.data + prev_pos, _pos - prev_pos)
+        };
     } else {
         const auto tail = Slice(_text.data + _pos, _text.size - _pos);
         const auto [is_capture, match_size, type] = delimited_token_type(tail, _grammar);
@@ -149,9 +150,9 @@ Token Tokenizer::next() {
                 span: span
             };
         } else {
-            const auto next_pos = find_next<is_delimiter>();
-            const auto span = Slice(_text.data + _pos, next_pos - _pos);
-            _pos = next_pos;
+            const auto prev_pos = _pos;
+            _pos = find_next<is_delimiter>();
+            const auto span = Slice(_text.data + prev_pos, _pos - prev_pos);
 
             return Token {
                 type: token_type(span, _grammar),
