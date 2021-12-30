@@ -9,9 +9,9 @@
 using namespace utils;
 using namespace syntax;
 
-bool is_number(const Slice<uint8_t>& sequence) {
-    for(auto i = 0; i < sequence.size; ++i) {
-        if(!range::contains(ascii::Numbers, sequence.data[i])) {
+bool is_number(const Slice<uint8_t>& text) {
+    for(auto i = 0; i < text.size; ++i) {
+        if(!range::contains(ascii::Numbers, text.data[i])) {
             return false;
         }
     }
@@ -19,9 +19,9 @@ bool is_number(const Slice<uint8_t>& sequence) {
     return true;
 }
 
-TokenType fixed_token(const Slice<uint8_t>& sequence, const Grammar& grammar) {
+TokenType fixed_token(const Slice<uint8_t>& text, const Grammar& grammar) {
 
-    if(is_number(sequence)) {
+    if(is_number(text)) {
         return TokenType::NumericLiteral;
     }
 
@@ -34,7 +34,7 @@ TokenType fixed_token(const Slice<uint8_t>& sequence, const Grammar& grammar) {
             const auto token_size = tokens[length_index];
             const auto token_start = tokens + length_index + 1;
 
-            if(token_size == sequence.size && std::memcmp(token_start, sequence.data, token_size) == 0) {
+            if(token_size == text.size && std::memcmp(token_start, text.data, token_size) == 0) {
                 return grammar.fixed_tokens.data[i].type;
             }
 
@@ -91,29 +91,24 @@ bool is_delimiter(const uint8_t val, const Grammar& grammar) {
 
 TokenizationState tokenizer::next(const Slice<uint8_t>& tail, const Grammar& grammar) {
 
-    const auto symbol = tail.data[0];
-    TokenType type = TokenType::Plain;
+    auto type = TokenType::Plain;
     size_t next_pos = 0;
 
     if(const auto pos = match<is_delimiter>(tail, grammar); pos > 0) {
-        type = TokenType::Delimiter;
         next_pos = pos;
+        type = TokenType::Delimiter;
+    } else if(const auto [pos, token_type] = delimited_token(tail, grammar); pos > 0) {
+        next_pos = pos;
+        type = token_type;
     } else {
-        const auto [match_size, token_type] = delimited_token(tail, grammar);
-
-        if(match_size > 0) {
-            next_pos = match_size;
-            type = token_type;
-        } else {
-            next_pos = find_next<is_delimiter>(tail, grammar);
-            const auto span = Slice(tail.data, next_pos);
-            type = fixed_token(span, grammar);
-        }
+        next_pos = find<is_delimiter>(tail, grammar);
+        const auto span = Slice(tail.data, next_pos);
+        type = fixed_token(span, grammar);
     }
 
     return TokenizationState {
         tail: Slice(tail.data + next_pos, tail.size - next_pos),
-        type: type,
-        span: Slice(tail.data, next_pos)
+        span: Slice(tail.data, next_pos),
+        type: type         
     };
 }

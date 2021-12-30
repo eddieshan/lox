@@ -9,13 +9,13 @@ namespace syntax {
 
     struct TokenizationState {
         utils::Slice<uint8_t> tail;
+        utils::Slice<uint8_t> span;
         TokenType type;
-        utils::Slice<uint8_t> span;        
     };
 
     namespace tokenizer {
         template<predicate pred>
-        size_t find_next(const utils::Slice<uint8_t>& text, const Grammar& grammar) {
+        size_t find(const utils::Slice<uint8_t>& text, const Grammar& grammar) {
             for(auto i = 1; i < text.size; ++i) {
                 if(pred(text.data[i], grammar)) {
                     return i;
