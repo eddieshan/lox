@@ -16,8 +16,7 @@ using namespace utils;
 
 void views::edit(const EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer) {
     const auto text = state.text_area.text();
-    auto tokenizer = syntax::Tokenizer(text, config.grammar);
-    const auto start_pos = views::syntax(tokenizer, screen_buffer);
+    const auto start_pos = views::syntax(text, config.grammar, screen_buffer);
  
     const auto text_state = navigation::text_cursor(text, state.pos);
 

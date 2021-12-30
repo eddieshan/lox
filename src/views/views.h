@@ -18,7 +18,7 @@ namespace views {
 
     utils::Position plain_text(const utils::Slice<uint8_t>& text, buffers::Buffer& buffer);
 
-    utils::Position syntax(syntax::Tokenizer& tokenizer, buffers::Buffer& buffer);
+    utils::Position syntax(const utils::Slice<uint8_t>& text, const syntax::Grammar& grammar, buffers::Buffer& buffer);
 
     void status_bar(const models::TextCursor& text_state, const utils::WindowSize& window_size, buffers::Buffer& buffer);
 

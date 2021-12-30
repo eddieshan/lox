@@ -12,24 +12,8 @@ namespace syntax {
         TypeKeyword = 4,
         NumericLiteral = 5,
         StringLiteral = 6,
-        Comment = 7,
-        NewLine = 8
+        Comment = 7
     };
-
-    // namespace TokenType {
-    //     enum TokenType {
-    //         Plain,
-    //         Delimiter,
-    //         Operator,
-    //         Keyword,
-    //         TypeKeyword,
-    //         NumericLiteral,
-    //         StringLiteral,
-    //         Comment,
-    //         NewLine
-    //     };
-    // }
-
 
     struct Token {
         TokenType type;

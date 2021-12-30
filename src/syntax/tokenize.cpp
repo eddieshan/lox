@@ -56,7 +56,7 @@ std::pair<bool, size_t> capture(const Slice<uint8_t>& text, const Slice<uint8_t>
                 // Otherwise line breaks will not be rendered properly. 
                 // A horrible fix but there but there is no other way to deal with the issue.
                 // Line break handling is known for messing up lexing & parsing.
-                const auto match_size = text.data[last] == ascii::Lf? last : index + end.size;
+                const auto match_size = index + end.size;
                 return std::make_pair(true, match_size);
             }
         }
@@ -96,10 +96,6 @@ bool is_delimiter(const uint8_t val, const Grammar& grammar) {
     return slice::contains(grammar.delimiters, val);
 }
 
-bool is_not_delimiter(const uint8_t val, const Grammar& grammar) {
-    return !slice::contains(grammar.delimiters, val);
-}
-
 Tokenizer::Tokenizer(const Slice<uint8_t>& text, const Grammar& grammar): 
     _text(text),
     _grammar(grammar),
@@ -113,14 +109,7 @@ Token Tokenizer::next() {
 
     const auto symbol = _text.data[_pos];
 
-    if(symbol == ascii::Lf) {
-        ++_pos;
-
-        return Token {
-            type: TokenType::NewLine,
-            span: Slice(_text.data, 0)
-        };
-    } else if(const auto next_pos = match<is_delimiter>(); next_pos > _pos) {
+    if(const auto next_pos = match<is_delimiter>(); next_pos > _pos) {
         const auto token = Token {
             type: TokenType::Delimiter,
             span: Slice(_text.data + _pos, next_pos - _pos)

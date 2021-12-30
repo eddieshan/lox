@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../utils/slice.h"
-#include "../utils/ascii.h"
 #include "grammar.h"
 
 namespace syntax {
@@ -19,7 +18,7 @@ namespace syntax {
             template<predicate pred>
             size_t find_next() {
                 for(auto i = _pos + 1; i < _text.size; ++i) {
-                    if(pred(_text.data[i], _grammar) || _text.data[i] == utils::ascii::Lf) {
+                    if(pred(_text.data[i], _grammar)) {
                         return i;
                     }
                 }
@@ -30,7 +29,7 @@ namespace syntax {
             template<predicate pred>
             size_t match() {
                 auto i = _pos;
-                while(i < _text.size && pred(_text.data[i], _grammar) && _text.data[i] != utils::ascii::Lf) {
+                while(i < _text.size && pred(_text.data[i], _grammar)) {
                     ++i;
                 }
 
