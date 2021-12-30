@@ -16,9 +16,9 @@ namespace views {
 
     void command_line(const models::EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer);
 
-    utils::Position plain_text(const utils::Slice<uint8_t>& text, const size_t pos, buffers::Buffer& buffer);
+    utils::Position plain_text(const utils::Slice<uint8_t>& text, buffers::Buffer& buffer);
 
-    utils::Position syntax(syntax::Tokenizer& tokenizer, const size_t pos, buffers::Buffer& buffer);
+    utils::Position syntax(syntax::Tokenizer& tokenizer, buffers::Buffer& buffer);
 
     void status_bar(const models::TextCursor& text_state, const utils::WindowSize& window_size, buffers::Buffer& buffer);
 

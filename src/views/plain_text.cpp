@@ -12,7 +12,7 @@ using namespace utils;
 using namespace term;
 using namespace views;
 
-Position views::plain_text(const Slice<uint8_t>& text, const size_t pos, buffers::Buffer& buffer) {
+Position views::plain_text(const Slice<uint8_t>& text, buffers::Buffer& buffer) {
 
     constexpr utils::Position start_pos = utils::Position { row: 0, col: 4 };
 

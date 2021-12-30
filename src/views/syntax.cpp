@@ -14,7 +14,7 @@ using namespace term;
 using namespace views;
 using namespace syntax;
 
-Position views::syntax(Tokenizer& tokenizer, const size_t pos, buffers::Buffer& buffer) {
+Position views::syntax(Tokenizer& tokenizer, buffers::Buffer& buffer) {
 
     constexpr Position start_pos = utils::Position { row: 0, col: 4 };
 

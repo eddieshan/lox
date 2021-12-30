@@ -34,7 +34,7 @@ Position render(const Command& command, const WindowSize& window_size, buffers::
 void views::command_line(const EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer) {
     const auto text = state.text_area.text();
     auto tokenizer = syntax::Tokenizer(text, config.grammar);
-    views::syntax(tokenizer, state.pos, screen_buffer);
+    views::syntax(tokenizer, screen_buffer);
  
     const auto text_state = navigation::text_cursor(text, state.pos);
 
