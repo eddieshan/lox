@@ -15,11 +15,6 @@ namespace syntax {
         Comment = 7
     };
 
-    struct Token {
-        TokenType type;
-        utils::Slice<uint8_t> span;
-    };    
-
     struct TokenGroup {
         std::unique_ptr<uint8_t[]> tokens;
         size_t size;
@@ -27,8 +22,8 @@ namespace syntax {
     };
 
     struct Grammar {
-        utils::Slice<TokenGroup> fixed_tokens;
-        utils::Slice<TokenGroup> delimited_tokens;
+        utils::Slice<const TokenGroup> fixed_tokens;
+        utils::Slice<const TokenGroup> delimited_tokens;
         utils::Slice<uint8_t> delimiters;
     };
 

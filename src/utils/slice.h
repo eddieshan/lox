@@ -6,16 +6,13 @@
 namespace utils {
 
     // Immutable, non owned slice type.
-    // Though it does not prevent writing the referenced memory block,
-    // it is meant to be used for sharing read only slices.
-    // Copy assignment and move assignment are disabled by making properties const.
-    // Disabling assignment is actually desirable for safer handling of memory slices.
+    // It is meant to be used for sharing read only slices.
     template<typename T>
     struct Slice {
-        const T* data;
-        const size_t size;
+        T* data;
+        size_t size;
 
-        Slice(const T* data_, const size_t size_): data(data_), size(size_) {}
+        Slice(T* data_, const size_t size_): data(data_), size(size_) {}
     };
 
     namespace slice {

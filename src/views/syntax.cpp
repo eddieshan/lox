@@ -28,17 +28,18 @@ Position views::syntax(const Slice<uint8_t>& text, const Grammar& grammar, buffe
 
         if(is_line_break || is_last) {
             const auto line_size = is_line_break? i - last_cr : i - last_cr + 1;
-            const auto line = Slice(text.data + last_cr, line_size);
+            auto line = Slice(text.data + last_cr, line_size);
 
-            auto tokenizer = Tokenizer(line, grammar);
+            do {
+                auto state = tokenizer::next(line, grammar);
+                const auto style = theme::syntax_style(state.type);
 
-            while(!tokenizer.is_end()) {
-                const auto token = tokenizer.next();
-                const auto style = theme::syntax_style(token.type);
-                buffer.esc(style);
-                buffer.write(token.span);
+                buffer.esc(style.data(), style.size());
+                buffer.write(state.span);
                 buffer.esc(ansi::ResetForeground);
-            }
+
+                line = state.tail;
+            } while(line.size > 0);
 
             if(is_line_break) {
                 buffer.esc(ansi::NextLine);

@@ -44,7 +44,7 @@ void Buffer::esc(const utils::Position& position) {
     }
 }
 
-void Buffer::esc(const uint32_t val, const uint8_t attr) {
+void Buffer::esc(const uint32_t val, uint8_t attr) {
     write(ansi::Csi);
 
     const auto seq_size = 4;
@@ -62,6 +62,11 @@ void Buffer::esc(const uint32_t val, const uint8_t attr) {
 void Buffer::esc(const Slice<uint8_t>& slice) {
     write(ansi::Csi);
     write(slice);
+}
+
+void Buffer::esc(const uint8_t* data, const size_t size) {
+    write(ansi::Csi);
+    write(data, size);
 }
 
 void Buffer::write(const Slice<uint8_t>& slice) {

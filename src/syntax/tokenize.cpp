@@ -50,12 +50,6 @@ std::pair<bool, size_t> capture(const Slice<uint8_t>& text, const Slice<uint8_t>
         const auto limit = text.size - end.size;
         for(auto index = start.size; index <= limit; ++index) {
             if(std::memcmp(end.data, text.data + index, end.size) == 0) {
-                const auto last = index + end.size - 1;
-
-                // If the terminating delimiter is a line break, exclude it from the token span.
-                // Otherwise line breaks will not be rendered properly. 
-                // A horrible fix but there but there is no other way to deal with the issue.
-                // Line break handling is known for messing up lexing & parsing.
                 const auto match_size = index + end.size;
                 return std::make_pair(true, match_size);
             }
@@ -91,54 +85,35 @@ std::tuple<size_t, TokenType> delimited_token(const Slice<uint8_t>& text, const 
     return std::make_tuple(0, TokenType::Plain);
 }
 
-
 bool is_delimiter(const uint8_t val, const Grammar& grammar) {
     return slice::contains(grammar.delimiters, val);
 }
 
-Tokenizer::Tokenizer(const Slice<uint8_t>& text, const Grammar& grammar): 
-    _text(text),
-    _grammar(grammar),
-    _pos(0) {}
+TokenizationState tokenizer::next(const Slice<uint8_t>& tail, const Grammar& grammar) {
 
-bool Tokenizer::is_end() const {
-    return _text.size == 0 || _pos == _text.size;
-}
+    const auto symbol = tail.data[0];
+    TokenType type = TokenType::Plain;
+    size_t next_pos = 0;
 
-Token Tokenizer::next() {
-
-    const auto symbol = _text.data[_pos];
-
-    if(const auto next_pos = match<is_delimiter>(); next_pos > _pos) {
-        const auto token = Token {
-            type: TokenType::Delimiter,
-            span: Slice(_text.data + _pos, next_pos - _pos)
-        };
-
-        _pos = next_pos;
-
-        return token;
+    if(const auto pos = match<is_delimiter>(tail, grammar); pos > 0) {
+        type = TokenType::Delimiter;
+        next_pos = pos;
     } else {
-        const auto tail = Slice(_text.data + _pos, _text.size - _pos);
-        const auto [match_size, type] = delimited_token(tail, _grammar);
+        const auto [match_size, token_type] = delimited_token(tail, grammar);
 
         if(match_size > 0) {
-            const auto span = Slice(_text.data + _pos, match_size);
-            _pos += match_size;
-
-            return Token {
-                type: type,
-                span: span
-            };
+            next_pos = match_size;
+            type = token_type;
         } else {
-            const auto prev_pos = _pos;
-            _pos = find_next<is_delimiter>();
-            const auto span = Slice(_text.data + prev_pos, _pos - prev_pos);
-
-            return Token {
-                type: fixed_token(span, _grammar),
-                span: span
-            };
+            next_pos = find_next<is_delimiter>(tail, grammar);
+            const auto span = Slice(tail.data, next_pos);
+            type = fixed_token(span, grammar);
         }
     }
+
+    return TokenizationState {
+        tail: Slice(tail.data + next_pos, tail.size - next_pos),
+        type: type,
+        span: Slice(tail.data, next_pos)
+    };
 }

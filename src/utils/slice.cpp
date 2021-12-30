@@ -18,5 +18,5 @@ using namespace utils;
 // constness propagation might do.
 Slice<uint8_t> slice::from(const char* val) {
     const auto size = std::strlen(val);
-    return Slice((uint8_t*)val, size);
+    return Slice<uint8_t>((uint8_t*)val, size);
 }

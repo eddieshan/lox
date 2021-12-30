@@ -22,5 +22,5 @@ namespace settings::theme {
         const auto Background = term::ansi::color_256(term::ansi::BackgroundAttr, 33);
     }
 
-    const utils::Slice<uint8_t> syntax_style(syntax::TokenType token_type);
+    const std::array<uint8_t, 9> syntax_style(syntax::TokenType token_type);
 }
