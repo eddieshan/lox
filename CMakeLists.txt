@@ -6,6 +6,8 @@ project(lox VERSION 0.0)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 set(SOURCES
+    src/utils/slice.cpp
+    src/utils/range.cpp    
     src/utils/convert.cpp
     src/utils/geometry.cpp
     src/utils/io.cpp    
@@ -23,7 +25,6 @@ set(SOURCES
     src/views/line_counter.cpp
     src/views/status_bar.cpp
     src/views/command_line.cpp
-    src/views/cursor.cpp
     src/views/edit.cpp
     src/controllers/edit_controller.cpp
     src/controllers/command_controller.cpp    
