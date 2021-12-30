@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "../utils/slice.h"
+#include "../utils/range.h"
 #include "../utils/ascii.h"
 #include "grammar.h"
 #include "tokenize.h"
@@ -10,7 +11,7 @@ using namespace syntax;
 
 bool is_number(const Slice<uint8_t>& sequence) {
     for(auto i = 0; i < sequence.size; ++i) {
-        if(sequence.data[i] < ascii::Zero || sequence.data[i] > ascii::Nine) {
+        if(!range::contains(ascii::Numbers, sequence.data[i])) {
             return false;
         }
     }
@@ -18,7 +19,7 @@ bool is_number(const Slice<uint8_t>& sequence) {
     return true;
 }
 
-TokenType token_type(const Slice<uint8_t>& sequence, const Grammar& grammar) {
+TokenType fixed_token(const Slice<uint8_t>& sequence, const Grammar& grammar) {
 
     if(is_number(sequence)) {
         return TokenType::NumericLiteral;
@@ -66,7 +67,7 @@ std::pair<bool, size_t> capture(const Slice<uint8_t>& text, const Slice<uint8_t>
     return std::make_pair(false, 0);
 }
 
-std::tuple<bool, size_t, TokenType> delimited_token_type(const Slice<uint8_t>& text, const Grammar& grammar) {
+std::tuple<size_t, TokenType> delimited_token(const Slice<uint8_t>& text, const Grammar& grammar) {
 
     for(auto i = 0; i < grammar.delimited_tokens.size; ++i) {
         const auto tokens = grammar.delimited_tokens.data[i].tokens.get();
@@ -82,12 +83,12 @@ std::tuple<bool, size_t, TokenType> delimited_token_type(const Slice<uint8_t>& t
             const auto [is_capture, match_size] = capture(text, start, end);
 
             if(is_capture) {
-                return std::make_tuple(true, match_size, grammar.delimited_tokens.data[i].type);
+                return std::make_tuple(match_size, grammar.delimited_tokens.data[i].type);
             }
         }
     }
 
-    return std::make_tuple(false, 0, TokenType::Plain);
+    return std::make_tuple(0, TokenType::Plain);
 }
 
 
@@ -108,16 +109,6 @@ bool Tokenizer::is_end() const {
     return _text.size == 0 || _pos == _text.size;
 }
 
-size_t Tokenizer::find_next(const uint8_t val) {
-    for(auto i = _pos + 1; i < _text.size; ++i) {
-        if(_text.data[i] == val || _text.data[i] == utils::ascii::Lf) {
-            return i;
-        }
-    }
-
-    return _text.size;
-}
-
 Token Tokenizer::next() {
 
     const auto symbol = _text.data[_pos];
@@ -129,19 +120,20 @@ Token Tokenizer::next() {
             type: TokenType::NewLine,
             span: Slice(_text.data, 0)
         };
-    } else if(slice::contains(_grammar.delimiters, symbol)) {
-        const auto prev_pos = _pos;
-        _pos = find_next<is_not_delimiter>();
-
-        return Token {
+    } else if(const auto next_pos = match<is_delimiter>(); next_pos > _pos) {
+        const auto token = Token {
             type: TokenType::Delimiter,
-            span: Slice(_text.data + prev_pos, _pos - prev_pos)
+            span: Slice(_text.data + _pos, next_pos - _pos)
         };
+
+        _pos = next_pos;
+
+        return token;
     } else {
         const auto tail = Slice(_text.data + _pos, _text.size - _pos);
-        const auto [is_capture, match_size, type] = delimited_token_type(tail, _grammar);
+        const auto [match_size, type] = delimited_token(tail, _grammar);
 
-        if(is_capture) {
+        if(match_size > 0) {
             const auto span = Slice(_text.data + _pos, match_size);
             _pos += match_size;
 
@@ -155,7 +147,7 @@ Token Tokenizer::next() {
             const auto span = Slice(_text.data + prev_pos, _pos - prev_pos);
 
             return Token {
-                type: token_type(span, _grammar),
+                type: fixed_token(span, _grammar),
                 span: span
             };
         }

@@ -27,7 +27,15 @@ namespace syntax {
                 return _text.size;
             }
 
-            size_t find_next(const uint8_t);
+            template<predicate pred>
+            size_t match() {
+                auto i = _pos;
+                while(i < _text.size && pred(_text.data[i], _grammar) && _text.data[i] != utils::ascii::Lf) {
+                    ++i;
+                }
+
+                return i;
+            }
 
         public:
             Tokenizer(const utils::Slice<uint8_t>& text, const Grammar& grammar);
