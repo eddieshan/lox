@@ -4,20 +4,16 @@
 
 namespace syntax {
 
-    enum class TokenType {
-        Plain,
-        Keyword,
-        TypeKeyword,
-        NumericLiteral,
-        StringLiteral,
-        Identifier,
-        NewLine
+    enum class TokenType: int {
+        Plain = 0,
+        Delimiter = 1,
+        Operator = 2,
+        Keyword = 3,
+        TypeKeyword = 4,
+        NumericLiteral = 5,
+        StringLiteral = 6,
+        Comment = 7
     };
-
-    struct Token {
-        TokenType type;
-        utils::Slice<uint8_t> span;
-    };    
 
     struct TokenGroup {
         std::unique_ptr<uint8_t[]> tokens;
@@ -26,7 +22,8 @@ namespace syntax {
     };
 
     struct Grammar {
-        utils::Slice<TokenGroup> tokens;
+        utils::Slice<const TokenGroup> fixed_tokens;
+        utils::Slice<const TokenGroup> delimited_tokens;
         utils::Slice<uint8_t> delimiters;
     };
 

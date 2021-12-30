@@ -1,17 +1,17 @@
 #include <cstring>
 
 #include "../utils/slice.h"
+#include "../utils/range.h"
 #include "../utils/ascii.h"
-#include "../term/term.h"
 #include "grammar.h"
 #include "tokenize.h"
 
 using namespace utils;
 using namespace syntax;
 
-bool is_number(const Slice<uint8_t>& sequence) {
-    for(auto i = 0; i < sequence.size; ++i) {
-        if(sequence.data[i] < ascii::Zero || sequence.data[i] > ascii::Nine) {
+bool is_number(const Slice<uint8_t>& text) {
+    for(auto i = 0; i < text.size; ++i) {
+        if(!range::contains(ascii::Numbers, text.data[i])) {
             return false;
         }
     }
@@ -19,23 +19,23 @@ bool is_number(const Slice<uint8_t>& sequence) {
     return true;
 }
 
-TokenType token_type(const Slice<uint8_t>& sequence, const Grammar& grammar) {
+TokenType fixed_token(const Slice<uint8_t>& text, const Grammar& grammar) {
 
-    if(is_number(sequence)) {
+    if(is_number(text)) {
         return TokenType::NumericLiteral;
     }
 
-    for(auto i = 0; i < grammar.tokens.size; ++i) {
-        const auto tokens = grammar.tokens.data[i].tokens.get();
+    for(auto i = 0; i < grammar.fixed_tokens.size; ++i) {
+        const auto tokens = grammar.fixed_tokens.data[i].tokens.get();
 
         size_t length_index = 0;
 
-        while(length_index < grammar.tokens.data[i].size) {
+        while(length_index < grammar.fixed_tokens.data[i].size) {
             const auto token_size = tokens[length_index];
             const auto token_start = tokens + length_index + 1;
 
-            if(token_size == sequence.size && std::memcmp(token_start, sequence.data, token_size) == 0) {
-                return grammar.tokens.data[i].type;
+            if(token_size == text.size && std::memcmp(token_start, text.data, token_size) == 0) {
+                return grammar.fixed_tokens.data[i].type;
             }
 
             length_index += (token_size + 1);
@@ -45,70 +45,70 @@ TokenType token_type(const Slice<uint8_t>& sequence, const Grammar& grammar) {
     return TokenType::Plain;
 }
 
+std::pair<bool, size_t> capture(const Slice<uint8_t>& text, const Slice<uint8_t>& start, const Slice<uint8_t>& end) {
+    if((text.size >= start.size + end.size) && (std::memcmp(start.data, text.data, start.size) == 0)) {
+        const auto limit = text.size - end.size;
+        for(auto index = start.size; index <= limit; ++index) {
+            if(std::memcmp(end.data, text.data + index, end.size) == 0) {
+                const auto match_size = index + end.size;
+                return std::make_pair(true, match_size);
+            }
+        }
+
+        return std::make_pair(true, text.size);
+    }
+
+    return std::make_pair(false, 0);
+}
+
+std::tuple<size_t, TokenType> delimited_token(const Slice<uint8_t>& text, const Grammar& grammar) {
+
+    for(auto i = 0; i < grammar.delimited_tokens.size; ++i) {
+        const auto tokens = grammar.delimited_tokens.data[i].tokens.get();
+
+        size_t length_index = 0;
+
+        while(length_index < grammar.delimited_tokens.data[i].size) {
+            const auto start = Slice(tokens + length_index + 1, tokens[length_index]);
+            length_index += (tokens[length_index] + 1);
+            const auto end = Slice(tokens + length_index + 1, tokens[length_index]);
+            length_index += (tokens[length_index] + 1);
+
+            const auto [is_capture, match_size] = capture(text, start, end);
+
+            if(is_capture) {
+                return std::make_tuple(match_size, grammar.delimited_tokens.data[i].type);
+            }
+        }
+    }
+
+    return std::make_tuple(0, TokenType::Plain);
+}
+
 bool is_delimiter(const uint8_t val, const Grammar& grammar) {
     return slice::contains(grammar.delimiters, val);
 }
 
-bool is_not_delimiter(const uint8_t val, const Grammar& grammar) {
-    return !slice::contains(grammar.delimiters, val);
-}
+TokenizationState tokenizer::next(const Slice<uint8_t>& tail, const Grammar& grammar) {
 
-Tokenizer::Tokenizer(const Slice<uint8_t>& text, const Grammar& grammar): 
-    _text(text),
-    _grammar(grammar),
-    _pos(0) {}
+    auto type = TokenType::Plain;
+    size_t next_pos = 0;
 
-bool Tokenizer::is_end() const {
-    return _text.size == 0 || _pos == _text.size;
-}
-
-size_t Tokenizer::find_next(const uint8_t val) {
-    for(auto i = _pos + 1; i < _text.size; ++i) {
-        if(_text.data[i] == val || _text.data[i] == utils::ascii::Lf) {
-            return i;
-        }
-    }
-
-    return _text.size;
-}
-
-Token Tokenizer::next() {
-
-    const auto symbol = _text.data[_pos];
-
-    if(symbol == ascii::Lf) {
-        ++_pos;
-
-        return Token {
-            type: TokenType::NewLine,
-            span: Slice(_text.data, 0)
-        };
-    } else if(symbol == ascii::Quote) {
-        const auto next_pos = find_next(ascii::Quote);
-        const auto span = Slice(_text.data + _pos, next_pos - _pos + 1);
-        _pos = next_pos == _text.size? _text.size : next_pos + 1;
-
-        return Token {
-            type: next_pos == _text.size? TokenType::Plain : TokenType::StringLiteral,
-            span: span
-        };
-    } else if(slice::contains(_grammar.delimiters, symbol)) {
-        const auto next_pos = find_next<is_not_delimiter>();
-        const auto span = Slice(_text.data + _pos, next_pos - _pos);
-        _pos = next_pos;
-
-        return Token {
-            type: token_type(span, _grammar),
-            span: span
-        };
+    if(const auto pos = match<is_delimiter>(tail, grammar); pos > 0) {
+        next_pos = pos;
+        type = TokenType::Delimiter;
+    } else if(const auto [pos, token_type] = delimited_token(tail, grammar); pos > 0) {
+        next_pos = pos;
+        type = token_type;
     } else {
-        const auto next_pos = find_next<is_delimiter>();
-        const auto span = Slice(_text.data + _pos, next_pos - _pos);
-        _pos = next_pos;
-
-        return Token {
-            type: token_type(span, _grammar),
-            span: span
-        };
+        next_pos = find<is_delimiter>(tail, grammar);
+        const auto span = Slice(tail.data, next_pos);
+        type = fixed_token(span, grammar);
     }
+
+    return TokenizationState {
+        tail: Slice(tail.data + next_pos, tail.size - next_pos),
+        span: Slice(tail.data, next_pos),
+        type: type         
+    };
 }

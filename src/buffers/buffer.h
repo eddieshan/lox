@@ -22,9 +22,11 @@ namespace buffers {
 
             void esc(const utils::Position& position);
 
-            void esc(const uint32_t val, const uint8_t attr);
+            void esc(const uint32_t val, uint8_t attr);
 
             void esc(const utils::Slice<uint8_t>& slice);
+
+            void esc(const uint8_t* data, const size_t size);
 
             void write(const utils::Slice<uint8_t>& data);
 

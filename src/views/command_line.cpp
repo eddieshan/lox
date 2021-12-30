@@ -21,8 +21,8 @@ namespace messages {
 }
 
 Position render(const Command& command, const WindowSize& window_size, buffers::Buffer& buffer) {
-    buffer.esc(Slice(theme::command_line::Background.data(), theme::command_line::Background.size()));
-    buffer.esc(Slice(theme::command_line::Foreground.data(), theme::command_line::Foreground.size()));
+    buffer.esc(theme::command_line::Background.data(), theme::command_line::Background.size());
+    buffer.esc(theme::command_line::Foreground.data(), theme::command_line::Foreground.size());
     buffer.esc(Position { row: window_size.rows, col: 0 });
     buffer.esc(term::ansi::ClearLine);
     buffer.write(messages::Open);
@@ -33,8 +33,7 @@ Position render(const Command& command, const WindowSize& window_size, buffers::
 
 void views::command_line(const EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer) {
     const auto text = state.text_area.text();
-    auto tokenizer = syntax::Tokenizer(text, config.grammar);
-    views::syntax(tokenizer, state.pos, screen_buffer);
+    views::syntax(text, config.grammar, screen_buffer);
  
     const auto text_state = navigation::text_cursor(text, state.pos);
 
