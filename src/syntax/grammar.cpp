@@ -14,11 +14,7 @@ TokenGroup tokens(const char* tokens_def, const TokenType token_type) {
 
     const auto tokens_length = strlen(tokens_def) + 1;
 
-    auto token_group = TokenGroup {
-        tokens: std::make_unique<uint8_t[]>(tokens_length),
-        size: tokens_length,
-        type: token_type
-    };
+    auto token_group = TokenGroup(tokens_length, token_type);
 
     const auto tokens = token_group.tokens.get();
     auto index = 0;
@@ -38,21 +34,13 @@ TokenGroup tokens(const char* tokens_def, const TokenType token_type) {
     return token_group;
 }
 
-const auto fixed_tokens = std::array<TokenGroup, 3> {
-    tokens(cpp::Keywords, syntax::TokenType::Keyword),
-    tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword),
-    tokens(cpp::Operators, syntax::TokenType::Operator)    
-};
-
-const auto delimited_tokens = std::array<TokenGroup, 2> {
-    tokens(cpp::StringDelimiters, syntax::TokenType::StringLiteral),
-    tokens(cpp::CommentDelimiters, syntax::TokenType::Comment)
-};
-
 Grammar syntax::build() {
-    return Grammar {
-        fixed_tokens: Slice(fixed_tokens.data(), fixed_tokens.size()),
-        delimited_tokens: Slice(delimited_tokens.data(), delimited_tokens.size()),
-        delimiters: slice::from(cpp::Delimiters)
-    };
+    return Grammar(
+        slice::from(cpp::Delimiters),
+        slice::from(cpp::Operators),
+        tokens(cpp::Keywords, syntax::TokenType::Keyword),
+        tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword),
+        tokens(cpp::StringDelimiters, syntax::TokenType::StringLiteral),
+        tokens(cpp::CommentDelimiters, syntax::TokenType::Comment)
+    );
 }

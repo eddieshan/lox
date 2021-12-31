@@ -6,5 +6,11 @@
 namespace settings {
     struct Config {
         syntax::Grammar grammar;
+
+        Config(syntax::Grammar grammar_):
+            grammar(std::move(grammar_)) {}
+
+        Config(Config&& config) noexcept:
+            grammar(std::move(config.grammar)) {}
     };
 }
