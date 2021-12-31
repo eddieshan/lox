@@ -21,8 +21,8 @@ using namespace models;
 
 void render(const Editor& editor, Buffer& screen_buffer, View view) {
     screen_buffer.clear();
-    screen_buffer.esc(theme::Foreground.data(), theme::Foreground.size());
-    screen_buffer.esc(theme::Background.data(), theme::Background.size());
+    screen_buffer.esc(theme::Foreground);
+    screen_buffer.esc(theme::Background);
     screen_buffer.esc(ansi::Clear);
     screen_buffer.esc(ansi::Home);
     view(editor.state, editor.config, screen_buffer);
