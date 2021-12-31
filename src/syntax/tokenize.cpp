@@ -52,7 +52,7 @@ bool is_alphanumeric(const uint8_t val) {
            val == id_delimiter;
 }
 
-bool fixed_token(const Slice<uint8_t>& text, const TokenGroup& token_group) {
+size_t match_fixed(const Slice<uint8_t>& text, const TokenGroup& token_group) {
     const auto tokens = token_group.tokens.get();
 
     size_t length_index = 0;
@@ -61,14 +61,16 @@ bool fixed_token(const Slice<uint8_t>& text, const TokenGroup& token_group) {
         const auto token_size = tokens[length_index];
         const auto token_start = tokens + length_index + 1;
 
-        if(token_size == text.size && std::memcmp(token_start, text.data, token_size) == 0) {
-            return true;
+        if(token_size <= text.size && 
+           std::memcmp(token_start, text.data, token_size) == 0 && 
+           !is_alphanumeric(text.data[token_size])) {
+            return token_size;
         }
 
         length_index += (token_size + 1);
     }
 
-    return false;
+    return 0;
 }
 
 size_t match(const Slice<uint8_t>& text, const Slice<uint8_t>& start, const Slice<uint8_t>& end) {
@@ -88,7 +90,7 @@ size_t match(const Slice<uint8_t>& text, const Slice<uint8_t>& start, const Slic
     return 0;
 }
 
-size_t delimited_token(const Slice<uint8_t>& text, const TokenGroup& token_group) {
+size_t match_delimited(const Slice<uint8_t>& text, const TokenGroup& token_group) {
 
     const auto tokens = token_group.tokens.get();
     size_t length_index = 0;
@@ -120,37 +122,20 @@ TokenizationState next_state(const Slice<uint8_t>& tail, const size_t pos, const
 TokenizationState tokenizer::next(const Slice<uint8_t>& tail, const Grammar& grammar) {
     if(const auto pos = match<is_delimiter>(tail, grammar); pos > 0) {
         return next_state(tail, pos, TokenType::Delimiter);
-    } else if(const auto pos = delimited_token(tail, grammar.string_delimiters); pos > 0) {
+    } else if(const auto pos = match_delimited(tail, grammar.string_delimiters); pos > 0) {
         return next_state(tail, pos, TokenType::StringLiteral);
-    } else if(const auto pos = delimited_token(tail, grammar.comment_delimiters); pos > 0) {
+    } else if(const auto pos = match_delimited(tail, grammar.comment_delimiters); pos > 0) {
         return next_state(tail, pos, TokenType::Comment);
     } else if(const auto pos = match<is_digit>(tail); pos > 0) {
         return next_state(tail, pos, TokenType::NumericLiteral);
     } else if(const auto pos = match<is_operator>(tail, grammar); pos > 0) {
         return next_state(tail, pos, TokenType::Operator);
-    } else if(const auto pos = match<is_alphanumeric>(tail); pos > 0) {
-        const auto span = Slice(tail.data, pos);
-
-        if(fixed_token(span, grammar.keyword_delimiters)) {
-            return TokenizationState {
-                tail: Slice(tail.data + pos, tail.size - pos),
-                span: span,
-                type: TokenType::Keyword
-            };
-        } else if(fixed_token(span, grammar.type_delimiters)) {
-            return TokenizationState {
-                tail: Slice(tail.data + pos, tail.size - pos),
-                span: span,
-                type: TokenType::TypeKeyword
-            };
-        } else {
-            return TokenizationState {
-                tail: Slice(tail.data + pos, tail.size - pos),
-                span: span,
-                type: TokenType::Plain
-            };            
-        }
-    } 
-
-    return next_state(tail, tail.size, TokenType::Plain);
+    } else if(const auto pos = match_fixed(tail, grammar.keyword_delimiters); pos > 0) {
+        return next_state(tail, pos, TokenType::Keyword);
+    } else if(const auto pos = match_fixed(tail, grammar.type_delimiters); pos > 0) {
+        return next_state(tail, pos, TokenType::TypeKeyword);
+    } else {
+        const auto next_pos = match<is_alphanumeric>(tail);
+        return next_state(tail, next_pos, TokenType::Plain);
+    }
 }
