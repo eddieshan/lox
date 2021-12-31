@@ -1,9 +1,9 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 
 #include "../utils/slice.h"
-#include "../utils/ascii.h"
 #include "../utils/geometry.h"
 
 namespace term::ansi {
@@ -14,15 +14,18 @@ namespace term::ansi {
 
     const auto NextLine = utils::slice::from("1E");
     const auto Clear = utils::slice::from("2J");
-    const auto ClearLine = utils::slice::from("K");
+    const auto ClearLine = (uint8_t)'K';
 
     const auto Dim = utils::slice::from("2m");
     const auto ResetDim = utils::slice::from("22m");
     const auto ResetForeground = utils::slice::from("39m");
     const auto Reset = utils::slice::from("0m");
 
-    constexpr uint8_t ForegroundAttr = 38;
-    constexpr uint8_t BackgroundAttr = 48;
+    struct ColorAttribute {
+        uint8_t attr;
+        uint8_t color;
+    };
 
-    std::array<uint8_t, 9> color_256(const uint8_t attr_code, const uint8_t color_code);
+    ColorAttribute foreground(const uint8_t color);
+    ColorAttribute background(const uint8_t color);
 }

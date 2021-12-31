@@ -1,28 +1,26 @@
 #include <array>
 
 #include "../utils/slice.h"
+#include "../term/ansi.h"
 #include "../syntax/tokenize.h"
 #include "theme.h"
 
 using namespace utils;
+using namespace term::ansi;
 using namespace syntax;
 using namespace settings;
 
-const auto syntax_styles_index() {
-    return std::array<std::array<uint8_t, 9>, 8> {
-        theme::Plain,
-        theme::Operator,
-        theme::Delimiter,
-        theme::Keyword,
-        theme::TypeKeyword,
-        theme::Number,
-        theme::String,
-        theme::Comment
-    };
-} 
+const auto syntax_styles = std::array<ColorAttribute, 8> {
+    theme::syntax_highlight::Plain,
+    theme::syntax_highlight::Operator,
+    theme::syntax_highlight::Delimiter,
+    theme::syntax_highlight::Keyword,
+    theme::syntax_highlight::TypeKeyword,
+    theme::syntax_highlight::Number,
+    theme::syntax_highlight::String,
+    theme::syntax_highlight::Comment
+};
 
-const auto syntax_styles = syntax_styles_index();
-
-const std::array<uint8_t, 9> theme::syntax_style(syntax::TokenType token_type) {
+const ColorAttribute theme::syntax_style(syntax::TokenType token_type) {
     return syntax_styles[static_cast<int>(token_type)];
 }

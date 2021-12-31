@@ -5,6 +5,7 @@
 
 #include "../utils/geometry.h"
 #include "../utils/slice.h"
+#include "../term/ansi.h"
 
 namespace buffers {
 
@@ -21,6 +22,8 @@ namespace buffers {
             void esc(const uint8_t val);
 
             void esc(const utils::Position& position);
+
+            void esc(const term::ansi::ColorAttribute color_attr);
 
             void esc(const uint32_t val, uint8_t attr);
 

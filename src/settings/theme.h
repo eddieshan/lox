@@ -5,22 +5,25 @@
 #include "../syntax/tokenize.h"
 
 namespace settings::theme {
-    const auto Foreground = term::ansi::color_256(term::ansi::ForegroundAttr, 254);
-    const auto Background = term::ansi::color_256(term::ansi::BackgroundAttr, 235);
-
-    const auto Plain = term::ansi::color_256(term::ansi::ForegroundAttr, 81);
-    const auto Operator = term::ansi::color_256(term::ansi::ForegroundAttr, 255);
-    const auto Delimiter = term::ansi::color_256(term::ansi::ForegroundAttr, 255);    
-    const auto Keyword = term::ansi::color_256(term::ansi::ForegroundAttr, 177);
-    const auto TypeKeyword = term::ansi::color_256(term::ansi::ForegroundAttr, 75);
-    const auto Number = term::ansi::color_256(term::ansi::ForegroundAttr, 10);
-    const auto String = term::ansi::color_256(term::ansi::ForegroundAttr, 214);
-    const auto Comment = term::ansi::color_256(term::ansi::ForegroundAttr, 28);
-
-    namespace command_line {
-        const auto Foreground = term::ansi::color_256(term::ansi::ForegroundAttr, 255);
-        const auto Background = term::ansi::color_256(term::ansi::BackgroundAttr, 33);
+    const auto Foreground = term::ansi::foreground(254);
+    const auto Background = term::ansi::background(235);
+    
+    namespace syntax_highlight {
+        const auto Plain = term::ansi::foreground(81);
+        const auto Operator = term::ansi::foreground(255);
+        const auto Delimiter = term::ansi::foreground(255);
+        const auto Keyword = term::ansi::foreground(177);
+        const auto TypeKeyword = term::ansi::foreground(75);
+        const auto Number = term::ansi::foreground(10);
+        const auto String = term::ansi::foreground(214);
+        const auto Comment = term::ansi::foreground(28);
     }
 
-    const std::array<uint8_t, 9> syntax_style(syntax::TokenType token_type);
+    namespace command_line {
+        const auto Foreground = term::ansi::foreground(255);
+        const auto Background = term::ansi::background(33);
+    }
+
+    const term::ansi::ColorAttribute syntax_style(syntax::TokenType token_type);
+
 }

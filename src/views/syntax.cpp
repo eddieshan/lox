@@ -1,5 +1,6 @@
 #include "../utils/convert.h"
 #include "../utils/geometry.h"
+#include "../utils/ascii.h"
 #include "../buffers/buffer.h"
 #include "../settings/theme.h"
 #include "../term/ansi.h"
@@ -34,7 +35,7 @@ Position views::syntax(const Slice<uint8_t>& text, const Grammar& grammar, buffe
                 auto state = tokenizer::next(line, grammar);
                 const auto style = theme::syntax_style(state.type);
 
-                buffer.esc(style.data(), style.size());
+                buffer.esc(style);
                 buffer.write(state.span);
                 buffer.esc(ansi::ResetForeground);
 

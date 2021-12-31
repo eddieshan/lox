@@ -30,17 +30,15 @@ void Buffer::esc(const uint8_t val) {
 void Buffer::esc(const utils::Position& position) {
     write(ansi::Csi);
 
-    const auto seq_size = 8;
+    constexpr auto CursorEscape = std::array<uint8_t, 8> { '\0', '\0', '\0', ';', '\0', '\0', '\0', 'H' };
     const auto remaining = _capacity - _size;
 
-    if(seq_size <= remaining) {
+    if(CursorEscape.size() <= remaining) {
         const auto current = _bytes.get() + _size;
-        std::memset(current, 0, 8);
+        std::copy(CursorEscape.data(), CursorEscape.data() + CursorEscape.size(), current);
         convert::to_chars_3(position.row, current);
         convert::to_chars_3(position.col, current + 4);
-        current[3] = (uint8_t)';';
-        current[7] = ansi::Home;
-        _size += seq_size;
+        _size += CursorEscape.size();
     }
 }
 
@@ -56,6 +54,22 @@ void Buffer::esc(const uint32_t val, uint8_t attr) {
         convert::to_chars_3(val, current);
         current[3] = attr;
         _size += seq_size;
+    }
+}
+
+void Buffer::esc(const ansi::ColorAttribute color_attr) {
+    write(ansi::Csi);
+    
+    constexpr auto ColorEscape = std::array<uint8_t, 9> { '\0', '\0', ';', '5', ';', '\0', '\0', '\0', 'm' };
+    const auto remaining = _capacity - _size;
+
+    if(ColorEscape.size() <= remaining) {
+        const auto current = _bytes.get() + _size;
+
+        std::copy(ColorEscape.data(), ColorEscape.data() + ColorEscape.size(), current);
+        convert::to_chars_2(color_attr.attr, current);
+        convert::to_chars_3(color_attr.color, current + 5);
+        _size += ColorEscape.size();
     }
 }
 
