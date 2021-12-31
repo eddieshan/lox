@@ -47,11 +47,13 @@ TokenType fixed_token(const Slice<uint8_t>& text, const Grammar& grammar) {
 
 std::pair<bool, size_t> capture(const Slice<uint8_t>& text, const Slice<uint8_t>& start, const Slice<uint8_t>& end) {
     if((text.size >= start.size + end.size) && (std::memcmp(start.data, text.data, start.size) == 0)) {
-        const auto limit = text.size - end.size;
-        for(auto index = start.size; index <= limit; ++index) {
-            if(std::memcmp(end.data, text.data + index, end.size) == 0) {
-                const auto match_size = index + end.size;
-                return std::make_pair(true, match_size);
+        if(end.size > 0) {
+            const auto limit = text.size - end.size;
+            for(auto index = start.size; index <= limit; ++index) {
+                if(std::memcmp(end.data, text.data + index, end.size) == 0) {
+                    const auto match_size = index + end.size;
+                    return std::make_pair(true, match_size);
+                }
             }
         }
 
