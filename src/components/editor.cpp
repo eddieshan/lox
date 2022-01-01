@@ -38,16 +38,9 @@ void editor::run() {
 
     auto wait_for_events = true;
 
-    const auto config = Config {
-        grammar: syntax::build()
-    };
-
     auto controller = controllers::edit;
 
-    auto editor = Editor {
-        state: editor_state::build(),
-        config: config
-    };
+    auto editor = Editor(editor_state::build(), Config(syntax::build()));
 
     render(editor, screen_buffer, views::edit);
 
