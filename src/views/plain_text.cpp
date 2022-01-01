@@ -16,24 +16,20 @@ Position views::plain_text(const Slice<uint8_t>& text, buffers::Buffer& buffer) 
 
     constexpr utils::Position start_pos = utils::Position { row: 0, col: 4 };
 
-    size_t last_cr = 0;
-
     buffer.esc(start_pos.col, ansi::ColumnRelative);
+
+    size_t last_cr = 0, last = text.size - 1;
 
     for(auto i = 0; i < text.size; ++i) {
         const auto is_line_break = text.data[i] == ascii::Lf;
-        if(is_line_break) {
-            const auto offset = last_cr == 0? 0 : 1;
-            buffer.write(text.data + last_cr + offset, i - last_cr);
+
+        if(is_line_break || (i == last)) {
+            const auto line_size = is_line_break? i - last_cr : i - last_cr + 1;
+            buffer.write(text.data + last_cr, line_size);
             buffer.esc(ansi::NextLine);
             buffer.esc(start_pos.col, ansi::ColumnRelative);
-            last_cr = i;
+            last_cr = i + 1;
         }
-    }
-
-    if (last_cr < text.size) {
-        const auto offset = last_cr == 0? 0 : 1;
-        buffer.write(text.data + last_cr + offset, text.size - last_cr);
     }
 
     return start_pos;
