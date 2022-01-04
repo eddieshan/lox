@@ -1,34 +1,24 @@
 #include "../utils/slice.h"
 #include "../utils/ascii.h"
-#include "../models/common.h"
-
 #include "navigation.h"
 
 using namespace utils;
-using namespace models;
 using namespace text;
 
-TextCursor navigation::text_cursor(const utils::Slice<uint8_t>& text, const size_t pos) {
-    auto cursor = TextCursor {
-        pos: Position { 0, 0 },
-        n_lines: 1
-    };
+utils::Position navigation::text_cursor(const Slice<uint8_t>& text, const size_t pos) {
+    auto cursor = Position { 0, 0 };
 
     for(auto i = 0; i < text.size; ++i) {
         const auto is_line_break = text.data[i] == ascii::Lf;
 
         if(i < pos) {
             if(is_line_break) {
-                ++cursor.pos.row;
-                cursor.pos.col = 0;
+                ++cursor.row;
+                cursor.col = 0;
             } else {
-                ++cursor.pos.col;
+                ++cursor.col;
             }
-        }
-        
-        if(is_line_break) {
-            ++cursor.n_lines;
-        }
+        }        
     }
 
     return cursor;

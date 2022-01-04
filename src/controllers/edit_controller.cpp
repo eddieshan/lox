@@ -31,28 +31,28 @@ ControllerResult controllers::edit(const term::Key& key, EditorState& state) {
             result.view = views::command_line;
             break;
         case ascii::Cr:
-            state.pos = state.text_buffer.insert(ascii::Lf, state.pos);
+            state.update(state.text_buffer.insert(ascii::Lf, state.pos));
             result.text_updated = true;
             break;
         case ascii::Up:
-            state.pos = navigation::row_back(state.text_area.text(), state.pos);
+            state.update(navigation::row_back(state.text_area.text(), state.pos));
             break;
         case ascii::Down:
-            state.pos = navigation::row_forward(state.text_area.text(), state.pos);
+            state.update(navigation::row_forward(state.text_area.text(), state.pos));
             break;
         case ascii::Right:
-            state.pos = navigation::col_forward(state.text_area.text(), state.pos);
+            state.update(navigation::col_forward(state.text_area.text(), state.pos));
             break;
         case ascii::Left:
-            state.pos = navigation::col_back(state.text_area.text(), state.pos);
+            state.update(navigation::col_back(state.text_area.text(), state.pos));
             break;
         case ascii::Htab:
             break;
         case ascii::LnStart:
-            state.pos = navigation::row_start(state.text_area.text(), state.pos);
+            state.update(navigation::row_start(state.text_area.text(), state.pos));
             break;
         case ascii::LnEnd:
-            state.pos = navigation::row_end(state.text_area.text(), state.pos);            
+            state.update(navigation::row_end(state.text_area.text(), state.pos));
             break;
         case ascii::Del:
             state.text_buffer.erase(state.pos);

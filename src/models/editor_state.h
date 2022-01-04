@@ -3,28 +3,23 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "../utils/range.h"
 #include "../buffers/piece_table.h"
 #include "../buffers/buffer.h"
 #include "command.h"
 
 namespace models {
-    enum class ActionType {
-        Navigate,
-        Edit,
-        Command
-    };
 
-    namespace active_views {
-        const uint8_t Edit = 1;
-        const uint8_t Command = 2;
-    }
+    class EditorState {
+        public:
+            buffers::PieceTable text_buffer;
+            buffers::Buffer text_area;
+            size_t pos;
+            utils::Range<size_t> visible_region;
+            utils::WindowSize window_size;
+            models::Command command;
 
-    struct EditorState {
-        buffers::PieceTable text_buffer;
-        buffers::Buffer text_area;
-        size_t pos;
-        utils::WindowSize window_size;
-        models::Command command;
+            void update(const size_t new_pos);
     };
 
     namespace editor_state {

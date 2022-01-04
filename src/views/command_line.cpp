@@ -38,7 +38,7 @@ void views::command_line(const EditorState& state, const settings::Config& confi
     const auto text_state = navigation::text_cursor(text, state.pos);
 
     views::status_bar(text_state, state.window_size, screen_buffer);
-    views::line_counter(text_state, screen_buffer);
+    //views::line_counter(text_state, screen_buffer);
 
     const auto pos = render(state.command, state.window_size, screen_buffer);
     screen_buffer.esc(Position { row: 0, col: (uint32_t) state.pos } + pos + Position { row: 1, col: 1 });

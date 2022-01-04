@@ -2,6 +2,7 @@
 
 #include "../utils/ascii.h"
 #include "../utils/units.h"
+#include "../utils/range.h"
 #include "../utils/io.h"
 #include "../term/term.h"
 #include "../buffers/piece_table.h"
@@ -15,11 +16,11 @@ using namespace controllers;
 using namespace text;
 using namespace models;
 
-void open_file(PieceTable& text_buffer, const char* path) {
+void open_file(EditorState& state, const char* path) {
 
     const auto size = io::file_size(path);
 
-    if(size <= text_buffer.capacity()) {
+    if(size <= state.text_buffer.capacity()) {
         std::ifstream reader(path, std::ifstream::in);
 
         auto pos = 0;
@@ -33,15 +34,22 @@ void open_file(PieceTable& text_buffer, const char* path) {
         // PieceTable, so no ideal solution yet. Needs more investigation.
         char buffer[units::Kb];
 
-        text_buffer.clear();
+        state.text_buffer.clear();
 
         while (reader.good()) {
             reader.read(buffer, units::Kb);
             const auto read_size = reader.gcount();
-            text_buffer.append(Slice((uint8_t*)buffer, read_size));
+            state.text_buffer.append(Slice((uint8_t*)buffer, read_size));
         }
 
         reader.close();
+
+        state.text_area.clear();
+        state.text_buffer.accept<Buffer, &Buffer::write>(state.text_area);
+        state.visible_region = Range<size_t> {
+            start: 0,
+            end: slice::find_n(state.text_area.text(), ascii::Lf, state.window_size.rows)
+        };
     }
 }
 
@@ -49,7 +57,7 @@ void execute_command(EditorState& state) {
     if(state.command.type == CommandType::OpenFile) {
         const auto path = (char*)state.command.text.data().data;
 
-        open_file(state.text_buffer, path);
+        open_file(state, path);
         state.pos = 0;
     }
 }

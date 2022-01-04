@@ -26,9 +26,12 @@ Position views::plain_text(const Slice<uint8_t>& text, buffers::Buffer& buffer) 
         if(is_line_break || (i == last)) {
             const auto line_size = is_line_break? i - last_cr : i - last_cr + 1;
             buffer.write(text.data + last_cr, line_size);
-            buffer.esc(ansi::NextLine);
-            buffer.esc(start_pos.col, ansi::ColumnRelative);
-            last_cr = i + 1;
+
+            if(is_line_break) {
+                buffer.esc(ansi::NextLine);
+                buffer.esc(start_pos.col, ansi::ColumnRelative);
+                last_cr = i + 1;
+            }
         }
     }
 
