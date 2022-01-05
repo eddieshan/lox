@@ -150,8 +150,9 @@ namespace utils {
         template<typename TItem>
         size_t find_back(const Slice<TItem>& slice, const TItem val, const size_t from) {
             for(size_t i = from + 1; i > 0; --i) {
-                if(slice.data[i - 1] == val) {
-                    return i;
+                const auto actual_index = i - 1;                
+                if(slice.data[actual_index] == val) {
+                    return actual_index;
                 }
             }
 
@@ -162,10 +163,11 @@ namespace utils {
         size_t find_n_back(const Slice<TItem>& slice, const TItem val, const size_t from, const size_t target) {
             auto count = 0;
             for(size_t i = from + 1; i > 0; --i) {
-                if(slice.data[i - 1] == val) {
+                const auto actual_index = i - 1;
+                if(slice.data[actual_index] == val) {
                     ++count;
                     if(count == target) {
-                        return i;
+                        return actual_index;
                     }
                 }
             }
