@@ -19,13 +19,13 @@ constexpr auto TempTextBufferSize = 64*units::Kb;
 constexpr auto CommandLineSize = 1000;
 
 Range<size_t> slide_window_down(const Slice<uint8_t> text, const size_t new_pos, const size_t rows) {
-    const auto new_end = slice::find(text, ascii::Lf, new_pos + 1);
+    const auto new_end = slice::find(text, ascii::Lf, new_pos);
     const auto new_start = slice::find_n_back(text, ascii::Lf, new_end, rows);
     return Range<size_t> { start: new_start, end: new_end };
 }
 
 Range<size_t> slide_window_up(const Slice<uint8_t> text, const size_t new_pos, const size_t rows) {
-    const auto new_start = slice::find_back(text, ascii::Lf, new_pos - 1);
+    const auto new_start = slice::find_back(text, ascii::Lf, new_pos);
     const auto new_end = slice::find_n(text, ascii::Lf, new_start, rows);
     return Range<size_t> { start: new_start, end: new_end };    
 }

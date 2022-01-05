@@ -8,17 +8,15 @@ using namespace text;
 utils::Position navigation::text_cursor(const Slice<uint8_t>& text, const size_t pos) {
     auto cursor = Position { 0, 0 };
 
-    for(auto i = 0; i < text.size; ++i) {
+    for(auto i = 0; i < pos; ++i) {
         const auto is_line_break = text.data[i] == ascii::Lf;
 
-        if(i < pos) {
-            if(is_line_break) {
-                ++cursor.row;
-                cursor.col = 0;
-            } else {
-                ++cursor.col;
-            }
-        }        
+        if(is_line_break) {
+            ++cursor.row;
+            cursor.col = 0;
+        } else {
+            ++cursor.col;
+        }
     }
 
     return cursor;

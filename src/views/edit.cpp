@@ -24,17 +24,16 @@ void views::edit(const EditorState& state, const settings::Config& config, buffe
     const auto clipped_text = slice::sub(full_text, state.visible_region);
     //const auto start_pos = views::syntax(text, config.grammar, screen_buffer);
     const auto start_pos = views::plain_text(clipped_text, screen_buffer);
- 
-    const auto cursor = navigation::text_cursor(full_text, state.pos);
 
-    const auto line_start = slice::count(full_text, ascii::Lf, 0, state.visible_region.start);
-    const auto line_end = slice::count(clipped_text, ascii::Lf) + line_start;
-    const auto line_range = Range<size_t> { start: line_start, end: line_end };
+    const auto start_line = slice::count(full_text, ascii::Lf, 0, state.visible_region.start);
+    const auto end_line = slice::count(clipped_text, ascii::Lf) + start_line;
+    const auto lines_range = Range<size_t> { start: start_line, end: end_line };
+
+    const auto relative_cursor = navigation::text_cursor(clipped_text, state.pos - state.visible_region.start);
+    const auto cursor = Position { row: relative_cursor.row + (uint32_t)start_line, col: relative_cursor.col };
 
     views::status_bar(cursor, state.window_size, screen_buffer);
-    views::line_counter(cursor, line_range, screen_buffer);
-
-    const auto relative_cursor = Position { row: cursor.row - (uint32_t)line_start, col: cursor.col };
+    views::line_counter(cursor, lines_range, screen_buffer);
 
     screen_buffer.esc(relative_cursor + start_pos + Position { row: 1, col: 1 });
 }
