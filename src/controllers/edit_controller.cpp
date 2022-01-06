@@ -35,37 +35,38 @@ ControllerResult controllers::edit(const term::Key& key, EditorState& state) {
             result.text_updated = true;
             break;
         case ascii::Up:
-            state.update(navigation::row_back(state.text_area.text(), state.pos));
+            state.update(navigation::row::up(state.text_area.text(), state.pos));
             break;
         case ascii::Down:
-            state.update(navigation::row_forward(state.text_area.text(), state.pos));
+            state.update(navigation::row::down(state.text_area.text(), state.pos));
             break;
         case ascii::Right:
-            state.update(navigation::col_forward(state.text_area.text(), state.pos));
+            state.update(navigation::col::right(state.text_area.text(), state.pos));
             break;
         case ascii::Left:
-            state.update(navigation::col_back(state.text_area.text(), state.pos));
+            state.update(navigation::col::left(state.text_area.text(), state.pos));
             break;
         case ascii::Htab:
             break;
         case ascii::LnStart:
-            state.update(navigation::row_start(state.text_area.text(), state.pos));
+            state.update(navigation::row::start(state.text_area.text(), state.pos));
             break;
         case ascii::LnEnd:
-            state.update(navigation::row_end(state.text_area.text(), state.pos));
+            state.update(navigation::row::end(state.text_area.text(), state.pos));
             break;
         case ascii::Del:
             state.text_buffer.erase(state.pos);
             result.text_updated = true;
             break;
         case ascii::BSpace:
-            state.pos = navigation::col_back(state.text_area.text(), state.pos);
+            state.pos = navigation::col::left(state.text_area.text(), state.pos);
             state.text_buffer.erase(state.pos);
             result.text_updated = true;
             break;
         default:
             if (key.size == 1) {
-                state.pos = state.text_buffer.insert(key.code, state.pos);
+                //state.pos = state.text_buffer.insert(key.code, state.pos);
+                state.update(state.text_buffer.insert(key.code, state.pos));
                 result.text_updated = true;
             }
     };

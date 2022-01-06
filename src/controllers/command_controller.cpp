@@ -90,24 +90,24 @@ ControllerResult controllers::command_line(const term::Key& key, EditorState& st
             result.view = views::edit;
             break;
         case ascii::Right:
-            state.pos = navigation::col_forward(state.command.text.data(), state.pos);
+            state.pos = navigation::col::right(state.command.text.data(), state.pos);
             break;
         case ascii::Left:
-            state.pos = navigation::col_back(state.command.text.data(), state.pos);
+            state.pos = navigation::col::left(state.command.text.data(), state.pos);
             break;
         case ascii::Htab:
             break;
         case ascii::LnStart:
-            state.pos = navigation::row_start(state.command.text.data(), state.pos);
+            state.pos = navigation::row::start(state.command.text.data(), state.pos);
             break;
         case ascii::LnEnd:
-            state.pos = navigation::row_end(state.command.text.data(), state.pos);
+            state.pos = navigation::row::end(state.command.text.data(), state.pos);
             break;
         case ascii::Del:
             state.command.text.erase(state.pos);
             break;
         case ascii::BSpace:
-            state.pos = navigation::col_back(state.text_area.text(), state.pos);
+            state.pos = navigation::col::left(state.text_area.text(), state.pos);
             state.command.text.erase(state.pos);
             break;
         default:

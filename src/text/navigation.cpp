@@ -22,67 +22,45 @@ utils::Position navigation::text_cursor(const Slice<uint8_t>& text, const size_t
     return cursor;
 }
 
-size_t navigation::col_forward(const utils::Slice<uint8_t>& text, const size_t pos) {
+size_t navigation::col::right(const utils::Slice<uint8_t>& text, const size_t pos) {
     return pos < text.size? pos + 1 : pos;
 }
 
-size_t navigation::col_back(const utils::Slice<uint8_t>& text, const size_t pos) {
+size_t navigation::col::left(const utils::Slice<uint8_t>& text, const size_t pos) {
     return pos > 0? pos - 1 : pos;
 }
 
-size_t navigation::row_forward(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step) {
-    size_t last_cr = 0, current_col = 0;
+size_t navigation::row::down(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step) {
+    const auto line_above_end = pos == 0? 0 : slice::find_back(text, ascii::Lf, pos - 1);
+    const auto line_end = slice::find(text, ascii::Lf, pos);
+    const auto line_below_end = slice::find(text, ascii::Lf, line_end + 1);
+    const auto distance_to_start = pos - line_above_end;
 
-    for(auto i = 1; i <= pos && text.data[pos - i] != ascii::Lf; ++i, ++current_col) {
-    }
+    const auto offset = line_above_end == 0? 1 : 0;
+    const auto new_pos = line_end + distance_to_start + offset;
 
-    size_t new_cursor = pos, row = 0, next_col = 0;
-
-    while(new_cursor < text.size && row <= step && next_col <= current_col) {
-        if(text.data[new_cursor] == ascii::Lf) {
-            ++row;
-        }
-        next_col += (row/step);
-        new_cursor++;
-    }
-
-    return new_cursor < text.size? new_cursor : text.size - 1;
+    return new_pos < line_below_end? new_pos : line_below_end;
 }
 
-size_t navigation::row_back(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step) {
+size_t navigation::row::up(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step) {
+    if(pos <= 1) {
+        return 0;
+    } else {
+        const auto line_above_end = slice::find_back(text, ascii::Lf, pos - 1);
+        const auto line_above_start = slice::find_back(text, ascii::Lf, line_above_end - 1);
+        const auto distance_to_start = pos - line_above_end;
 
-    size_t row = 0, current_col = 0, last_prev_col = 0, new_cursor = pos, distance = 1;
+        const auto offset = line_above_start == 0? 1 : 0;
+        const auto new_pos = line_above_start + distance_to_start - offset;
 
-    while(distance <= pos && row <= step) {
-        new_cursor = pos - distance;
-
-        if(text.data[new_cursor] == ascii::Lf) {
-            ++row;
-        } else if(row == step) {
-            ++last_prev_col;
-        } else if(row == 0) {
-            ++current_col;
-        } 
-
-        ++distance;
+        return new_pos < line_above_end? new_pos : line_above_end;
     }
-
-    const auto new_col = current_col > last_prev_col? last_prev_col : current_col;
-    return new_cursor == 0? new_col : new_cursor + new_col + 1;
 }
 
-size_t navigation::row_start(const utils::Slice<uint8_t>& text, const size_t pos) {    
-    auto i = pos == 0? pos : pos - 1;
-    for(; i > 0 && text.data[i] != ascii::Lf; --i) {
-    }
-    
-    return i == 0? i : i + 1;
+size_t navigation::row::start(const utils::Slice<uint8_t>& text, const size_t pos) {
+    return pos == 0? 0 : slice::find_back(text, ascii::Lf, pos - 1) + 1;
 }
 
-size_t navigation::row_end(const utils::Slice<uint8_t>& text, const size_t pos) {
-    auto i = pos;
-    for(; i < text.size && text.data[i] != ascii::Lf; ++i) {
-    }
-
-    return i;
+size_t navigation::row::end(const utils::Slice<uint8_t>& text, const size_t pos) {
+    return slice::find(text, ascii::Lf, pos);
 }
