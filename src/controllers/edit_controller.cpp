@@ -16,8 +16,7 @@ ControllerResult controllers::edit(const term::Key& key, EditorState& state) {
     auto result = ControllerResult {
         controller: controllers::edit,
         view: views::edit,
-        exit: false,
-        text_updated: false
+        exit: false
     };
 
     switch (key.code) {
@@ -25,49 +24,43 @@ ControllerResult controllers::edit(const term::Key& key, EditorState& state) {
             result.exit = true;
             break;
         case ascii::CtrlO:
-            state.command.type = CommandType::OpenFile;
-            state.pos = 0;
+            state.command.set(CommandType::OpenFile);
             result.controller = controllers::command_line;
             result.view = views::command_line;
             break;
         case ascii::Cr:
-            state.update(state.text_buffer.insert(ascii::Lf, state.pos));
-            result.text_updated = true;
+            state.insert(ascii::Lf);
             break;
         case ascii::Up:
-            state.update(navigation::row::up(state.text_area.text(), state.pos));
+            state.move(navigation::row::up);
             break;
         case ascii::Down:
-            state.update(navigation::row::down(state.text_area.text(), state.pos));
+            state.move(navigation::row::down);
             break;
         case ascii::Right:
-            state.update(navigation::col::right(state.text_area.text(), state.pos));
+            state.move(navigation::col::right);
             break;
         case ascii::Left:
-            state.update(navigation::col::left(state.text_area.text(), state.pos));
+            state.move(navigation::col::left);
             break;
         case ascii::Htab:
             break;
         case ascii::LnStart:
-            state.update(navigation::row::start(state.text_area.text(), state.pos));
+            state.move(navigation::row::start);
             break;
         case ascii::LnEnd:
-            state.update(navigation::row::end(state.text_area.text(), state.pos));
+            state.move(navigation::row::end);
             break;
         case ascii::Del:
-            state.text_buffer.erase(state.pos);
-            result.text_updated = true;
+            state.erase();
             break;
         case ascii::BSpace:
-            state.pos = navigation::col::left(state.text_area.text(), state.pos);
-            state.text_buffer.erase(state.pos);
-            result.text_updated = true;
+            state.move(navigation::col::left);
+            state.erase();
             break;
         default:
             if (key.size == 1) {
-                //state.pos = state.text_buffer.insert(key.code, state.pos);
-                state.update(state.text_buffer.insert(key.code, state.pos));
-                result.text_updated = true;
+                state.insert(key.code);
             }
     };
 

@@ -1,7 +1,11 @@
+#include <fstream>
+
 #include "../utils/units.h"
+#include "../utils/geometry.h"
 #include "../utils/ascii.h"
 #include "../utils/range.h"
 #include "../utils/array_list.h"
+#include "../utils/io.h"
 #include "../buffers/piece_table.h"
 #include "../buffers/buffer.h"
 #include "../term/term.h"
@@ -30,28 +34,108 @@ Range<size_t> slide_window_up(const Slice<uint8_t> text, const size_t new_pos, c
     return Range<size_t> { start: new_start, end: new_end };    
 }
 
-void EditorState::update(const size_t new_pos) {
-    const auto text = text_area.text();
-
-    if(new_pos > visible_region.end) {
-        visible_region = slide_window_down(text, new_pos, window_size.rows);
-    } else if(new_pos < visible_region.start) {
-        visible_region = slide_window_up(text, new_pos, window_size.rows);
-    }
-
-    pos = new_pos;
+Slice<uint8_t> EditorState::text() const {
+    return _text_area.text();
 }
 
-EditorState editor_state::build() {
-    return EditorState {
-        text_buffer: PieceTable(TextBufferSize),
-        text_area: Buffer(TempTextBufferSize),
-        pos: 0,
-        visible_region: Range<size_t> { start: 0, end: 0 },
-        window_size: term::get_window_size(),
-        command: Command {
-            type: CommandType::OpenFile,
-            text: ArrayList<uint8_t>(CommandLineSize)
+size_t EditorState::pos() const {
+    return _pos;
+}
+
+WindowSize EditorState::window_size() const {
+    return _window_size;
+}
+
+Range<size_t> EditorState::visible_region() const {
+    return _visible_region;
+}
+
+void EditorState::update(const size_t new_pos) {
+    const auto text = _text_area.text();
+
+    if(new_pos > _visible_region.end) {
+        _visible_region = slide_window_down(text, new_pos, _window_size.rows);
+    } else if(new_pos < _visible_region.start) {
+        _visible_region = slide_window_up(text, new_pos, _window_size.rows);
+    }
+
+    _pos = new_pos;
+}
+
+void EditorState::move(const Navigator navigate) {
+    const auto new_pos = navigate(_text_area.text(), _pos);
+    update(new_pos);
+}
+
+void EditorState::move(const StepNavigator navigate, const size_t step) {
+    const auto new_pos = navigate(_text_area.text(), _pos, step);
+    update(new_pos);
+}
+
+void EditorState::insert(const uint8_t val) {
+    const auto new_pos = _text_buffer.insert(ascii::Lf, _pos);
+    _text_area.clear();
+    _text_buffer.accept<Buffer, &Buffer::write>(_text_area);
+    update(new_pos);
+}
+
+void EditorState::erase() {
+    _text_buffer.erase(_pos);
+    _text_area.clear();
+    _text_buffer.accept<Buffer, &Buffer::write>(_text_area);
+}
+
+void EditorState::load_file(const char* path) {
+    const auto size = io::file_size(path);
+
+    if(size <= _text_buffer.capacity()) {
+        std::ifstream reader(path, std::ifstream::in);
+
+        // TODO: using a temporary read buffer is not optimal.
+        // Reads could be done directly onto the underlying buffer of the piece table. 
+        // The problem with this is doing this safely, memory wise e.g. exposing a 
+        // pointer to the underlying buffer would be straightforward but clearly unsafe,
+        // An alternative would be using a templated visitor but the signature for 
+        // ifstream::read would introduce undesired depedencies to ifstream types in 
+        // PieceTable, so no ideal solution yet. Needs more investigation.
+        char buffer[units::Kb];
+
+        _text_buffer.clear();
+
+        while (reader.good()) {
+            reader.read(buffer, units::Kb);
+            const auto read_size = reader.gcount();
+            _text_buffer.append(Slice((uint8_t*)buffer, read_size));
         }
-    };
+
+        reader.close();
+
+        _text_area.clear();
+        _text_buffer.accept<Buffer, &Buffer::write>(_text_area);
+        _visible_region = Range<size_t> {
+            start: 0,
+            end: slice::find_n(_text_area.text(), ascii::Lf, _window_size.rows)
+        };
+        _pos = 0;
+    }
+}
+
+void EditorState::execute_command() {
+    if(command.type() == CommandType::OpenFile) {
+        const auto path = (char*)command.text().data;
+
+        load_file(path);
+    }
+}
+
+EditorState::EditorState(const size_t buffer_size, const size_t command_size, const WindowSize& window_size):
+    _text_buffer(PieceTable(TextBufferSize)),
+    _text_area(Buffer(TempTextBufferSize)),
+    _pos(0),
+    _visible_region(Range<size_t> { start: 0, end: 0 }),
+    _window_size(window_size),
+    command(Command(CommandLineSize)) { }
+
+EditorState editor_state::build() {
+    return EditorState(TextBufferSize, CommandLineSize, term::get_window_size());
 }

@@ -14,7 +14,6 @@ namespace controllers {
         Controller controller;
         views::View view;
         bool exit;
-        bool text_updated;
     };
 
     ControllerResult command_line(const term::Key& key, models::EditorState& state);

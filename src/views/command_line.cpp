@@ -26,20 +26,21 @@ Position render(const Command& command, const WindowSize& window_size, buffers::
     buffer.esc(Position { row: window_size.rows, col: 0 });
     buffer.esc(term::ansi::ClearLine);
     buffer.write(messages::Open);
-    buffer.write(command.text.data());
+    buffer.write(command.text());
 
     return Position { row: window_size.rows, col: (uint32_t) messages::Open.size };
 }
 
 void views::command_line(const EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer) {
-    const auto text = state.text_area.text();
+    const auto text = state.text();
     views::syntax(text, config.grammar, screen_buffer);
  
-    const auto text_state = navigation::text_cursor(text, state.pos);
+    const auto text_state = navigation::text_cursor(text, state.pos());
+    const auto window_size = state.window_size();
 
-    views::status_bar(text_state, state.window_size, screen_buffer);
+    views::status_bar(text_state, window_size, screen_buffer);
     //views::line_counter(text_state, screen_buffer);
 
-    const auto pos = render(state.command, state.window_size, screen_buffer);
-    screen_buffer.esc(Position { row: 0, col: (uint32_t) state.pos } + pos + Position { row: 1, col: 1 });
+    const auto pos = render(state.command, window_size, screen_buffer);
+    screen_buffer.esc(Position { row: 0, col: (uint32_t) state.command.pos() } + pos + Position { row: 1, col: 1 });
 }

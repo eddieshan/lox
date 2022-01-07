@@ -52,11 +52,6 @@ void editor::run() {
             controller = result.controller;
             wait_for_events = !result.exit;
 
-            if(result.text_updated) {
-                editor.state.text_area.clear();
-                editor.state.text_buffer.accept<Buffer, &Buffer::write>(editor.state.text_area);
-            }
-
             render(editor, screen_buffer, result.view);
         }
     } while(wait_for_events);
