@@ -73,9 +73,17 @@ void EditorState::move(const StepNavigator navigate, const size_t step) {
 }
 
 void EditorState::insert(const uint8_t val) {
-    const auto new_pos = _text_buffer.insert(ascii::Lf, _pos);
+    const auto new_pos = _text_buffer.insert(val, _pos);
     _text_area.clear();
     _text_buffer.accept<Buffer, &Buffer::write>(_text_area);
+
+    const auto text = _text_area.text();
+    const auto clipped_size = _visible_region.end == _visible_region.start? 0 : _visible_region.end - _visible_region.start + 1;
+
+    if(text.size > clipped_size) {
+        _visible_region.end = slice::find_n(text, ascii::Lf, _window_size.rows);
+    }
+
     update(new_pos);
 }
 
