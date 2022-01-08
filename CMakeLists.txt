@@ -7,7 +7,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 set(SOURCES
     src/utils/slice.cpp
-    src/utils/range.cpp    
     src/utils/convert.cpp
     src/utils/geometry.cpp
     src/utils/io.cpp    
@@ -19,7 +18,8 @@ set(SOURCES
     src/syntax/tokenize.cpp
     src/syntax/grammar.cpp
     src/text/navigation.cpp
-    src/models/editor_state.cpp    
+    src/models/command.cpp
+    src/models/editor_state.cpp
     src/views/plain_text.cpp
     src/views/syntax.cpp
     src/views/line_counter.cpp
