@@ -23,8 +23,13 @@ namespace utils {
 
         template<typename TItem>
         Slice<TItem> sub(const Slice<TItem>& slice, const Range<size_t>& range) {
-            const auto size = range.start == range.end? 0 : range.end - range.start + 1;
-            return Slice(slice.data + range.start, size);
+            if(slice.size == 0 || range.start == range.end) {
+                return Slice(slice.data, 0);
+            } else if(range.start < slice.size && range.end < slice.size) {
+                return Slice(slice.data + range.start, range.end - range.start + 1);
+            } else {
+                return slice;
+            }
         }        
 
         template<typename TItem>
