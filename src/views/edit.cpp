@@ -28,7 +28,7 @@ void views::edit(const EditorState& state, const settings::Config& config, buffe
     //const auto start_pos = views::plain_text(clipped_text, screen_buffer);
 
     const auto start_line = slice::count(full_text, ascii::Lf, 0, visible_region.start);
-    const auto end_line = slice::count(clipped_text, ascii::Lf) + start_line;
+    const auto end_line = slice::count(clipped_text, ascii::Lf) + start_line + 1;
     const auto lines_range = Range<size_t> { start: start_line, end: end_line };
 
     const auto relative_cursor = navigation::text_cursor(clipped_text, state.pos() - visible_region.start);
