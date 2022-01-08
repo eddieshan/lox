@@ -39,7 +39,7 @@ size_t navigation::row::down(const utils::Slice<uint8_t>& text, const size_t pos
     const auto offset = line_above_end == 0? 1 : 0;
     const auto new_pos = line_end + distance_to_start + offset;
 
-    return new_pos < line_below_end? new_pos : line_below_end;
+    return std::min(new_pos, line_below_end);
 }
 
 size_t navigation::row::up(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step) {
@@ -53,7 +53,7 @@ size_t navigation::row::up(const utils::Slice<uint8_t>& text, const size_t pos, 
         const auto offset = line_above_start == 0? 1 : 0;
         const auto new_pos = line_above_start + distance_to_start - offset;
 
-        return new_pos < line_above_end? new_pos : line_above_end;
+        return std::min(new_pos, line_above_end);
     }
 }
 
