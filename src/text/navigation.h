@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../models/common.h"
+#include "../utils/geometry.h"
 #include "../utils/slice.h"
 
 // Navigation module providing free functions to calculate the next position 
@@ -9,12 +9,19 @@
 // Boundary check is not guaranteed, the caller is responsible for passing a valid position value.
 namespace text::navigation {
 
-    models::TextCursor text_cursor(const utils::Slice<uint8_t>& text, const size_t pos);
+    utils::Position text_cursor(const utils::Slice<uint8_t>& text, const size_t pos);
 
-    size_t col_forward(const utils::Slice<uint8_t>& text, const size_t pos);
-    size_t col_back(const utils::Slice<uint8_t>& text, const size_t pos);
-    size_t row_forward(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step = 1);
-    size_t row_back(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step = 1);
-    size_t row_start(const utils::Slice<uint8_t>& text, const size_t pos);
-    size_t row_end(const utils::Slice<uint8_t>& text, const size_t pos);
+    namespace col {
+        size_t right(const utils::Slice<uint8_t>& text, const size_t pos);
+        size_t left(const utils::Slice<uint8_t>& text, const size_t pos);
+    }
+
+    namespace row
+    {
+        size_t down(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step = 1);
+        size_t up(const utils::Slice<uint8_t>& text, const size_t pos, const size_t step = 1);
+        size_t start(const utils::Slice<uint8_t>& text, const size_t pos);
+        size_t end(const utils::Slice<uint8_t>& text, const size_t pos);        
+    }
+    
 }

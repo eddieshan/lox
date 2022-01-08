@@ -4,12 +4,16 @@
 
 namespace utils {
 
+    template<typename TComparable>
     struct Range {
-        uint8_t start;
-        uint8_t end;
+        TComparable start;
+        TComparable end;
     };
     
     namespace range {
-        bool contains(const Range& range, const uint8_t val);
+        template<typename TComparable>
+        bool contains(const Range<TComparable>& range, const TComparable val) {
+            return val >= range.start && val <= range.end;
+        }
     }
 }

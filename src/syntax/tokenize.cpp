@@ -134,8 +134,9 @@ TokenizationState tokenizer::next(const Slice<uint8_t>& tail, const Grammar& gra
         return next_state(tail, pos, TokenType::Keyword);
     } else if(const auto pos = match_fixed(tail, grammar.type_delimiters); pos > 0) {
         return next_state(tail, pos, TokenType::TypeKeyword);
+    } else if(const auto pos = match<is_alphanumeric>(tail); pos > 0) {
+        return next_state(tail, pos, TokenType::Plain);
     } else {
-        const auto next_pos = match<is_alphanumeric>(tail);
-        return next_state(tail, next_pos, TokenType::Plain);
+        return next_state(tail, tail.size, TokenType::Plain);        
     }
 }
