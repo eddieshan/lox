@@ -23,7 +23,8 @@ void views::edit(const EditorState& state, const settings::Config& config, buffe
     const auto page_size = window_size.rows;
 
     const auto full_text = state.text();
-    const auto clipped_text = slice::sub(full_text, visible_region);
+    const auto requires_clipping = visible_region.start < full_text.size && visible_region.end < full_text.size;
+    const auto clipped_text = requires_clipping? slice::sub(full_text, visible_region) : full_text;
     const auto start_pos = views::syntax(clipped_text, config.grammar, screen_buffer);
     //const auto start_pos = views::plain_text(clipped_text, screen_buffer);
 

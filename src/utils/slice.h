@@ -23,14 +23,8 @@ namespace utils {
 
         template<typename TItem>
         Slice<TItem> sub(const Slice<TItem>& slice, const Range<size_t>& range) {
-            if(slice.size == 0 || range.start == range.end) {
-                return Slice(slice.data, 0);
-            } else if(range.start < slice.size && range.end < slice.size) {
-                return Slice(slice.data + range.start, range.end - range.start + 1);
-            } else {
-                return slice;
-            }
-        }        
+            return Slice(slice.data + range.start, range::size(range));
+        }
 
         template<typename TItem>
         size_t count(const Slice<TItem>& slice, const TItem val) {
@@ -79,28 +73,6 @@ namespace utils {
             return false;
         }
 
-        template<typename TItem, bool (*predicate)(const TItem val)>
-        size_t find(const Slice<TItem>& slice) {
-            for(auto i = 0; i < slice.size; ++i) {
-                if(predicate(slice.data[i])) {
-                    return i;
-                }
-            }
-
-            return slice.size;
-        }
-
-        template<typename TItem, bool (*predicate)(const TItem val)>
-        size_t find(const Slice<TItem>& slice, const size_t from, const size_t to) {
-            for(auto i = from; i <= to; ++i) {
-                if(predicate(slice.data[i])) {
-                    return i;
-                }
-            }
-
-            return slice.size;
-        }
-
         template<typename TItem>
         size_t find(const Slice<TItem>& slice, const TItem val, const size_t from) {
             for(auto i = from; i < slice.size; ++i) {
@@ -124,22 +96,7 @@ namespace utils {
         }
 
         template<typename TItem>
-        size_t find_n(const Slice<TItem>& slice, const TItem val, const size_t target) {
-            auto count = 0;
-            for(auto i = 0; i < slice.size; ++i) {
-                if(slice.data[i] == val) {
-                    ++count;
-                    if(count == target) {
-                        return i;
-                    }
-                }
-            }
-
-            return slice.size;
-        }
-
-        template<typename TItem>
-        size_t find_n(const Slice<TItem>& slice, const TItem val, const size_t from, const size_t target) {
+        size_t find_n(const Slice<TItem>& slice, const TItem val, const size_t target, const size_t from = 0) {
             auto count = 0;
             for(auto i = from; i < slice.size; ++i) {
                 if(slice.data[i] == val) {
@@ -166,7 +123,7 @@ namespace utils {
         }
 
         template<typename TItem>
-        size_t find_n_back(const Slice<TItem>& slice, const TItem val, const size_t from, const size_t target) {
+        size_t find_n_back(const Slice<TItem>& slice, const TItem val, const size_t target, const size_t from = 0) {
             auto count = 0;
             for(size_t i = from + 1; i > 0; --i) {
                 const auto actual_index = i - 1;
@@ -180,6 +137,17 @@ namespace utils {
 
             return 0;
         }
+
+        template<typename TItem, bool (*predicate)(const TItem val)>
+        size_t match(const Slice<TItem>& slice) {
+            auto i = 0;
+            while(i < slice.size && predicate(slice.data[i])) {
+                ++i;
+            }
+
+            return i;
+        }
+
 
     }
 }
