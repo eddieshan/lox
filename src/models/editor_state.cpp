@@ -22,15 +22,15 @@ constexpr auto TextBufferSize = 64*units::Kb;
 constexpr auto TempTextBufferSize = 64*units::Kb;
 constexpr auto CommandLineSize = 1000;
 
-Range<size_t> slide_window_down(const Slice<uint8_t> text, const size_t new_pos, const size_t rows) {
+Range<size_t> slide_window_down(const Slice<uint8_t> text, const size_t new_pos, const size_t n_rows) {
     const auto new_end = slice::find(text, ascii::Lf, new_pos);
-    const auto new_start = slice::find_n_back(text, ascii::Lf, new_end, rows);
+    const auto new_start = slice::find_n_back(text, ascii::Lf, n_rows, new_end);
     return Range<size_t> { start: new_start, end: new_end };
 }
 
-Range<size_t> slide_window_up(const Slice<uint8_t> text, const size_t new_pos, const size_t rows) {
+Range<size_t> slide_window_up(const Slice<uint8_t> text, const size_t new_pos, const size_t n_rows) {
     const auto new_start = slice::find_back(text, ascii::Lf, new_pos);
-    const auto new_end = slice::find_n(text, ascii::Lf, new_start, rows);
+    const auto new_end = slice::find_n(text, ascii::Lf, n_rows, new_start);
     return Range<size_t> { start: new_start, end: new_end };    
 }
 
@@ -78,7 +78,7 @@ void EditorState::insert(const uint8_t val) {
     _text_buffer.accept<Buffer, &Buffer::write>(_text_area);
 
     const auto text = _text_area.text();
-    const auto clipped_size = _visible_region.end == _visible_region.start? 0 : _visible_region.end - _visible_region.start + 1;
+    const auto clipped_size = range::size(_visible_region);
 
     if(text.size > clipped_size) {
         _visible_region.end = slice::find_n(text, ascii::Lf, _window_size.rows);

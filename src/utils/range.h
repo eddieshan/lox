@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include <cstddef>
 
 namespace utils {
 
@@ -14,6 +14,11 @@ namespace utils {
         template<typename TComparable>
         bool contains(const Range<TComparable>& range, const TComparable val) {
             return val >= range.start && val <= range.end;
+        }
+
+        template<typename TComparable>
+        size_t size(const Range<TComparable>& range) {
+            return range.start == range.end? 0 : range.end - range.start + 1;
         }
     }
 }

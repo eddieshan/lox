@@ -9,23 +9,12 @@
 using namespace utils;
 using namespace syntax;
 
-using GeneralPredicate = bool (*)(const uint8_t val);
 using GrammarPredicate = bool (*)(const uint8_t val, const Grammar& grammar);
 
 template<GrammarPredicate pred>
 size_t match(const utils::Slice<uint8_t>& text, const Grammar& grammar) {
     auto i = 0;
     while(i < text.size && pred(text.data[i], grammar)) {
-        ++i;
-    }
-
-    return i;
-}
-
-template<GeneralPredicate pred>
-size_t match(const utils::Slice<uint8_t>& text) {
-    auto i = 0;
-    while(i < text.size && pred(text.data[i])) {
         ++i;
     }
 
@@ -115,7 +104,7 @@ TokenizationState next_state(const Slice<uint8_t>& tail, const size_t pos, const
     return TokenizationState {
         tail: Slice(tail.data + pos, tail.size - pos),
         span: Slice(tail.data, pos),
-        type: token_type         
+        type: token_type
     };
 }
 
@@ -126,7 +115,7 @@ TokenizationState tokenizer::next(const Slice<uint8_t>& tail, const Grammar& gra
         return next_state(tail, pos, TokenType::StringLiteral);
     } else if(const auto pos = match_delimited(tail, grammar.comment_delimiters); pos > 0) {
         return next_state(tail, pos, TokenType::Comment);
-    } else if(const auto pos = match<is_digit>(tail); pos > 0) {
+    } else if(const auto pos = slice::match<uint8_t, is_digit>(tail); pos > 0) {
         return next_state(tail, pos, TokenType::NumericLiteral);
     } else if(const auto pos = match<is_operator>(tail, grammar); pos > 0) {
         return next_state(tail, pos, TokenType::Operator);
@@ -134,7 +123,7 @@ TokenizationState tokenizer::next(const Slice<uint8_t>& tail, const Grammar& gra
         return next_state(tail, pos, TokenType::Keyword);
     } else if(const auto pos = match_fixed(tail, grammar.type_delimiters); pos > 0) {
         return next_state(tail, pos, TokenType::TypeKeyword);
-    } else if(const auto pos = match<is_alphanumeric>(tail); pos > 0) {
+    } else if(const auto pos = slice::match<uint8_t, is_alphanumeric>(tail); pos > 0) {
         return next_state(tail, pos, TokenType::Plain);
     } else {
         return next_state(tail, tail.size, TokenType::Plain);        
