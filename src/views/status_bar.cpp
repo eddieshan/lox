@@ -2,7 +2,7 @@
 
 #include "../utils/convert.h"
 #include "../utils/geometry.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "../term/ansi.h"
 #include "views.h"
 
@@ -10,7 +10,7 @@ using namespace utils;
 using namespace term;
 using namespace views;
 
-void views::status_bar(const Position& cursor, const WindowSize& window_size, buffers::Buffer& buffer) {
+void views::status_bar(const Position& cursor, const WindowSize& window_size, buffers::Vt100Buffer& buffer) {
     std::array<uint8_t, 9> caption { '\0', '\0', '\0', ':', '\0', '\0', '\0' };
 
     convert::to_chars_3(cursor.row + 1, (uint8_t*)caption.data());
