@@ -7,10 +7,10 @@ namespace utils {
 
     // ArrayBuffer is an owned, fixed size, heap allocated array with size and max capacity.
     // Size is exposed as an open property, the class user is responsible for its consistency.
-    // I chose not to use std::vector because,
-    // - I needed a non-growable container,
-    // - calling items destructors upon release was not desired,
-    // - in general, std::vector has overhead I preferred to avoid.
+    // ArrayBuffer covers needs not fulfilled by std::vector,
+    // - a non-growable container,
+    // - it does not call items destructors upon release,
+    // - very simple, less overhead than std::vector.
     template<typename TItem>
     class ArrayBuffer {
         private:
@@ -26,12 +26,24 @@ namespace utils {
                 _capacity(capacity),
                 size(0) {}
 
+           ArrayBuffer(const ArrayBuffer& other) = delete;
+           ArrayBuffer& operator=(const ArrayBuffer& other) = delete;
+
+           ArrayBuffer(ArrayBuffer&& other):
+                _data(std::move(other._data)),
+                _capacity(other._capacity),
+                size(other.size) {}
+
+           ArrayBuffer& operator=(ArrayBuffer&& other) = delete;
+
+           ~ArrayBuffer() = default;
+
             size_t capacity() const {
                 return _capacity;
             }
 
             TItem* data() const {
                 return _data.get();
-            }            
+            }
     };
 }

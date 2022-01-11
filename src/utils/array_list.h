@@ -24,6 +24,16 @@ namespace utils
             explicit ArrayList(const size_t capacity):
                 _array(capacity) {}
 
+            ArrayList(const ArrayList& other) = delete;
+            ArrayList& operator=(const ArrayList& other) = delete;
+
+            ArrayList(ArrayList&& other):
+                _array(std::move(other._array)) {}
+
+            ArrayList& operator=(ArrayList&& other) = delete;
+
+            ~ArrayList() = default;
+
             void insert(const TItem& item, const size_t pos) {
                 if(_array.size < _array.capacity() && pos >= 0 && pos <= _array.size) {
                     auto data = _array.data();

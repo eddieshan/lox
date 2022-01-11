@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "../utils/slice.h"
+#include "../utils/packed_array.h"
 #include "../utils/range.h"
 #include "../utils/ascii.h"
 #include "grammar.h"
@@ -41,22 +42,19 @@ bool is_alphanumeric(const uint8_t val) {
            val == id_delimiter;
 }
 
-size_t match_fixed(const Slice<uint8_t>& text, const TokenGroup& token_group) {
-    const auto tokens = token_group.tokens.get();
+size_t match_fixed(const Slice<uint8_t>& text, const PackedArray& token_group) {
 
-    size_t length_index = 0;
+    auto iterator = PackedArray::PackedArrayIterator(token_group);
+    auto token = iterator.next();
 
-    while(length_index < token_group.size) {
-        const auto token_size = tokens[length_index];
-        const auto token_start = tokens + length_index + 1;
-
-        if(token_size <= text.size && 
-           std::memcmp(token_start, text.data, token_size) == 0 && 
-           !is_alphanumeric(text.data[token_size])) {
-            return token_size;
+    while(token.size > 0) {
+        if(token.size <= text.size && 
+           std::memcmp(token.data, text.data, token.size) == 0 && 
+           !is_alphanumeric(text.data[token.size])) {
+            return token.size;
         }
 
-        length_index += (token_size + 1);
+        token = iterator.next();
     }
 
     return 0;
@@ -79,24 +77,22 @@ size_t match(const Slice<uint8_t>& text, const Slice<uint8_t>& start, const Slic
     return 0;
 }
 
-size_t match_delimited(const Slice<uint8_t>& text, const TokenGroup& token_group) {
+size_t match_delimited(const Slice<uint8_t>& text, const PackedArray& token_group) {
 
-    const auto tokens = token_group.tokens.get();
-    size_t length_index = 0;
+    auto iterator = PackedArray::PackedArrayIterator(token_group);
+    auto delimiter_start = iterator.next();
 
-    while(length_index < token_group.size) {
-        const auto start = Slice(tokens + length_index + 1, tokens[length_index]);
-        length_index += (tokens[length_index] + 1);
-        const auto end = Slice(tokens + length_index + 1, tokens[length_index]);
-        length_index += (tokens[length_index] + 1);
-
-        const auto size = match(text, start, end);
+    while(delimiter_start.size > 0) {
+        auto delimiter_end = iterator.next();
+        const auto size = match(text, delimiter_start, delimiter_end);
 
         if(size > 0) {
             return size;
         }
-    }
 
+        delimiter_start = iterator.next();
+    }
+    
     return 0;
 }
 
