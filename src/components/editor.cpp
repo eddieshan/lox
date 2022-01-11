@@ -40,7 +40,7 @@ void editor::run() {
 
     auto controller = controllers::edit;
 
-    auto editor = Editor(editor_state::build(), Config(syntax::build()));
+    auto editor = Editor { state: editor_state::build(), config: Config(syntax::build()) };
 
     render(editor, screen_buffer, views::edit);
 
