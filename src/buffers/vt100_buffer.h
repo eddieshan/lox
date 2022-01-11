@@ -1,23 +1,21 @@
 #pragma once
 
 #include <cstddef>
-#include <memory>
 
 #include "../utils/geometry.h"
+#include "../utils/array_buffer.h"
 #include "../utils/slice.h"
 #include "../term/ansi.h"
 
 namespace buffers {
 
-    class Buffer {
+    class Vt100Buffer {
         private:
-            std::unique_ptr<uint8_t[]> _bytes;
-            size_t _capacity;
-            size_t _size;
+            utils::ArrayBuffer<uint8_t> _buffer;
 
         public:
 
-            explicit Buffer(const size_t capacity);
+            explicit Vt100Buffer(const size_t capacity);
 
             void esc(const uint8_t val);
 
@@ -40,9 +38,5 @@ namespace buffers {
             utils::Slice<uint8_t> text() const;
 
             void clear();
-
-            size_t size() const;
-
-            size_t capacity() const;
     };
 }

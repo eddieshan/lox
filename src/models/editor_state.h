@@ -6,7 +6,7 @@
 #include "../utils/range.h"
 #include "../utils/geometry.h"
 #include "../buffers/piece_table.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "command.h"
 
 namespace models {
@@ -24,7 +24,7 @@ namespace models {
     class EditorState {
         private:
             buffers::PieceTable _text_buffer;
-            buffers::Buffer _text_area;
+            buffers::Vt100Buffer _text_area;
             size_t _pos;
             utils::Range<size_t> _visible_region;
             utils::WindowSize _window_size;

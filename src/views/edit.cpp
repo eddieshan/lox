@@ -4,7 +4,7 @@
 #include "../utils/range.h"
 #include "../utils/slice.h"
 #include "../utils/ascii.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "../text/navigation.h"
 #include "../syntax/tokenize.h"
 #include "../models/command.h"
@@ -17,7 +17,7 @@ using namespace text;
 using namespace models;
 using namespace utils;
 
-void views::edit(const EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer) {
+void views::edit(const EditorState& state, const settings::Config& config, buffers::Vt100Buffer& screen_buffer) {
     const auto window_size = state.window_size();
     const auto visible_region = state.visible_region();
     const auto page_size = window_size.rows;

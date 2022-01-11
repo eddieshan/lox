@@ -1,7 +1,7 @@
 #include "../utils/range.h"
 #include "../utils/geometry.h"
 #include "../utils/convert.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "../term/ansi.h"
 #include "../text/navigation.h"
 
@@ -11,7 +11,7 @@ using namespace utils;
 using namespace term;
 using namespace views;
 
-void views::line_counter(const Position& pos, const Range<size_t>& range, buffers::Buffer& buffer) {
+void views::line_counter(const Position& pos, const Range<size_t>& range, buffers::Vt100Buffer& buffer) {
     std::array<uint8_t, 3> line_count = { (uint8_t)' ', (uint8_t)' ', (uint8_t)' ' };
 
     buffer.esc(ansi::Home);

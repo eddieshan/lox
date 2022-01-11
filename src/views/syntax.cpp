@@ -1,7 +1,7 @@
 #include "../utils/convert.h"
 #include "../utils/geometry.h"
 #include "../utils/ascii.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "../settings/theme.h"
 #include "../term/ansi.h"
 #include "../term/term.h"
@@ -15,7 +15,7 @@ using namespace term;
 using namespace views;
 using namespace syntax;
 
-Position views::syntax(const Slice<uint8_t>& text, const Grammar& grammar, buffers::Buffer& buffer) {
+Position views::syntax(const Slice<uint8_t>& text, const Grammar& grammar, buffers::Vt100Buffer& buffer) {
 
     constexpr Position start_pos = utils::Position { row: 0, col: 4 };
 

@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "slice.h"
+#include "array_buffer.h"
 
 namespace utils
 {
@@ -17,71 +18,77 @@ namespace utils
     template<typename TItem>
     class ArrayList {
         private:
-            std::unique_ptr<TItem[]> _data;
-            size_t _capacity;
-            size_t _size;
+            utils::ArrayBuffer<TItem> _array;
 
         public:
-            explicit ArrayList(const size_t size):
-                _data(std::make_unique<TItem[]>(size)),
-                _capacity(size),
-                _size(0) {}
+            explicit ArrayList(const size_t capacity):
+                _array(capacity) {}
+
+            ArrayList(const ArrayList& other) = delete;
+            ArrayList& operator=(const ArrayList& other) = delete;
+
+            ArrayList(ArrayList&& other):
+                _array(std::move(other._array)) {}
+
+            ArrayList& operator=(ArrayList&& other) = delete;
+
+            ~ArrayList() = default;
 
             void insert(const TItem& item, const size_t pos) {
-                if(_size < _capacity && pos >= 0 && pos <= _size) {
-                    auto data = _data.get();
+                if(_array.size < _array.capacity() && pos >= 0 && pos <= _array.size) {
+                    auto data = _array.data();
 
-                    if(pos < _size) {
-                        std::copy(data + pos, data + _size, data + pos + 1);
+                    if(pos < _array.size) {
+                        std::copy(data + pos, data + _array.size, data + pos + 1);
                     }
                     data[pos] = item;
 
-                    ++_size;
+                    ++_array.size;
                 }
             }
 
             void erase(const size_t pos) {
-                if(pos >= 0 && pos < _size) {
-                    auto data = _data.get();
+                if(pos >= 0 && pos < _array.size) {
+                    auto data = _array.data();
 
-                    if(pos < _size) {
-                        std::copy(data + pos + 1, data + _size, data + pos);
+                    if(pos < _array.size) {
+                        std::copy(data + pos + 1, data + _array.size, data + pos);
                     }
 
-                    --_size;
+                    --_array.size;
                 }
             }
 
             void clear() {
-                std::memset(_data.get(), 0, _capacity*sizeof(TItem));
-                _size = 0;
+                std::memset(_array.data(), 0, _array.capacity()*sizeof(TItem));
+                _array.size = 0;
             }
 
             void insert(const TItem& item) {
-                if(_size < _capacity) {
-                    _data[_size] = item;
-                    ++_size;
+                if(_array.size < _array.capacity()) {
+                    _array.data()[_array.size] = item;
+                    ++_array.size;
                 }
             }
 
             utils::Slice<TItem> data() const {
-                return utils::Slice<TItem>(_data.get(), _size);
+                return utils::Slice<TItem>(_array.data(), _array.size);
             }
 
             TItem& operator[](const size_t pos) { 
-                return _data[pos]; 
+                return _array.data()[pos]; 
             }
 
             TItem& operator[](const size_t pos) const { 
-                return _data[pos]; 
+                return _array.data()[pos]; 
             }
 
             size_t size() const { 
-                return _size; 
+                return _array.size; 
             }
 
             size_t capacity() const { 
-                return _capacity; 
-            }            
+                return _array.capacity(); 
+            }
     };    
 }

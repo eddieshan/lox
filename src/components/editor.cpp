@@ -1,5 +1,5 @@
 #include "../utils/units.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "../term/term.h"
 #include "../settings/config.h"
 #include "../syntax/grammar.h"
@@ -19,7 +19,7 @@ using namespace views;
 using namespace settings;
 using namespace models;
 
-void render(const Editor& editor, Buffer& screen_buffer, View view) {
+void render(const Editor& editor, Vt100Buffer& screen_buffer, View view) {
     screen_buffer.clear();
     screen_buffer.esc(theme::Foreground);
     screen_buffer.esc(theme::Background);
@@ -34,13 +34,13 @@ void editor::run() {
     const auto result = term::enable_raw_mode();
     constexpr auto ScreenBufferSize = 16*units::Kb;
 
-    auto screen_buffer = Buffer(ScreenBufferSize);
+    auto screen_buffer = Vt100Buffer(ScreenBufferSize);
 
     auto wait_for_events = true;
 
     auto controller = controllers::edit;
 
-    auto editor = Editor(editor_state::build(), Config(syntax::build()));
+    auto editor = Editor { state: editor_state::build(), config: Config(syntax::build()) };
 
     render(editor, screen_buffer, views::edit);
 

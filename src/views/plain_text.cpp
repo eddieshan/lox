@@ -2,7 +2,7 @@
 #include "../utils/geometry.h"
 #include "../utils/slice.h"
 #include "../utils/ascii.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "../term/ansi.h"
 #include "../text/navigation.h"
 
@@ -12,7 +12,7 @@ using namespace utils;
 using namespace term;
 using namespace views;
 
-Position views::plain_text(const Slice<uint8_t>& text, buffers::Buffer& buffer) {
+Position views::plain_text(const Slice<uint8_t>& text, buffers::Vt100Buffer& buffer) {
 
     constexpr utils::Position start_pos = utils::Position { row: 0, col: 4 };
 

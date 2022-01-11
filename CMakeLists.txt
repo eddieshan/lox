@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.13.4)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "-fconcepts")
+
 project(lox VERSION 0.0)
 
 
@@ -9,10 +11,11 @@ set(SOURCES
     src/utils/slice.cpp
     src/utils/convert.cpp
     src/utils/geometry.cpp
+    src/utils/packed_array.cpp
     src/utils/io.cpp    
     src/term/ansi.cpp
     src/term/term.cpp
-    src/buffers/buffer.cpp
+    src/buffers/vt100_buffer.cpp
     src/buffers/piece.cpp
     src/buffers/piece_table.cpp
     src/syntax/tokenize.cpp

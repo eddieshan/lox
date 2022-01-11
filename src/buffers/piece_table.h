@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstddef>
-#include <memory>
 
 #include "../utils/slice.h"
 #include "../utils/geometry.h"
@@ -13,10 +12,8 @@ namespace buffers {
 
     class PieceTable {
         private:
-            std::unique_ptr<uint8_t[]> _bytes;
+            utils::ArrayBuffer<uint8_t> _buffer;
             utils::ArrayList<Piece> _pieces;
-            size_t _size;
-            size_t _capacity;
             size_t _last_piece;
 
             PieceCursor cursor(const size_t pos);
@@ -39,12 +36,11 @@ namespace buffers {
 
             template <typename T, void (T::*visit)(const utils::Slice<uint8_t>&)>
             void accept(T& visitor) {
-                for(size_t i = 0; i < _pieces.size(); i++) {
-                    const auto start = _bytes.get() + _pieces[i].start;
+                for(auto i = 0; i < _pieces.size(); i++) {
+                    const auto start = _buffer.data() + _pieces[i].start;
                     const auto slice = utils::Slice<uint8_t>(start, _pieces[i].size);
                     (visitor.*visit)(slice);
                 }
             }
-
     };
 }

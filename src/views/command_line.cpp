@@ -1,7 +1,7 @@
 #include "../utils/slice.h"
 #include "../utils/geometry.h"
 #include "../utils/convert.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "../text/navigation.h"
 #include "../term/ansi.h"
 #include "../settings/theme.h"
@@ -20,7 +20,7 @@ namespace messages {
     const auto Open = slice::from(" Open: ");
 }
 
-Position render(const Command& command, const WindowSize& window_size, buffers::Buffer& buffer) {
+Position render(const Command& command, const WindowSize& window_size, buffers::Vt100Buffer& buffer) {
     buffer.esc(theme::command_line::Background);
     buffer.esc(theme::command_line::Foreground);
     buffer.esc(Position { row: window_size.rows, col: 0 });
@@ -31,7 +31,7 @@ Position render(const Command& command, const WindowSize& window_size, buffers::
     return Position { row: window_size.rows, col: (uint32_t) messages::Open.size };
 }
 
-void views::command_line(const EditorState& state, const settings::Config& config, buffers::Buffer& screen_buffer) {
+void views::command_line(const EditorState& state, const settings::Config& config, buffers::Vt100Buffer& screen_buffer) {
     const auto text = state.text();
     views::syntax(text, config.grammar, screen_buffer);
  

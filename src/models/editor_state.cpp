@@ -7,7 +7,7 @@
 #include "../utils/array_list.h"
 #include "../utils/io.h"
 #include "../buffers/piece_table.h"
-#include "../buffers/buffer.h"
+#include "../buffers/vt100_buffer.h"
 #include "../term/term.h"
 
 #include "command.h"
@@ -75,7 +75,7 @@ void EditorState::move(const StepNavigator navigate, const size_t step) {
 void EditorState::insert(const uint8_t val) {
     const auto new_pos = _text_buffer.insert(val, _pos);
     _text_area.clear();
-    _text_buffer.accept<Buffer, &Buffer::write>(_text_area);
+    _text_buffer.accept<Vt100Buffer, &Vt100Buffer::write>(_text_area);
 
     const auto text = _text_area.text();
     const auto clipped_size = range::size(_visible_region);
@@ -90,7 +90,7 @@ void EditorState::insert(const uint8_t val) {
 void EditorState::erase() {
     _text_buffer.erase(_pos);
     _text_area.clear();
-    _text_buffer.accept<Buffer, &Buffer::write>(_text_area);
+    _text_buffer.accept<Vt100Buffer, &Vt100Buffer::write>(_text_area);
 }
 
 void EditorState::load_file(const char* path) {
@@ -119,7 +119,7 @@ void EditorState::load_file(const char* path) {
         reader.close();
 
         _text_area.clear();
-        _text_buffer.accept<Buffer, &Buffer::write>(_text_area);
+        _text_buffer.accept<Vt100Buffer, &Vt100Buffer::write>(_text_area);
         _visible_region = Range<size_t> {
             start: 0,
             end: slice::find_n(_text_area.text(), ascii::Lf, _window_size.rows)
@@ -138,7 +138,7 @@ void EditorState::execute_command() {
 
 EditorState::EditorState(const size_t buffer_size, const size_t command_size, const WindowSize& window_size):
     _text_buffer(PieceTable(TextBufferSize)),
-    _text_area(Buffer(TempTextBufferSize)),
+    _text_area(Vt100Buffer(TempTextBufferSize)),
     _pos(0),
     _visible_region(Range<size_t> { start: 0, end: 0 }),
     _window_size(window_size),
