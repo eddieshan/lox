@@ -1,12 +1,12 @@
 #pragma once
 
 #include <cstdint>
+
 #include "../utils/slice.h"
 #include "../utils/array_list.h"
+#include "common.h"
 
 namespace models {
-
-    using Navigator = size_t (*)(const utils::Slice<uint8_t>& text, const size_t current_pos);    
 
     enum class CommandType {
         OpenFile

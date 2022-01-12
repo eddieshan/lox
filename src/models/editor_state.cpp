@@ -10,6 +10,7 @@
 #include "../buffers/vt100_buffer.h"
 #include "../term/term.h"
 
+#include "common.h"
 #include "command.h"
 #include "editor_state.h"
 
