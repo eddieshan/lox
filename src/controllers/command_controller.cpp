@@ -13,18 +13,14 @@ using namespace controllers;
 using namespace text;
 using namespace models;
 
-ControllerResult controllers::command_line(const term::Key& key, EditorState& state) {
+ActionResult controllers::command_line(const term::Key& key, EditorState& state) {
 
-    auto result = ControllerResult {
+    auto result = ActionResult {
         controller: controllers::command_line,
-        view: views::command_line,
-        exit: false
+        view: views::command_line
     };
 
     switch (key.code) {
-        case ascii::CtrlQ:
-            result.exit = true;
-            break;
         case ascii::Esc:
             result.controller = controllers::edit;
             result.view = views::edit;

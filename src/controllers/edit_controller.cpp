@@ -11,9 +11,9 @@ using namespace controllers;
 using namespace text;
 using namespace models;
 
-ControllerResult controllers::edit(const term::Key& key, EditorState& state) {
+ActionResult controllers::edit(const term::Key& key, EditorState& state) {
 
-    auto result = ControllerResult {
+    auto result = ActionResult {
         controller: controllers::edit,
         view: views::edit,
         exit: false
