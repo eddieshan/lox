@@ -1,5 +1,6 @@
-#include "command.h"
 #include "../utils/slice.h"
+#include "common.h"
+#include "command.h"
 
 using namespace utils;
 using namespace models;

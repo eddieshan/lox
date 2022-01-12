@@ -3,16 +3,15 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "../utils/slice.h"
 #include "../utils/range.h"
 #include "../utils/geometry.h"
 #include "../buffers/piece_table.h"
 #include "../buffers/vt100_buffer.h"
+#include "common.h"
 #include "command.h"
 
 namespace models {
-
-    using Navigator = size_t (*)(const utils::Slice<uint8_t>& text, const size_t current_pos);
-    using StepNavigator = size_t (*)(const utils::Slice<uint8_t>& text, const size_t current_pos, const size_t step);
 
     // TODO: EditorState is a god class in the making.
     // A redesign is required asap to break it down.
