@@ -1,4 +1,5 @@
 #include "../utils/units.h"
+#include "../utils/ascii.h"
 #include "../buffers/vt100_buffer.h"
 #include "../term/term.h"
 #include "../settings/config.h"
@@ -48,11 +49,13 @@ void editor::run() {
         const auto key = term::read_key();
 
         if(key.size > 0) {
-            const auto result = controller(key, editor.state);
-            controller = result.controller;
-            wait_for_events = !result.exit;
-
-            render(editor, screen_buffer, result.view);
+            if(key.code == ascii::CtrlQ) {
+                wait_for_events = false;
+            } else {
+                const auto result = controller(key, editor.state);
+                controller = result.controller;
+                render(editor, screen_buffer, result.view);
+            }
         }
     } while(wait_for_events);
 }

@@ -6,17 +6,16 @@
 
 namespace controllers {
 
-    struct ControllerResult;
+    struct ActionResult;
 
-    using Controller = ControllerResult (*)(const term::Key& key, models::EditorState& state);
+    using Controller = ActionResult (*)(const term::Key& key, models::EditorState& state);
 
-    struct ControllerResult {
+    struct ActionResult {
         Controller controller;
         views::View view;
-        bool exit;
     };
 
-    ControllerResult command_line(const term::Key& key, models::EditorState& state);
+    ActionResult command_line(const term::Key& key, models::EditorState& state);
 
-    ControllerResult edit(const term::Key& key, models::EditorState& state);
+    ActionResult edit(const term::Key& key, models::EditorState& state);
 }
