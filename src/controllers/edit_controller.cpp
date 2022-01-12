@@ -15,14 +15,10 @@ ActionResult controllers::edit(const term::Key& key, EditorState& state) {
 
     auto result = ActionResult {
         controller: controllers::edit,
-        view: views::edit,
-        exit: false
+        view: views::edit
     };
 
     switch (key.code) {
-        case ascii::CtrlQ:
-            result.exit = true;
-            break;
         case ascii::CtrlO:
             state.command.set(CommandType::OpenFile);
             result.controller = controllers::command_line;

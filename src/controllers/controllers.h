@@ -13,7 +13,6 @@ namespace controllers {
     struct ActionResult {
         Controller controller;
         views::View view;
-        bool exit;
     };
 
     ActionResult command_line(const term::Key& key, models::EditorState& state);
