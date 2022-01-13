@@ -12,7 +12,7 @@ using namespace term;
 using namespace views;
 
 void views::line_counter(const Position& pos, const Range<size_t>& range, buffers::Vt100Buffer& buffer) {
-    std::array<uint8_t, 3> line_count = { (uint8_t)' ', (uint8_t)' ', (uint8_t)' ' };
+    auto line_count = std::array { (uint8_t)' ', (uint8_t)' ', (uint8_t)' ' };
 
     buffer.esc(ansi::Home);
     buffer.esc(ansi::Dim);

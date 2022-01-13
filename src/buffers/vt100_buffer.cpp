@@ -29,7 +29,7 @@ void Vt100Buffer::esc(const uint8_t val) {
 void Vt100Buffer::esc(const utils::Position& position) {
     write(ansi::Csi);
 
-    constexpr auto CursorEscape = std::array<uint8_t, 8> { '\0', '\0', '\0', ';', '\0', '\0', '\0', 'H' };
+    constexpr auto CursorEscape = std::array { '\0', '\0', '\0', ';', '\0', '\0', '\0', 'H' };
     const auto remaining = _buffer.capacity() - _buffer.size;
 
     if(CursorEscape.size() <= remaining) {
@@ -59,7 +59,7 @@ void Vt100Buffer::esc(const uint32_t val, uint8_t attr) {
 void Vt100Buffer::esc(const ansi::ColorAttribute color_attr) {
     write(ansi::Csi);
     
-    constexpr auto ColorEscape = std::array<uint8_t, 9> { '\0', '\0', ';', '5', ';', '\0', '\0', '\0', 'm' };
+    constexpr auto ColorEscape = std::array { '\0', '\0', ';', '5', ';', '\0', '\0', '\0', 'm' };
     const auto remaining = _buffer.capacity() - _buffer.size;
 
     if(ColorEscape.size() <= remaining) {

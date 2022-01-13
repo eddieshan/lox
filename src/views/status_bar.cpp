@@ -11,7 +11,7 @@ using namespace term;
 using namespace views;
 
 void views::status_bar(const Position& cursor, const WindowSize& window_size, buffers::Vt100Buffer& buffer) {
-    std::array<uint8_t, 9> caption { '\0', '\0', '\0', ':', '\0', '\0', '\0' };
+    auto caption = std::array { (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)':', (uint8_t)0, (uint8_t)0, (uint8_t)0 };
 
     convert::to_chars_3(cursor.row + 1, (uint8_t*)caption.data());
     convert::to_chars_3(cursor.col + 1, (uint8_t*)caption.data() + 4);
