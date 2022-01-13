@@ -63,7 +63,7 @@ namespace utils {
         }
 
         template<typename TItem>
-        bool contains(const Slice<TItem>& slice, const TItem val) {
+        bool any(const Slice<TItem>& slice, const TItem val) {
             for(auto i = 0; i < slice.size; ++i) {
                 if(slice.data[i] == val) {
                     return true;

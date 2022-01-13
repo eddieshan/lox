@@ -23,22 +23,22 @@ size_t match(const utils::Slice<uint8_t>& text, const Grammar& grammar) {
 }
 
 bool is_delimiter(const uint8_t val, const Grammar& grammar) {
-    return slice::contains(grammar.delimiters, val);
+    return slice::any(grammar.delimiters, val);
 }
 
 bool is_digit(const uint8_t val) {
     constexpr auto decimal_delimiter = (uint8_t)'.';
-    return range::contains(ascii::Numbers, val) || val == decimal_delimiter;
+    return range::any(ascii::Numbers, val) || val == decimal_delimiter;
 }
 
 bool is_operator(const uint8_t val, const Grammar& grammar) {
-    return slice::contains(grammar.operators, val);
+    return slice::any(grammar.operators, val);
 }
 
 bool is_alphanumeric(const uint8_t val) {
     constexpr auto id_delimiter = (uint8_t)'_';
-    return range::contains(ascii::LettersLower, val) ||
-           range::contains(ascii::LettersUpper, val) ||
+    return range::any(ascii::LettersLower, val) ||
+           range::any(ascii::LettersUpper, val) ||
            val == id_delimiter;
 }
 
