@@ -148,6 +148,14 @@ namespace utils {
             return i;
         }
 
+        template<typename TItem>
+        size_t match(const Slice<TItem>& slice, const TItem val, const size_t from = 0) {
+            auto i = from;
+            while(i < slice.size && slice.data[i] == val) {
+                ++i;
+            }
 
+            return i;
+        }
     }
 }
