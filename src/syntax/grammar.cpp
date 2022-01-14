@@ -2,6 +2,7 @@
 #include <cstring>
 
 #include "../utils/slice.h"
+#include "../utils/range.h"
 #include "../utils/packed_array.h"
 #include "grammar.h"
 #include "cpp.h"
@@ -32,6 +33,7 @@ PackedArray tokens(const char* tokens_def, const TokenType token_type) {
 Grammar syntax::build() {
     return Grammar(
         slice::from(cpp::Delimiters),
+        cpp::FunctionCallDelimiters,
         slice::from(cpp::Operators),
         tokens(cpp::Keywords, syntax::TokenType::Keyword),
         tokens(cpp::TypeKeywords, syntax::TokenType::TypeKeyword),

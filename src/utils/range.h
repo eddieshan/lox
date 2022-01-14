@@ -12,7 +12,7 @@ namespace utils {
     
     namespace range {
         template<typename TComparable>
-        bool contains(const Range<TComparable>& range, const TComparable val) {
+        bool any(const Range<TComparable>& range, const TComparable val) {
             return val >= range.start && val <= range.end;
         }
 

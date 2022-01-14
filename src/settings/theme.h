@@ -17,6 +17,7 @@ namespace settings::theme {
         const auto Number = term::ansi::foreground(10);
         const auto String = term::ansi::foreground(214);
         const auto Comment = term::ansi::foreground(28);
+        const auto Function = term::ansi::foreground(227);
     }
 
     namespace command_line {
