@@ -1,6 +1,6 @@
 # lox
 
-Lox (funky transliteration of LOCs) is a terminal code editor for myself, born out of a  
+lox (funky transliteration of LOCs) is a terminal code editor for myself, born out of a  
 "if I had dime ..." moment. As in, if I had written a chunk of code for every time I complained  
 about never finding the ideal code editor, by now I might have one of my own. If code is a craft  
 and decent craftsmen make their own tools, it makes sense to roll out your own code editor.
@@ -12,6 +12,10 @@ evolved, the quality of its code and the state of the plugin ecosystem.
 
 Isn't it ironic that after so many decades, we developers have built outstanding software of all  
 kinds but have failed to deliver the code editor we all deserve?
+
+Sticking to tradition, here is a screenshot of lox editing itself,
+
+![](lox_screenshot.png)
 
 ## Design
 
@@ -32,6 +36,7 @@ years to come. Modularity and maintenability come first, even if I have to sacri
 It has zero dependencies (no ncurses) but I expect at some point I will need to integrate external libs for  
 the language heavy lifting parts e.g. LSP support.
 
-This project was actually started in Rust, you can check it out [here](https://github.com/eddieshan/foo-editor). Some time after, however, it dawned   
-on me that integration with external libs would be a pain, given Rust's poor FFI story. I am cool with bindgen  
-or writing wrappers in other contexts, just not here as this is a project where I want minimum friction.
+This project was actually started in Rust, you can check it out here [foo-editor](https://github.com/eddieshan/foo-editor).  
+Some time after, however, it dawned on me that integration with external libs would be a pain, given Rust's  
+poor FFI story. I am cool with bindgen or writing wrappers in other contexts, just not here, this is a project  
+where I want minimum friction.
